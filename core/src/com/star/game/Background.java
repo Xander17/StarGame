@@ -30,8 +30,8 @@ public class Background {
     }
 
     private void parallaxSettings() {
-        bgSrcX = BG_PARALLAX_PERCENT * SCREEN_WIDTH;
-        bgSrcY = BG_PARALLAX_PERCENT * SCREEN_HEIGHT;
+        bgSrcX = BG_PARALLAX_PERCENT * textureCosmos.getWidth();
+        bgSrcY = BG_PARALLAX_PERCENT * textureCosmos.getHeight();
         bgSrcW = (int) (textureCosmos.getWidth() - 2 * bgSrcX);
         bgSrcH = (int) (textureCosmos.getHeight() - 2 * bgSrcY);
         bgParallaxStepX = bgSrcX / (SCREEN_WIDTH / 2);
