@@ -11,22 +11,24 @@ public class StarGame extends ApplicationAdapter {
     private SpriteBatch batch;
     private Background background;
     private Hero hero;
+    private Asteroid asteroid;
 
-	public Hero getHero() {
-		return hero;
-	}
+    public Hero getHero() {
+        return hero;
+    }
 
-	// Домашнее задание:
-	// 1. Разобраться с кодом
-	// 2. Сделать по кноке S задний ход с уменьшенной вдвое скоростью
-	// 3. Сделайте астероид, которые просто летает в случайную сторону, и
-	// пролетает сквозь экран
+    // Домашнее задание:
+    // 1. Разобраться с кодом
+    // 2. Сделать по кноке S задний ход с уменьшенной вдвое скоростью
+    // 3. Сделайте астероид, которые просто летает в случайную сторону, и
+    // пролетает сквозь экран
 
-	@Override
+    @Override
     public void create() {
         batch = new SpriteBatch();
         background = new Background(this);
         hero = new Hero();
+        asteroid = new Asteroid();
     }
 
     @Override
@@ -39,12 +41,14 @@ public class StarGame extends ApplicationAdapter {
         batch.begin();
         background.render(batch);
         hero.render(batch);
+        asteroid.render(batch);
         batch.end();
     }
 
     public void update(float dt) {
         background.update(dt);
-		hero.update(dt);
+        asteroid.update(dt);
+        hero.update(dt);
     }
 
     @Override
