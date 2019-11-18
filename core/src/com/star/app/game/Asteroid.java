@@ -1,4 +1,4 @@
-package com.star.game;
+package com.star.app.game;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -10,8 +10,8 @@ import static com.star.game.ScreenManager.*;
 public class Asteroid {
     private final float SPEED_MIN = 100f;
     private final float SPEED_MAX = 30f;
-    private final float SCALE_MIN = 0.4f;
-    private final float SCALE_MAX = 0.8f;
+    private final float SCALE_MIN = 0.2f;
+    private final float SCALE_MAX = 0.4f;
     private final float ROTATION_SPEED_MIN = 60f;
     private final float ROTATION_SPEED_MAX = 10f;
     private final float ANGLE_NO_CREATE = 15f;
@@ -52,25 +52,25 @@ public class Asteroid {
     }
 
     public void render(SpriteBatch batch) {
-        batch.draw(texture, position.x - textureW / 2, position.y - textureH / 2,
-                textureW / 2, textureH / 2, textureW, textureH, scale, scale, rotationAngle,
+        batch.draw(texture, position.x - textureW / 2f, position.y - textureH / 2f,
+                textureW / 2f, textureH / 2f, textureW, textureH, scale, scale, rotationAngle,
                 0, 0, textureW, textureH, false, false);
     }
 
     public void update(float dt) {
         position.x += velocity.x * dt;
         position.y += velocity.y * dt;
-        if (position.x < -textureW / 2 * scale) position.x = SCREEN_WIDTH + textureW / 2 * scale;
-        else if (position.x > SCREEN_WIDTH + textureW / 2 * scale) position.x = -textureW / 2 * scale;
-        if (position.y < -textureH / 2 * scale) position.y = SCREEN_HEIGHT + textureH / 2 * scale;
-        else if (position.y > SCREEN_HEIGHT + textureH / 2 * scale) position.y = -textureH / 2 * scale;
+        if (position.x < -textureW / 2f * scale) position.x = SCREEN_WIDTH + textureW / 2f * scale;
+        else if (position.x > SCREEN_WIDTH + textureW / 2f * scale) position.x = -textureW / 2f * scale;
+        if (position.y < -textureH / 2f * scale) position.y = SCREEN_HEIGHT + textureH / 2f * scale;
+        else if (position.y > SCREEN_HEIGHT + textureH / 2f * scale) position.y = -textureH / 2f * scale;
 
         rotationAngle += rotationSpeed * dt;
     }
 
     private Vector2 getRandomStartPoint() {
-        if (MathUtils.random(1) == 0) return new Vector2(MathUtils.random(0, SCREEN_WIDTH), -textureH / 2 * scale);
-        else return new Vector2(-textureW / 2 * scale, MathUtils.random(0, SCREEN_HEIGHT));
+        if (MathUtils.random(1) == 0) return new Vector2(MathUtils.random(0, SCREEN_WIDTH), -textureH / 2f * scale);
+        else return new Vector2(-textureW / 2f * scale, MathUtils.random(0, SCREEN_HEIGHT));
     }
 
 }

@@ -1,4 +1,4 @@
-package com.star.game;
+package com.star.app.game;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -12,15 +12,15 @@ public class Background {
     private final int STARS_COUNT = 600;
     private final float BG_PARALLAX_PERCENT = 0.1f;
 
-    private StarGame game;
+    private GameController gameController;
     private Texture textureCosmos;
     private Star[] stars;
-    private float bgSrcX, bgSrcY;
-    private int bgSrcW, bgSrcH;
-    private float bgParallaxStepX, bgParallaxStepY;
+    private float srcX, srcY;
+    private int srcW, srcH;
+    private float parallaxStepX, parallaxStepY;
 
-    public Background(StarGame game) {
-        this.game = game;
+    public Background(GameController gameController) {
+        this.gameController = gameController;
         this.textureCosmos = new Texture("background.jpg");
         parallaxSettings();
         this.stars = new Star[STARS_COUNT];
@@ -30,31 +30,31 @@ public class Background {
     }
 
     private void parallaxSettings() {
-        bgSrcX = BG_PARALLAX_PERCENT * textureCosmos.getWidth();
-        bgSrcY = BG_PARALLAX_PERCENT * textureCosmos.getHeight();
-        bgSrcW = (int) (textureCosmos.getWidth() - 2 * bgSrcX);
-        bgSrcH = (int) (textureCosmos.getHeight() - 2 * bgSrcY);
-        bgParallaxStepX = bgSrcX / (SCREEN_WIDTH / 2);
-        bgParallaxStepY = bgSrcY / (SCREEN_HEIGHT / 2);
+        srcX = BG_PARALLAX_PERCENT * textureCosmos.getWidth();
+        srcY = BG_PARALLAX_PERCENT * textureCosmos.getHeight();
+        srcW = (int) (textureCosmos.getWidth() - 2 * srcX);
+        srcH = (int) (textureCosmos.getHeight() - 2 * srcY);
+        parallaxStepX = srcX / (SCREEN_WIDTH / 2f);
+        parallaxStepY = srcY / (SCREEN_HEIGHT / 2f);
     }
 
     public void render(SpriteBatch batch) {
         batch.draw(textureCosmos, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT,
-                (int) bgSrcX, (int) bgSrcY, bgSrcW, bgSrcH, false, false);
-        for (Star star : stars) star.render(batch);
+                (int) srcX, (int) srcY, srcW, srcH, false, false);
+        for (int i = 0; i < stars.length; i++) stars[i].render(batch);
     }
 
     public void update(float dt) {
-        bgSrcX += game.getHero().getLastDisplacement().x * bgParallaxStepX;
-        bgSrcY -= game.getHero().getLastDisplacement().y * bgParallaxStepY;
-        for (Star star : stars) star.update(dt);
+        srcX += gameController.getHero().getVelocity().x * parallaxStepX;
+        srcY -= gameController.getHero().getVelocity().y * parallaxStepY;
+        for (int i = 0; i < stars.length; i++) stars[i].update(dt);
     }
 
     private class Star {
-        private final float X_SPEED_MIN = -40f;
-        private final float X_SPEED_MAX = -5f;
-        private final float MIN_SIZE_SCALLING = 0.4f;
-        private final float MAX_SIZE_SCALLING = 0.8f;
+        private final float X_SPEED_MIN = -5f;
+        private final float X_SPEED_MAX = -1f;
+        private final float MIN_SIZE_SCALING = 0.4f;
+        private final float MAX_SIZE_SCALING = 0.8f;
         private final float SCREEN_PADDING = 200;
         private final float MAX_SHINING_SCALE = 1.5f;
         private final float SHINING_TIME = 0.2f;
@@ -84,15 +84,15 @@ public class Background {
         }
 
         private void newStarInit() {
-            scale = Math.abs(velocity.x / X_SPEED_MIN) * MathUtils.random(MIN_SIZE_SCALLING, MAX_SIZE_SCALLING);
+            scale = Math.abs(velocity.x / X_SPEED_MIN) * MathUtils.random(MIN_SIZE_SCALING, MAX_SIZE_SCALING);
             texture = starTypes[MathUtils.random(starTypes.length - 1)];
             shining = false;
             shiningScale = 1;
         }
 
         void update(float dt) {
-            position.x += (velocity.x - game.getHero().getLastDisplacement().x * DISPLACEMENT_FACTOR) * dt;
-            position.y += (velocity.y - game.getHero().getLastDisplacement().y * DISPLACEMENT_FACTOR) * dt;
+            position.x += (velocity.x - gameController.getHero().getVelocity().x * DISPLACEMENT_FACTOR) * dt;
+            position.y += (velocity.y - gameController.getHero().getVelocity().y * DISPLACEMENT_FACTOR) * dt;
             if (position.x < -SCREEN_PADDING) {
                 position.x = SCREEN_WIDTH + SCREEN_PADDING;
                 position.y = MathUtils.random(-SCREEN_PADDING, SCREEN_HEIGHT + SCREEN_PADDING);
@@ -102,15 +102,17 @@ public class Background {
             if (shiningScale == 1 && Math.random() < SHINING_FREQ) shining = true;
             if (shining) shiningScale += (MAX_SHINING_SCALE - 1) * dt / SHINING_TIME;
             else shiningScale -= (MAX_SHINING_SCALE - 1) * dt / SHINING_TIME;
-            if (shiningScale > MAX_SHINING_SCALE) shining = false;
-            else if (shiningScale < 1) shiningScale = 1;
+            if (shiningScale > MAX_SHINING_SCALE) {
+                shiningScale = MAX_SHINING_SCALE;
+                shining = false;
+            } else if (shiningScale < 1) shiningScale = 1;
 
         }
 
         void render(SpriteBatch batch) {
             int textureW = texture.getWidth();
             int textureH = texture.getHeight();
-            batch.draw(texture, position.x - textureW / 2, position.y - textureH / 2,
+            batch.draw(texture, position.x - textureW / 2f, position.y - textureH / 2f,
                     textureW / 2, textureH / 2, textureW, textureH, scale * shiningScale, scale * shiningScale, 0,
                     0, 0, textureW, textureH, false, false);
         }
