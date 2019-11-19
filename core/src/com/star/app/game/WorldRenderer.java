@@ -19,7 +19,8 @@ public class WorldRenderer {
         batch.begin();
         gameController.getBackground().render(batch);
         gameController.getHero().render(batch);
-        gameController.getAsteroid().render(batch);
+        gameController.getBulletController().render(batch);
+        gameController.getAsteroidController().render(batch);
         batch.end();
     }
 }

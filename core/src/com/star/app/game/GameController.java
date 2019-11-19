@@ -3,7 +3,8 @@ package com.star.app.game;
 public class GameController {
     private Background background;
     private Hero hero;
-    private Asteroid asteroid;
+    private AsteroidController asteroidController;
+    private BulletController bulletController;
 
     public Background getBackground() {
         return background;
@@ -13,19 +14,26 @@ public class GameController {
         return hero;
     }
 
-    public Asteroid getAsteroid() {
-        return asteroid;
+    public BulletController getBulletController() {
+        return bulletController;
+    }
+
+    public AsteroidController getAsteroidController() {
+        return asteroidController;
     }
 
     public GameController() {
         background = new Background(this);
-        hero = new Hero();
-        asteroid = new Asteroid();
+        hero = new Hero(this);
+        bulletController = new BulletController(this);
+        asteroidController = new AsteroidController();
+        asteroidController.createNew();
     }
 
     public void update(float dt) {
         background.update(dt);
-        asteroid.update(dt);
         hero.update(dt);
+        bulletController.update(dt);
+        asteroidController.update(dt);
     }
 }

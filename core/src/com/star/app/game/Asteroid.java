@@ -4,10 +4,14 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.star.app.game.helpers.Destroyable;
+import com.star.app.game.helpers.Poolable;
+
+import javax.xml.soap.Text;
 
 import static com.star.game.ScreenManager.*;
 
-public class Asteroid {
+public class Asteroid implements Poolable, Destroyable {
     private final float SPEED_MIN = 100f;
     private final float SPEED_MAX = 30f;
     private final float SCALE_MIN = 0.2f;
@@ -33,22 +37,39 @@ public class Asteroid {
     private float scale;
     private int textureW;
     private int textureH;
+    private boolean isActive;
 
     public Asteroid() {
-        texture = asteroidTypes[MathUtils.random(asteroidTypes.length - 1)];
-        this.textureW = texture.getWidth();
-        this.textureH = texture.getHeight();
-        scale = MathUtils.random(SCALE_MIN, SCALE_MAX);
-        position = getRandomStartPoint();
+        position = new Vector2(0, 0);
+        velocity = new Vector2(0, 0);
+        isActive = false;
+    }
+
+    public void activate() {
         float speed = MathUtils.random(SPEED_MIN, SPEED_MAX);
         float angle = 0;
         while (angle % 90 < ANGLE_NO_CREATE || angle % 90 > (90 - ANGLE_NO_CREATE)) {
             angle = MathUtils.random(0, 360);
         }
-        velocity = new Vector2(MathUtils.randomSign() * (float) Math.cos(Math.toRadians(angle)) * speed,
+        activate(getRandomStartPoint(), MathUtils.random(SCALE_MIN, SCALE_MAX),
+                MathUtils.randomSign() * (float) Math.cos(Math.toRadians(angle)) * speed,
                 MathUtils.randomSign() * (float) Math.sin(Math.toRadians(angle)) * speed);
+    }
+
+    public void activate(Vector2 position, float scale, float velocityX, float velocityY) {
+        activate(position.x, position.y, scale, velocityX, velocityY);
+    }
+
+    public void activate(float x, float y, float scale, float velocityX, float velocityY) {
+        this.texture = asteroidTypes[MathUtils.random(asteroidTypes.length - 1)];
+        this.textureW = texture.getWidth();
+        this.textureH = texture.getHeight();
+        position.set(x, y);
+        this.scale = scale;
+        velocity.set(velocityX, velocityY);
         rotationAngle = MathUtils.random(0, 360);
         rotationSpeed = MathUtils.randomSign() * MathUtils.random(ROTATION_SPEED_MIN, ROTATION_SPEED_MAX);
+        isActive = true;
     }
 
     public void render(SpriteBatch batch) {
@@ -73,4 +94,23 @@ public class Asteroid {
         else return new Vector2(-textureW / 2f * scale, MathUtils.random(0, SCREEN_HEIGHT));
     }
 
+    @Override
+    public boolean isActive() {
+        return isActive;
+    }
+
+    @Override
+    public void destroy() {
+        isActive = false;
+    }
+
+    @Override
+    public Vector2 getPosition() {
+        return position;
+    }
+
+    @Override
+    public float getHitBoxRadius() {
+        return Math.max(textureW, textureH) * scale / 2;
+    }
 }
