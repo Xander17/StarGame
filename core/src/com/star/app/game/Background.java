@@ -10,7 +10,7 @@ import static com.star.game.ScreenManager.SCREEN_WIDTH;
 
 public class Background {
     private final int STARS_COUNT = 600;
-    private final float BG_PARALLAX_PERCENT = 0.1f;
+    private final float PARALLAX_PERCENT = 0.1f;
 
     private GameController gameController;
     private Texture textureCosmos;
@@ -30,8 +30,8 @@ public class Background {
     }
 
     private void parallaxSettings() {
-        srcX = BG_PARALLAX_PERCENT * textureCosmos.getWidth();
-        srcY = BG_PARALLAX_PERCENT * textureCosmos.getHeight();
+        srcX = PARALLAX_PERCENT * textureCosmos.getWidth();
+        srcY = PARALLAX_PERCENT * textureCosmos.getHeight();
         srcW = (int) (textureCosmos.getWidth() - 2 * srcX);
         srcH = (int) (textureCosmos.getHeight() - 2 * srcY);
         parallaxStepX = srcX / (SCREEN_WIDTH / 2f);
@@ -45,8 +45,8 @@ public class Background {
     }
 
     public void update(float dt) {
-        srcX += gameController.getHero().getVelocity().x * parallaxStepX;
-        srcY -= gameController.getHero().getVelocity().y * parallaxStepY;
+        srcX += gameController.getHero().getVelocity().x * dt * parallaxStepX;
+        srcY -= gameController.getHero().getVelocity().y * dt * parallaxStepY;
         for (int i = 0; i < stars.length; i++) stars[i].update(dt);
     }
 
@@ -59,7 +59,7 @@ public class Background {
         private final float MAX_SHINING_SCALE = 1.5f;
         private final float SHINING_TIME = 0.2f;
         private final double SHINING_FREQ = 0.005;
-        private final int DISPLACEMENT_FACTOR = 15;
+        private final float DISPLACEMENT_FACTOR = 0.2f;
 
         private Texture[] starTypes = {
                 new Texture("stars/star_white.png"),
