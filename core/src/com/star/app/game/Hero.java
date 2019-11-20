@@ -16,7 +16,7 @@ public class Hero {
     private final float BACKWARD_POWER = 60f;
     private final float BOUND_BREAK_FACTOR = 0.5f;
     private final float FRICTION_BREAK = 120f;
-    private final float SHOOT_DELAY_MIN = 1f;
+    private final float SHOOT_DELAY_MIN = 0.1f;
 
     private final float SHOT_VELOCITY = 600f;
 
@@ -37,7 +37,7 @@ public class Hero {
     private float shootDelay;
     private Vector2 rightGunPosition;
     private Vector2 leftGunPosition;
-    private float[] massCenter;
+    private float[] massCenterXY;
 
     public Vector2 getVelocity() {
         return velocity;
@@ -49,18 +49,18 @@ public class Hero {
         this.position = new Vector2(SCREEN_WIDTH / 2f, SCREEN_HEIGHT / 2f);
         this.velocity = new Vector2(0, 0);
         this.angle = 0.0f;
-        this.textureW = texture.getWidth();
-        this.textureH = texture.getHeight();
         this.isRightGun = true;
         // TODO: 20.11.2019 вынести настройки корабля отдельно
-        massCenter = new float[]{-9, 0};
-        rightGunPosition = new Vector2(6 - massCenter[0], -26 - massCenter[1]);
-        leftGunPosition = new Vector2(6 - massCenter[0], 26 - massCenter[1]);
+        textureW = 64;
+        textureH = 64;
+        massCenterXY = new float[]{23, 32};
+        rightGunPosition = new Vector2(10, -28);
+        leftGunPosition = new Vector2(10, 28);
     }
 
     public void render(SpriteBatch batch) {
-        batch.draw(texture, position.x - textureW / 2f - massCenter[0], position.y - textureH / 2f - massCenter[1],
-                textureW / 2f + massCenter[0], textureH / 2f + massCenter[1], textureW, textureH, 1, 1, angle,
+        batch.draw(texture, position.x - massCenterXY[0], position.y - massCenterXY[1],
+                massCenterXY[0], massCenterXY[1], textureW, textureH, 1, 1, angle,
                 0, 0, textureW, textureH, false, false);
     }
 
@@ -98,12 +98,12 @@ public class Hero {
         if (Gdx.input.isKeyPressed(KEY_LEFT)) {
             angle += ROTATE_SPEED * dt;
             angle %= 360;
-            gunPositionUpdate(ROTATE_SPEED * dt);
+            pointVectorsUpdate(ROTATE_SPEED * dt);
         }
         if (Gdx.input.isKeyPressed(KEY_RIGHT)) {
             angle -= ROTATE_SPEED * dt;
             if (angle < 0) angle += 360;
-            gunPositionUpdate(-ROTATE_SPEED * dt);
+            pointVectorsUpdate(-ROTATE_SPEED * dt);
         }
         if (Gdx.input.isKeyPressed(KEY_FORWARD)) {
             velocity.add(directionX * FORWARD_POWER * dt, directionY * FORWARD_POWER * dt);
@@ -124,7 +124,7 @@ public class Hero {
         }
     }
 
-    private void gunPositionUpdate(float degrees) {
+    private void pointVectorsUpdate(float degrees) {
         leftGunPosition.rotate(degrees);
         rightGunPosition.rotate(degrees);
     }
