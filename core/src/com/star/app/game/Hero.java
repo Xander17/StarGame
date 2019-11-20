@@ -53,13 +53,13 @@ public class Hero {
         this.textureH = texture.getHeight();
         this.isRightGun = true;
         // TODO: 20.11.2019 вынести настройки корабля отдельно
-        rightGunPosition = new Vector2(6, -26);
-        leftGunPosition = new Vector2(6, 26);
         massCenter = new float[]{-9, 0};
+        rightGunPosition = new Vector2(6 - massCenter[0], -26 - massCenter[1]);
+        leftGunPosition = new Vector2(6 - massCenter[0], 26 - massCenter[1]);
     }
 
     public void render(SpriteBatch batch) {
-        batch.draw(texture, position.x - textureW / 2f, position.y - textureH / 2f,
+        batch.draw(texture, position.x - textureW / 2f - massCenter[0], position.y - textureH / 2f - massCenter[1],
                 textureW / 2f + massCenter[0], textureH / 2f + massCenter[1], textureW, textureH, 1, 1, angle,
                 0, 0, textureW, textureH, false, false);
     }
