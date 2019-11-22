@@ -45,8 +45,8 @@ public class Background {
     }
 
     public void update(float dt) {
-        srcX += gameController.getHero().getVelocity().x * dt * parallaxStepX;
-        srcY -= gameController.getHero().getVelocity().y * dt * parallaxStepY;
+        srcX += gameController.getPlayer().getShip().getVelocity().x * dt * parallaxStepX;
+        srcY -= gameController.getPlayer().getShip().getVelocity().y * dt * parallaxStepY;
         for (int i = 0; i < stars.length; i++) stars[i].update(dt);
     }
 
@@ -91,8 +91,8 @@ public class Background {
         }
 
         void update(float dt) {
-            position.x += (velocity.x - gameController.getHero().getVelocity().x * DISPLACEMENT_FACTOR) * dt;
-            position.y += (velocity.y - gameController.getHero().getVelocity().y * DISPLACEMENT_FACTOR) * dt;
+            position.x += (velocity.x - gameController.getPlayer().getShip().getVelocity().x * DISPLACEMENT_FACTOR) * dt;
+            position.y += (velocity.y - gameController.getPlayer().getShip().getVelocity().y * DISPLACEMENT_FACTOR) * dt;
             if (position.x < -SCREEN_PADDING) {
                 position.x = SCREEN_WIDTH + SCREEN_PADDING;
                 position.y = MathUtils.random(-SCREEN_PADDING, SCREEN_HEIGHT + SCREEN_PADDING);

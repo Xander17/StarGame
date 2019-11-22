@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
 
 import static com.star.game.ScreenManager.*;
@@ -35,9 +36,10 @@ public class Hero {
     private float angle;
     private boolean isRightGun;
     private float shootDelay;
-    private Vector2 rightGunPosition;
-    private Vector2 leftGunPosition;
     private float[] massCenterXY;
+    private float[] rightGunPosition;
+    private float[] leftGunPosition;
+    private Circle hitBox;
 
     public Vector2 getVelocity() {
         return velocity;
@@ -54,8 +56,9 @@ public class Hero {
         textureW = 64;
         textureH = 64;
         massCenterXY = new float[]{23, 32};
-        rightGunPosition = new Vector2(10, -28);
-        leftGunPosition = new Vector2(10, 28);
+        rightGunPosition = new float[]{10, -27};
+        leftGunPosition = new float[]{10, 27};
+        hitBox = new Circle();
     }
 
     public void render(SpriteBatch batch) {
@@ -65,84 +68,124 @@ public class Hero {
     }
 
     public void update(float dt) {
-        shooting(dt);
-        moving(dt);
+        shootDelay += dt;
+        control(dt);
         frictionBreak(dt);
         position.mulAdd(velocity, dt);
         checkBounds();
     }
 
-    private void shooting(float dt) {
-        if ((shootDelay += dt) < SHOOT_DELAY_MIN) return;
+    private void shooting() {
+        float gunX, gunY;
+        if (isRightGun) {
+            gunX = position.x + getShipSystemX(rightGunPosition);
+            gunY = position.y + getShipSystemY(rightGunPosition);
+        } else {
+            gunX = position.x + getShipSystemX(leftGunPosition);
+            gunY = position.y + getShipSystemY(leftGunPosition);
+        }
+        gameController.getBulletController().createNew(gunX, gunY, angle,
+                (float) Math.cos(Math.toRadians(angle)) * SHOT_VELOCITY + velocity.x,
+                (float) Math.sin(Math.toRadians(angle)) * SHOT_VELOCITY + velocity.y);
+        shootDelay = 0;
+        isRightGun = !isRightGun;
+    }
+
+    public void tryShooting() {
+        if (shootDelay < SHOOT_DELAY_MIN) return;
+        shooting();
+    }
+
+    private void control(float dt) {
         if (Gdx.input.isKeyPressed(KEY_SHOT)) {
-            float gunX, gunY;
-            if (isRightGun) {
-                gunX = rightGunPosition.x + position.x;
-                gunY = rightGunPosition.y + position.y;
-            } else {
-                gunX = leftGunPosition.x + position.x;
-                gunY = leftGunPosition.y + position.y;
-            }
-            gameController.getBulletController().createNew(gunX, gunY, angle,
-                    (float) Math.cos(Math.toRadians(angle)) * SHOT_VELOCITY + velocity.x,
-                    (float) Math.sin(Math.toRadians(angle)) * SHOT_VELOCITY + velocity.y);
-            shootDelay = 0;
-            isRightGun = !isRightGun;
+            tryShooting();
+        }
+        if (Gdx.input.isKeyPressed(KEY_LEFT)) {
+            turnLeft(dt);
+        }
+        if (Gdx.input.isKeyPressed(KEY_RIGHT)) {
+            turnRight(dt);
+        }
+        if (Gdx.input.isKeyPressed(KEY_FORWARD)) {
+            moveForward(dt);
+        }
+        if (Gdx.input.isKeyPressed(KEY_BACK)) {
+            moveBack(dt);
         }
     }
 
-    private void moving(float dt) {
+    private void turnLeft(float dt) {
+        angle += ROTATE_SPEED * dt;
+        if (angle >= 360) angle %= 360;
+    }
+
+    private void turnRight(float dt) {
+        angle -= ROTATE_SPEED * dt;
+        if (angle < 0) angle = angle % 360 + 360;
+    }
+
+    private void moveForward(float dt) {
         float directionX = (float) Math.cos(Math.toRadians(angle));
         float directionY = (float) Math.sin(Math.toRadians(angle));
         boolean isForwardMoving = velocity.dot(directionX, directionY) >= 0;
-        if (Gdx.input.isKeyPressed(KEY_LEFT)) {
-            angle += ROTATE_SPEED * dt;
-            angle %= 360;
-            pointVectorsUpdate(ROTATE_SPEED * dt);
-        }
-        if (Gdx.input.isKeyPressed(KEY_RIGHT)) {
-            angle -= ROTATE_SPEED * dt;
-            if (angle < 0) angle += 360;
-            pointVectorsUpdate(-ROTATE_SPEED * dt);
-        }
-        if (Gdx.input.isKeyPressed(KEY_FORWARD)) {
-            velocity.add(directionX * FORWARD_POWER * dt, directionY * FORWARD_POWER * dt);
-            if (velocity.len() > FORWARD_MAX_VELOCITY && isForwardMoving)
-                velocity.nor().scl(FORWARD_MAX_VELOCITY);
-        }
-        if (Gdx.input.isKeyPressed(KEY_BACK)) {
-            velocity.sub(directionX * BACKWARD_POWER * dt, directionY * BACKWARD_POWER * dt);
-            if (velocity.len() > BACKWARD_MAX_VELOCITY && !isForwardMoving)
-                velocity.nor().scl(BACKWARD_MAX_VELOCITY);
-        }
+        velocity.add(directionX * FORWARD_POWER * dt, directionY * FORWARD_POWER * dt);
+        if (velocity.len() > FORWARD_MAX_VELOCITY && isForwardMoving)
+            velocity.nor().scl(FORWARD_MAX_VELOCITY);
+    }
+
+    private void moveBack(float dt) {
+        float directionX = (float) Math.cos(Math.toRadians(angle));
+        float directionY = (float) Math.sin(Math.toRadians(angle));
+        boolean isForwardMoving = velocity.dot(directionX, directionY) >= 0;
+        velocity.sub(directionX * BACKWARD_POWER * dt, directionY * BACKWARD_POWER * dt);
+        if (velocity.len() > BACKWARD_MAX_VELOCITY && !isForwardMoving)
+            velocity.nor().scl(BACKWARD_MAX_VELOCITY);
     }
 
     private void frictionBreak(float dt) {
         if (!Gdx.input.isKeyPressed(KEY_FORWARD) && !Gdx.input.isKeyPressed(KEY_BACK)) {
             if (velocity.len() < FRICTION_BREAK * dt) velocity.set(0, 0);
-            else velocity.sub(velocity.cpy().nor().scl(FRICTION_BREAK * dt));
+            else {
+                float skl = FRICTION_BREAK * dt / velocity.len();
+                velocity.mulAdd(velocity, -skl);
+            }
         }
     }
 
-    private void pointVectorsUpdate(float degrees) {
-        leftGunPosition.rotate(degrees);
-        rightGunPosition.rotate(degrees);
+    private float getShipSystemX(float[] coords) {
+        return (float) (Math.cos(Math.toRadians(angle)) * coords[0] - Math.sin(Math.toRadians(angle)) * coords[1]);
+    }
+
+    private float getShipSystemY(float[] coords) {
+        return (float) (Math.sin(Math.toRadians(angle)) * coords[0] + Math.cos(Math.toRadians(angle)) * coords[1]);
+    }
+
+    private float[] getTextureCenterCoords() {
+        return new float[]{textureW / 2f - massCenterXY[0], textureH / 2f - massCenterXY[1]};
     }
 
     private void checkBounds() {
-        if (position.x < textureW / 2f) {
-            position.x = textureW / 2f;
+        float offsetX = getShipSystemX(getTextureCenterCoords());
+        float offsetY = getShipSystemY(getTextureCenterCoords());
+        if (position.x + offsetX < textureW / 2f) {
+            position.x = textureW / 2f - offsetX;
             velocity.x *= -BOUND_BREAK_FACTOR;
-        } else if (position.x > SCREEN_WIDTH - textureW / 2f) {
-            position.x = SCREEN_WIDTH - textureW / 2f;
+        } else if (position.x + offsetX > SCREEN_WIDTH - textureW / 2f) {
+            position.x = SCREEN_WIDTH - textureW / 2f - offsetX;
             velocity.x *= -BOUND_BREAK_FACTOR;
         }
-        if (position.y < textureH / 2f) {
-            position.y = textureH / 2f;
+        if (position.y + offsetY < textureH / 2f) {
+            position.y = textureH / 2f - offsetY;
             velocity.y *= -BOUND_BREAK_FACTOR;
-        } else if (position.y > SCREEN_HEIGHT - textureH / 2f) {
-            position.y = SCREEN_HEIGHT - textureH / 2f;
+        } else if (position.y + offsetY > SCREEN_HEIGHT - textureH / 2f) {
+            position.y = SCREEN_HEIGHT - textureH / 2f - offsetY;
             velocity.y *= -BOUND_BREAK_FACTOR;
         }
+    }
+
+    public Circle getHitBox() {
+        float[] coords = getTextureCenterCoords();
+        hitBox.set(coords[0], coords[1], textureH / 2f);
+        return hitBox;
     }
 }
