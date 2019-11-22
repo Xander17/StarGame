@@ -1,8 +1,8 @@
 package com.star.app.game.ships;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.star.app.game.GameController;
 import com.star.app.game.helpers.Piloting;
+import com.star.app.utils.Assets;
 
 public class HorseshoeType extends Ship {
     private float[] rightGunPosition;
@@ -10,9 +10,9 @@ public class HorseshoeType extends Ship {
 
     HorseshoeType(GameController gameController, Piloting pilot) {
         super(gameController, pilot, 300f, 100f, 200f, 50f, 100f, 90f, 0.1f, 600f);
-        texture = new Texture("ships/horseshoe.png");
-        textureW = texture.getWidth();
-        textureH = texture.getHeight();
+        texture = Assets.getInstance().getTextureAtlas().findRegion("horseshoe");
+        textureW = texture.getRegionWidth();
+        textureH = texture.getRegionHeight();
         massCenterXY = new float[]{23, 32};
         rightGunPosition = new float[]{32, -14};
         leftGunPosition = new float[]{32, 14};

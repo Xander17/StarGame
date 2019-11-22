@@ -25,7 +25,7 @@ public abstract class ObjectPool<T extends Poolable> {
         return element;
     }
 
-    protected void free(int index) {
+    private void free(int index) {
         freeList.add(activeList.remove(index));
     }
 

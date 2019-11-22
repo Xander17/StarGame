@@ -18,10 +18,10 @@ public class WorldRenderer {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
         gameController.getBackground().render(batch);
-        //gameController.getHero().render(batch);
         gameController.getPlayer().render(batch);
         gameController.getBulletController().render(batch);
         gameController.getAsteroidController().render(batch);
+        gameController.getInfoOverlay().render(batch);
         batch.end();
     }
 }

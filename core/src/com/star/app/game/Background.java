@@ -2,11 +2,13 @@ package com.star.app.game;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.star.app.utils.Assets;
 
-import static com.star.game.ScreenManager.SCREEN_HEIGHT;
-import static com.star.game.ScreenManager.SCREEN_WIDTH;
+import static com.star.app.screen.ScreenManager.SCREEN_HEIGHT;
+import static com.star.app.screen.ScreenManager.SCREEN_WIDTH;
 
 public class Background {
     private final int STARS_COUNT = 600;
@@ -21,7 +23,7 @@ public class Background {
 
     public Background(GameController gameController) {
         this.gameController = gameController;
-        this.textureCosmos = new Texture("background.jpg");
+        this.textureCosmos = new Texture("images/background.jpg");
         parallaxSettings();
         this.stars = new Star[STARS_COUNT];
         for (int i = 0; i < stars.length; i++) {
@@ -61,19 +63,19 @@ public class Background {
         private final double SHINING_FREQ = 0.005;
         private final float DISPLACEMENT_FACTOR = 0.2f;
 
-        private Texture[] starTypes = {
-                new Texture("stars/star_white.png"),
-                new Texture("stars/star_blue.png"),
-                new Texture("stars/star_green.png"),
-                new Texture("stars/star_purple.png"),
-                new Texture("stars/star_red.png"),
-                new Texture("stars/star_yellow.png")
+        private TextureRegion[] starTypes = {
+                Assets.getInstance().getTextureAtlas().findRegion("star1"),
+                Assets.getInstance().getTextureAtlas().findRegion("star2"),
+                Assets.getInstance().getTextureAtlas().findRegion("star3"),
+                Assets.getInstance().getTextureAtlas().findRegion("star4"),
+                Assets.getInstance().getTextureAtlas().findRegion("star5"),
+                Assets.getInstance().getTextureAtlas().findRegion("star6")
         };
 
         private Vector2 position;
         private Vector2 velocity;
         private float scale;
-        private Texture texture;
+        private TextureRegion texture;
         private boolean shining;
         private float shiningScale;
 
@@ -110,11 +112,10 @@ public class Background {
         }
 
         void render(SpriteBatch batch) {
-            int textureW = texture.getWidth();
-            int textureH = texture.getHeight();
+            int textureW = texture.getRegionWidth();
+            int textureH = texture.getRegionHeight();
             batch.draw(texture, position.x - textureW / 2f, position.y - textureH / 2f,
-                    textureW / 2, textureH / 2, textureW, textureH, scale * shiningScale, scale * shiningScale, 0,
-                    0, 0, textureW, textureH, false, false);
+                    textureW / 2, textureH / 2, textureW, textureH, scale * shiningScale, scale * shiningScale, 0);
         }
     }
 }

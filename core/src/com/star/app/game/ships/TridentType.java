@@ -1,8 +1,8 @@
 package com.star.app.game.ships;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.star.app.game.GameController;
 import com.star.app.game.helpers.Piloting;
+import com.star.app.utils.Assets;
 
 public class TridentType extends Ship {
 
@@ -13,9 +13,9 @@ public class TridentType extends Ship {
 
     TridentType(GameController gameController, Piloting pilot) {
         super(gameController, pilot, 240f, 120f, 150f, 80f, 140f, 180f, 0.1f, 600f);
-        texture = new Texture("ships/trident.png");
-        textureW = texture.getWidth();
-        textureH = texture.getHeight();
+        texture = Assets.getInstance().getTextureAtlas().findRegion("trident");
+        textureW = texture.getRegionWidth();
+        textureH = texture.getRegionHeight();
         massCenterXY = new float[]{40, 32};
         gunsPosition = new float[][]{{15, -12}, {15, 0}, {15, 12}};
         gunIndex = 0;

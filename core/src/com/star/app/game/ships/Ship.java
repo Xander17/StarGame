@@ -1,14 +1,14 @@
 package com.star.app.game.ships;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
 import com.star.app.game.GameController;
 import com.star.app.game.helpers.Piloting;
 
-import static com.star.game.ScreenManager.SCREEN_HEIGHT;
-import static com.star.game.ScreenManager.SCREEN_WIDTH;
+import static com.star.app.screen.ScreenManager.SCREEN_HEIGHT;
+import static com.star.app.screen.ScreenManager.SCREEN_WIDTH;
 
 public abstract class Ship {
     private final float BOUND_BREAK_FACTOR = 0.5f;
@@ -22,7 +22,7 @@ public abstract class Ship {
     private final float SHOOT_DELAY_MIN;
     private final float SHOT_VELOCITY;
 
-    Texture texture;
+    TextureRegion texture;
     int textureW;
     int textureH;
     float[] massCenterXY;
@@ -36,7 +36,7 @@ public abstract class Ship {
     private float shootDelay;
 
 
-    void resetShootDelay() {
+    private void resetShootDelay() {
         shootDelay = 0;
     }
 
@@ -44,9 +44,9 @@ public abstract class Ship {
         return velocity;
     }
 
-    public Ship(GameController gameController, Piloting pilot, float FORWARD_SPEED_MAX, float BACKWARD_SPEED_MAX,
-                float FORWARD_POWER, float BACKWARD_POWER, float FRICTION_BREAK, float ROTATE_SPEED,
-                float SHOOT_DELAY_MIN, float SHOT_VELOCITY) {
+    Ship(GameController gameController, Piloting pilot, float FORWARD_SPEED_MAX, float BACKWARD_SPEED_MAX,
+         float FORWARD_POWER, float BACKWARD_POWER, float FRICTION_BREAK, float ROTATE_SPEED,
+         float SHOOT_DELAY_MIN, float SHOT_VELOCITY) {
         this.gameController = gameController;
         this.pilot = pilot;
         this.position = new Vector2(SCREEN_WIDTH / 2f, SCREEN_HEIGHT / 2f);
@@ -65,8 +65,7 @@ public abstract class Ship {
 
     public void render(SpriteBatch batch) {
         batch.draw(texture, position.x - massCenterXY[0], position.y - massCenterXY[1],
-                massCenterXY[0], massCenterXY[1], textureW, textureH, 1, 1, angle,
-                0, 0, textureW, textureH, false, false);
+                massCenterXY[0], massCenterXY[1], textureW, textureH, 1, 1, angle);
     }
 
     public void update(float dt) {
