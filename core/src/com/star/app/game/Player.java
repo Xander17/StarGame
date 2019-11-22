@@ -5,7 +5,8 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.star.app.game.helpers.Piloting;
 import com.star.app.game.ships.Ship;
-import com.star.app.game.ships.ShipClassic;
+import com.star.app.game.ships.ShipFactory;
+import com.star.app.game.ships.ShipTypes;
 
 public class Player implements Piloting {
     private final int KEY_FORWARD = Input.Keys.UP;
@@ -17,7 +18,7 @@ public class Player implements Piloting {
     private Ship ship;
 
     public Player(GameController gameController) {
-        ship = new ShipClassic(gameController, this);
+        ship = ShipFactory.getShip(ShipTypes.TRIDENT, gameController, this);
     }
 
     public void update(float dt) {

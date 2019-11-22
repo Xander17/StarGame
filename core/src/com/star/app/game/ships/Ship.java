@@ -11,6 +11,21 @@ import static com.star.game.ScreenManager.SCREEN_HEIGHT;
 import static com.star.game.ScreenManager.SCREEN_WIDTH;
 
 public abstract class Ship {
+    private final float BOUND_BREAK_FACTOR = 0.5f;
+
+    private final float FORWARD_SPEED_MAX;
+    private final float BACKWARD_SPEED_MAX;
+    private final float FORWARD_POWER;
+    private final float BACKWARD_POWER;
+    private final float FRICTION_BREAK;
+    private final float ROTATE_SPEED;
+    private final float SHOOT_DELAY_MIN;
+    private final float SHOT_VELOCITY;
+
+    Texture texture;
+    int textureW;
+    int textureH;
+    float[] massCenterXY;
 
     private GameController gameController;
     private Piloting pilot;
@@ -20,13 +35,6 @@ public abstract class Ship {
     private float angle;
     private float shootDelay;
 
-    ShipType type;
-    Texture texture;
-    int textureW;
-    int textureH;
-    float[] massCenterXY;
-    float[] rightGunPosition;
-    float[] leftGunPosition;
 
     void resetShootDelay() {
         shootDelay = 0;
@@ -36,13 +44,23 @@ public abstract class Ship {
         return velocity;
     }
 
-    Ship(GameController gameController, Piloting pilot) {
+    public Ship(GameController gameController, Piloting pilot, float FORWARD_SPEED_MAX, float BACKWARD_SPEED_MAX,
+                float FORWARD_POWER, float BACKWARD_POWER, float FRICTION_BREAK, float ROTATE_SPEED,
+                float SHOOT_DELAY_MIN, float SHOT_VELOCITY) {
         this.gameController = gameController;
         this.pilot = pilot;
         this.position = new Vector2(SCREEN_WIDTH / 2f, SCREEN_HEIGHT / 2f);
         this.velocity = new Vector2(0, 0);
         this.angle = 0.0f;
         hitBox = new Circle();
+        this.FORWARD_SPEED_MAX = FORWARD_SPEED_MAX;
+        this.BACKWARD_SPEED_MAX = BACKWARD_SPEED_MAX;
+        this.FORWARD_POWER = FORWARD_POWER;
+        this.BACKWARD_POWER = BACKWARD_POWER;
+        this.FRICTION_BREAK = FRICTION_BREAK;
+        this.ROTATE_SPEED = ROTATE_SPEED;
+        this.SHOOT_DELAY_MIN = SHOOT_DELAY_MIN;
+        this.SHOT_VELOCITY = SHOT_VELOCITY;
     }
 
     public void render(SpriteBatch batch) {
@@ -61,23 +79,28 @@ public abstract class Ship {
     protected abstract void shooting();
 
     public void tryShooting() {
-        if (shootDelay < type.SHOOT_DELAY_MIN) return;
+        if (shootDelay < SHOOT_DELAY_MIN) return;
         shooting();
+        resetShootDelay();
     }
 
     void engageBullet(float[] coords) {
-        gameController.getBulletController().createNew(position.x + getShipSystemX(coords), position.y + getShipSystemY(coords), angle,
-                (float) Math.cos(Math.toRadians(angle)) * type.SHOT_VELOCITY + velocity.x,
-                (float) Math.sin(Math.toRadians(angle)) * type.SHOT_VELOCITY + velocity.y);
+        engageBullet(coords, 0);
+    }
+
+    void engageBullet(float[] coords, float angleOffset) {
+        gameController.getBulletController().createNew(position.x + getShipSystemX(coords), position.y + getShipSystemY(coords), angle + angleOffset,
+                (float) Math.cos(Math.toRadians(angle + angleOffset)) * SHOT_VELOCITY + velocity.x,
+                (float) Math.sin(Math.toRadians(angle + angleOffset)) * SHOT_VELOCITY + velocity.y);
     }
 
     public void turnLeft(float dt) {
-        angle += type.ROTATE_SPEED * dt;
+        angle += ROTATE_SPEED * dt;
         if (angle >= 360) angle %= 360;
     }
 
     public void turnRight(float dt) {
-        angle -= type.ROTATE_SPEED * dt;
+        angle -= ROTATE_SPEED * dt;
         if (angle < 0) angle = angle % 360 + 360;
     }
 
@@ -85,24 +108,24 @@ public abstract class Ship {
         float directionX = (float) Math.cos(Math.toRadians(angle));
         float directionY = (float) Math.sin(Math.toRadians(angle));
         boolean isForwardMoving = velocity.dot(directionX, directionY) >= 0;
-        velocity.add(directionX * type.FORWARD_POWER * dt, directionY * type.FORWARD_POWER * dt);
-        if (velocity.len() > type.FORWARD_MAX_VELOCITY && isForwardMoving)
-            velocity.nor().scl(type.FORWARD_MAX_VELOCITY);
+        velocity.add(directionX * FORWARD_POWER * dt, directionY * FORWARD_POWER * dt);
+        if (velocity.len() > FORWARD_SPEED_MAX && isForwardMoving)
+            velocity.nor().scl(FORWARD_SPEED_MAX);
     }
 
     public void moveBack(float dt) {
         float directionX = (float) Math.cos(Math.toRadians(angle));
         float directionY = (float) Math.sin(Math.toRadians(angle));
         boolean isForwardMoving = velocity.dot(directionX, directionY) >= 0;
-        velocity.sub(directionX * type.BACKWARD_POWER * dt, directionY * type.BACKWARD_POWER * dt);
-        if (velocity.len() > type.BACKWARD_MAX_VELOCITY && !isForwardMoving)
-            velocity.nor().scl(type.BACKWARD_MAX_VELOCITY);
+        velocity.sub(directionX * BACKWARD_POWER * dt, directionY * BACKWARD_POWER * dt);
+        if (velocity.len() > BACKWARD_SPEED_MAX && !isForwardMoving)
+            velocity.nor().scl(BACKWARD_SPEED_MAX);
     }
 
     private void frictionBreak(float dt) {
-        if (velocity.len() < type.FRICTION_BREAK * dt) velocity.set(0, 0);
+        if (velocity.len() < FRICTION_BREAK * dt) velocity.set(0, 0);
         else {
-            float skl = type.FRICTION_BREAK * dt / velocity.len();
+            float skl = FRICTION_BREAK * dt / velocity.len();
             velocity.mulAdd(velocity, -skl);
         }
     }
@@ -124,17 +147,17 @@ public abstract class Ship {
         float offsetY = getShipSystemY(getTextureCenterCoords());
         if (position.x + offsetX < textureW / 2f) {
             position.x = textureW / 2f - offsetX;
-            velocity.x *= -type.BOUND_BREAK_FACTOR;
+            velocity.x *= -BOUND_BREAK_FACTOR;
         } else if (position.x + offsetX > SCREEN_WIDTH - textureW / 2f) {
             position.x = SCREEN_WIDTH - textureW / 2f - offsetX;
-            velocity.x *= -type.BOUND_BREAK_FACTOR;
+            velocity.x *= -BOUND_BREAK_FACTOR;
         }
         if (position.y + offsetY < textureH / 2f) {
             position.y = textureH / 2f - offsetY;
-            velocity.y *= -type.BOUND_BREAK_FACTOR;
+            velocity.y *= -BOUND_BREAK_FACTOR;
         } else if (position.y + offsetY > SCREEN_HEIGHT - textureH / 2f) {
             position.y = SCREEN_HEIGHT - textureH / 2f - offsetY;
-            velocity.y *= -type.BOUND_BREAK_FACTOR;
+            velocity.y *= -BOUND_BREAK_FACTOR;
         }
     }
 
