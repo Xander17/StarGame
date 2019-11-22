@@ -6,8 +6,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.star.app.game.helpers.Destroyable;
 import com.star.app.game.helpers.Poolable;
 
-import static com.star.game.ScreenManager.SCREEN_HEIGHT;
-import static com.star.game.ScreenManager.SCREEN_WIDTH;
+import static com.star.app.screen.ScreenManager.SCREEN_HEIGHT;
+import static com.star.app.screen.ScreenManager.SCREEN_WIDTH;
 
 public class Bullet implements Poolable {
     private Texture texture;

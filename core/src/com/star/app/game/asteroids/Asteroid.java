@@ -2,14 +2,14 @@ package com.star.app.game;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.star.app.game.helpers.Destroyable;
 import com.star.app.game.helpers.Poolable;
 
-import javax.xml.soap.Text;
-
-import static com.star.game.ScreenManager.*;
+import static com.star.app.screen.ScreenManager.SCREEN_HEIGHT;
+import static com.star.app.screen.ScreenManager.SCREEN_WIDTH;
 
 public class Asteroid implements Poolable, Destroyable {
     private final float SPEED_MIN = 100f;
@@ -20,16 +20,16 @@ public class Asteroid implements Poolable, Destroyable {
     private final float ROTATION_SPEED_MAX = 10f;
     private final float ANGLE_NO_CREATE = 15f;
 
-    private Texture[] asteroidTypes = {
-            new Texture("asteroids/asteroid1.png"),
-            new Texture("asteroids/asteroid2.png"),
-            new Texture("asteroids/asteroid3.png"),
-            new Texture("asteroids/asteroid4.png"),
-            new Texture("asteroids/asteroid5.png"),
-            new Texture("asteroids/asteroid6.png")
+    private TextureRegion[] asteroidTypes = new TextureRegion[]{
+            new TextureRegion("asteroid1"),
+            new TextureRegion("asteroid2"),
+            new TextureRegion("asteroid3"),
+            new TextureRegion("asteroid4"),
+            new TextureRegion("asteroid5"),
+            new TextureRegion("asteroid6")
     };
 
-    private Texture texture;
+    private TextureRegion texture;
     private Vector2 position;
     private Vector2 velocity;
     private float rotationAngle;
