@@ -3,13 +3,15 @@ package com.star.app.game.bullets;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.star.app.game.helpers.Destroyable;
+import com.star.app.game.helpers.Collisional;
 import com.star.app.game.helpers.Poolable;
 
 import static com.star.app.screen.ScreenManager.SCREEN_HEIGHT;
 import static com.star.app.screen.ScreenManager.SCREEN_WIDTH;
 
 public class Bullet implements Poolable {
+    private final int BASE_DAMAGE = 1;
+
     private TextureRegion texture;
     private int textureW;
     private int textureH;
@@ -54,6 +56,15 @@ public class Bullet implements Poolable {
         batch.draw(texture, position.x - textureW / 2f, position.y - textureH / 2f,
                 textureW / 2f, textureH / 2f, textureW, textureH,
                 1, 1, angle);
+    }
+
+    public boolean checkHit(Collisional obj) {
+        return obj.getHitBox().contains(getHitPointX(), getHitPointY());
+    }
+
+    public boolean damageTarget(Collisional obj) {
+        deactivate();
+        return obj.takeDamage(BASE_DAMAGE);
     }
 
     public float getHitPointX() {

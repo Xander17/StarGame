@@ -22,6 +22,7 @@ public class WorldRenderer {
         gameController.getBulletController().render(batch);
         gameController.getAsteroidController().render(batch);
         gameController.getInfoOverlay().render(batch);
+        gameController.getDebugOverlay().render(batch);
         batch.end();
     }
 }

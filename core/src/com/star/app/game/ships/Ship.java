@@ -1,10 +1,12 @@
 package com.star.app.game.ships;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
 import com.star.app.game.GameController;
+import com.star.app.game.helpers.Collisional;
 import com.star.app.game.helpers.Piloting;
 
 import static com.star.app.screen.ScreenManager.SCREEN_HEIGHT;
@@ -12,6 +14,7 @@ import static com.star.app.screen.ScreenManager.SCREEN_WIDTH;
 
 public abstract class Ship {
     private final float BOUND_BREAK_FACTOR = 0.5f;
+    private final float COLLISION_BREAK_FACTOR = 0.5f;
 
     private final float FORWARD_SPEED_MAX;
     private final float BACKWARD_SPEED_MAX;
@@ -32,9 +35,9 @@ public abstract class Ship {
     private Vector2 position;
     private Vector2 velocity;
     private Circle hitBox;
+    private float durability;
     private float angle;
     private float shootDelay;
-
 
     private void resetShootDelay() {
         shootDelay = 0;
@@ -44,7 +47,7 @@ public abstract class Ship {
         return velocity;
     }
 
-    Ship(GameController gameController, Piloting pilot, float FORWARD_SPEED_MAX, float BACKWARD_SPEED_MAX,
+    Ship(GameController gameController, Piloting pilot, float durability, float FORWARD_SPEED_MAX, float BACKWARD_SPEED_MAX,
          float FORWARD_POWER, float BACKWARD_POWER, float FRICTION_BREAK, float ROTATE_SPEED,
          float SHOOT_DELAY_MIN, float SHOT_VELOCITY) {
         this.gameController = gameController;
@@ -53,6 +56,7 @@ public abstract class Ship {
         this.velocity = new Vector2(0, 0);
         this.angle = 0.0f;
         hitBox = new Circle();
+        this.durability = durability;
         this.FORWARD_SPEED_MAX = FORWARD_SPEED_MAX;
         this.BACKWARD_SPEED_MAX = BACKWARD_SPEED_MAX;
         this.FORWARD_POWER = FORWARD_POWER;
@@ -66,6 +70,7 @@ public abstract class Ship {
     public void render(SpriteBatch batch) {
         batch.draw(texture, position.x - massCenterXY[0], position.y - massCenterXY[1],
                 massCenterXY[0], massCenterXY[1], textureW, textureH, 1, 1, angle);
+
     }
 
     public void update(float dt) {
@@ -162,7 +167,67 @@ public abstract class Ship {
 
     public Circle getHitBox() {
         float[] coords = getTextureCenterCoords();
-        hitBox.set(coords[0], coords[1], textureH / 2f);
+        hitBox.set(position.x + coords[0], position.y + coords[1], textureH / 2f);
         return hitBox;
+    }
+
+    public float getDurability() {
+        return durability;
+    }
+
+    public Vector2 getPosition() {
+        return position;
+    }
+
+    public boolean checkCollision(Collisional obj, float dt) {
+        getHitBox();
+        Circle objHitBox = obj.getHitBox();
+        if (!objHitBox.overlaps(hitBox)) return false;
+        Vector2 objVelocity = obj.getVelocity();
+        Vector2 objPosition = obj.getPosition();
+        float collisionDistance = position.dst(objPosition);
+        float collisionAngle = (float) Math.toDegrees(Math.atan2(objPosition.y - position.y, objPosition.x - position.x));
+        if (collisionAngle < 0) collisionAngle += 360;
+        if (collisionDistance < hitBox.radius + objHitBox.radius) {
+            float offset = (hitBox.radius + objHitBox.radius - collisionDistance) / 2;
+            float offsetX = offset * (float) Math.cos(Math.toRadians(collisionAngle)) + 1;
+            float offsetY = offset * (float) Math.sin(Math.toRadians(collisionAngle)) + 1;
+            position.sub(offsetX, offsetY);
+            objPosition.add(offsetX, offsetY);
+        }
+
+        boolean velocityAndAngle = velocity.x * (objPosition.x - position.x) + velocity.y * (objPosition.y - position.y) > 0;
+        if (velocity.dot(objVelocity) < 0 && velocityAndAngle) {
+            velocity.scl(-COLLISION_BREAK_FACTOR);
+            objVelocity.scl(-COLLISION_BREAK_FACTOR / obj.getMassFactor());
+            Gdx.app.log("p><a", velocity.toString());
+        } else if (velocityAndAngle) {
+            Gdx.app.log("p>>a", velocity.toString());
+            behindCollision(velocity, objVelocity);
+        } else {
+            Gdx.app.log("p<<a", velocity.toString());
+            behindCollision(objVelocity, velocity);
+        }
+        takeDamage(obj.getMassFactor());
+        obj.takeDamage(velocity.len() * dt);
+        return true;
+    }
+
+    private void takeDamage(float amount) {
+        Gdx.app.log("durability", String.valueOf(amount));
+        durability -= amount;
+    }
+
+    private void headOnCollision() {
+
+    }
+
+    private void behindCollision(Vector2 behindV, Vector2 aheadV) {
+        float behindVLen = behindV.len();
+        float aheadVLen = aheadV.len();
+        float max = Math.max(behindVLen, aheadVLen);
+        aheadV.add(behindV);
+        if (aheadVLen > max) aheadV.scl(max / aheadVLen);
+        behindV.scl(-COLLISION_BREAK_FACTOR);
     }
 }

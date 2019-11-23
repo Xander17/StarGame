@@ -17,14 +17,17 @@ public class Player implements Piloting {
     private final int KEY_SHOT = Input.Keys.Z;
 
     private final int START_LIVES = 3;
+    private final ShipTypes START_TYPE = ShipTypes.HORSESHOE;
 
+    GameController gameController;
     private Ship ship;
     private int score;
     private int scoreView;
     private int lives;
 
     public Player(GameController gameController) {
-        ship = ShipFactory.getShip(ShipTypes.HORSESHOE, gameController, this);
+        this.gameController = gameController;
+        ship = ShipFactory.getShip(START_TYPE, gameController, this);
         score = 0;
         scoreView = 0;
         lives = START_LIVES;
@@ -34,6 +37,10 @@ public class Player implements Piloting {
         if (score - scoreView > 3000) scoreView += (score - scoreView) / 3f * dt;
         else scoreView += dt * 1000;
         if (scoreView > score) scoreView = score;
+        if (ship.getDurability() <= 0) {
+            ship = ShipFactory.getShip(START_TYPE, gameController, this);
+            lives--;
+        }
         ship.update(dt);
     }
 

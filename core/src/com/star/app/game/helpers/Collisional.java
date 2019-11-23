@@ -3,10 +3,16 @@ package com.star.app.game.helpers;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
 
-public interface Destroyable {
+public interface Collisional {
     void destroy();
 
-    boolean takeDamage(int amount);
+    boolean takeDamage(float amount);
 
     Circle getHitBox();
+
+    Vector2 getVelocity();
+
+    Vector2 getPosition();
+
+    float getMassFactor();
 }

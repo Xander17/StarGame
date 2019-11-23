@@ -1,18 +1,19 @@
 package com.star.app.game.asteroids;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.star.app.game.helpers.Destroyable;
+import com.star.app.game.helpers.Collisional;
 import com.star.app.game.helpers.Poolable;
 import com.star.app.utils.Assets;
 
 import static com.star.app.screen.ScreenManager.SCREEN_HEIGHT;
 import static com.star.app.screen.ScreenManager.SCREEN_WIDTH;
 
-public class Asteroid implements Poolable, Destroyable {
+public class Asteroid implements Poolable, Collisional {
     private final int HEALTH_POINTS_MIN = 8;
     private final int HEALTH_POINTS_MAX = 10;
     private final float BASE_SPEED_MIN = 100f;
@@ -40,8 +41,8 @@ public class Asteroid implements Poolable, Destroyable {
     private TextureRegion texture;
     private Vector2 position;
     private Vector2 velocity;
-    private int maxHealth;
-    private int health;
+    private float maxHealth;
+    private float health;
     private float rotationAngle;
     private float rotationSpeed;
     private float scale;
@@ -64,26 +65,27 @@ public class Asteroid implements Poolable, Destroyable {
         while (angle % 90 < ANGLE_NO_CREATE || angle % 90 > (90 - ANGLE_NO_CREATE)) {
             angle = MathUtils.random(0, 360);
         }
-        int health = MathUtils.random(HEALTH_POINTS_MIN, HEALTH_POINTS_MAX);
-        activate(getRandomStartPoint(), MathUtils.random(BASE_SCALE_MIN, BASE_SCALE_MAX),
+        float scale = MathUtils.random(BASE_SCALE_MIN, BASE_SCALE_MAX);
+        float health = MathUtils.random(HEALTH_POINTS_MIN, HEALTH_POINTS_MAX);
+        activate(getRandomStartPoint(scale), scale,
                 MathUtils.randomSign() * (float) Math.cos(Math.toRadians(angle)) * speed,
                 MathUtils.randomSign() * (float) Math.sin(Math.toRadians(angle)) * speed, health);
     }
 
-    void activate(float x, float y, float scale, int health) {
+    void activate(float x, float y, float scale, float health) {
         float speed = MathUtils.random(BASE_SPEED_MIN, BASE_SPEED_MAX);
         float angle = MathUtils.random(360);
         activate(x, y, scale, MathUtils.randomSign() * (float) Math.cos(Math.toRadians(angle)) * speed,
                 MathUtils.randomSign() * (float) Math.sin(Math.toRadians(angle)) * speed, health);
     }
 
-    private void activate(Vector2 position, float scale, float velocityX, float velocityY, int health) {
+    private void activate(Vector2 position, float scale, float velocityX, float velocityY, float health) {
         activate(position.x, position.y, scale, velocityX, velocityY, health);
     }
 
-    void activate(float x, float y, float scale, float velocityX, float velocityY, int health) {
+    void activate(float x, float y, float scale, float velocityX, float velocityY, float health) {
         this.texture = asteroidTypes[MathUtils.random(asteroidTypes.length - 1)];
-        this.texture.flip(MathUtils.randomBoolean(), false);
+        //this.texture.flip(MathUtils.randomBoolean(), false);
         this.textureW = texture.getRegionWidth();
         this.textureH = texture.getRegionHeight();
         this.position.set(x, y);
@@ -112,8 +114,8 @@ public class Asteroid implements Poolable, Destroyable {
         rotationAngle += rotationSpeed * dt;
     }
 
-    private Vector2 getRandomStartPoint() {
-        if (MathUtils.random(1) == 0) return new Vector2(MathUtils.random(0, SCREEN_WIDTH), -textureH / 2f * scale);
+    private Vector2 getRandomStartPoint(float scale) {
+        if (MathUtils.randomBoolean()) return new Vector2(MathUtils.random(0, SCREEN_WIDTH), -textureH / 2f * scale);
         else return new Vector2(-textureW / 2f * scale, MathUtils.random(0, SCREEN_HEIGHT));
     }
 
@@ -123,10 +125,12 @@ public class Asteroid implements Poolable, Destroyable {
     }
 
     @Override
-    public boolean takeDamage(int amount) {
+    public boolean takeDamage(float amount) {
         health -= amount;
+        Gdx.app.log("damage",String.valueOf(amount));
         if (health <= 0) {
             destroy();
+            Gdx.app.log("damage","destroy");
             return true;
         }
         return false;
@@ -151,7 +155,20 @@ public class Asteroid implements Poolable, Destroyable {
         return hitBox;
     }
 
-    public int getMaxHealth() {
+    public float getMaxHealth() {
         return maxHealth;
+    }
+
+    public Vector2 getPosition() {
+        return position;
+    }
+
+    public Vector2 getVelocity() {
+        return velocity;
+    }
+
+    @Override
+    public float getMassFactor() {
+        return (float) Math.ceil(scale * 10 / 3);
     }
 }

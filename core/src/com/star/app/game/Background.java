@@ -32,12 +32,12 @@ public class Background {
     }
 
     private void parallaxSettings() {
-        srcX = PARALLAX_PERCENT * textureCosmos.getWidth();
-        srcY = PARALLAX_PERCENT * textureCosmos.getHeight();
+        srcX=PARALLAX_PERCENT * textureCosmos.getWidth();
+        srcY=PARALLAX_PERCENT * textureCosmos.getHeight();
         srcW = (int) (textureCosmos.getWidth() - 2 * srcX);
         srcH = (int) (textureCosmos.getHeight() - 2 * srcY);
-        parallaxStepX = srcX / (SCREEN_WIDTH / 2f);
-        parallaxStepY = srcY / (SCREEN_HEIGHT / 2f);
+        parallaxStepX = PARALLAX_PERCENT * textureCosmos.getWidth() / (SCREEN_WIDTH / 2f);
+        parallaxStepY = PARALLAX_PERCENT * textureCosmos.getHeight() / (SCREEN_HEIGHT / 2f);
     }
 
     public void render(SpriteBatch batch) {
@@ -47,8 +47,8 @@ public class Background {
     }
 
     public void update(float dt) {
-        srcX += gameController.getPlayer().getShip().getVelocity().x * dt * parallaxStepX;
-        srcY -= gameController.getPlayer().getShip().getVelocity().y * dt * parallaxStepY;
+        srcX = parallaxStepX * gameController.getPlayer().getShip().getPosition().x;
+        srcY = parallaxStepY * (SCREEN_HEIGHT - gameController.getPlayer().getShip().getPosition().y);
         for (int i = 0; i < stars.length; i++) stars[i].update(dt);
     }
 

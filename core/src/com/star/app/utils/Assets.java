@@ -43,25 +43,26 @@ public class Assets {
         switch (type) {
             case GAME:
                 assetManager.load(GAME_PACK_PATH, TextureAtlas.class);
-                createStandardFont(22);
+                createStandardFont("fonts/good times rg.ttf", 22, "font");
+                createStandardFont("fonts/fragile bombers.ttf", 12, "debug");
                 assetManager.finishLoading();
                 textureAtlas = assetManager.get(GAME_PACK_PATH, TextureAtlas.class);
                 break;
         }
     }
 
-    private void createStandardFont(int size) {
+    private void createStandardFont(String filename, int size, String prefix) {
         FileHandleResolver resolver = new InternalFileHandleResolver();
         assetManager.setLoader(FreeTypeFontGenerator.class, new FreeTypeFontGeneratorLoader(resolver));
         assetManager.setLoader(BitmapFont.class, ".ttf", new FreetypeFontLoader(resolver));
         FreetypeFontLoader.FreeTypeFontLoaderParameter parameter = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
-        parameter.fontFileName = "fonts/good times rg.ttf";
+        parameter.fontFileName = filename;
         parameter.fontParameters.size = size;
         parameter.fontParameters.color = Color.WHITE;
         parameter.fontParameters.shadowOffsetX = 1;
         parameter.fontParameters.shadowOffsetY = 1;
         parameter.fontParameters.shadowColor = Color.DARK_GRAY;
-        assetManager.load("fonts/font" + size + ".ttf", BitmapFont.class, parameter);
+        assetManager.load("fonts/" + prefix + size + ".ttf", BitmapFont.class, parameter);
     }
 
     public void clear() {

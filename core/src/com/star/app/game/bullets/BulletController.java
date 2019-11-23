@@ -7,7 +7,6 @@ import com.star.app.game.helpers.ObjectPool;
 import com.star.app.utils.Assets;
 
 public class BulletController extends ObjectPool<Bullet> {
-    private final int BASE_DAMAGE=1;
 
     TextureRegion texture;
     GameController gameController;
@@ -31,10 +30,6 @@ public class BulletController extends ObjectPool<Bullet> {
             activeList.get(i).update(dt);
         }
         checkFreeObjects();
-    }
-
-    public int getBASE_DAMAGE() {
-        return BASE_DAMAGE;
     }
 
     public void render(SpriteBatch batch) {

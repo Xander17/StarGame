@@ -66,51 +66,58 @@ fighter
   orig: 64, 64
   offset: 0, 0
   index: -1
-star6
+durability
   rotate: false
   xy: 2, 975
+  size: 26, 26
+  orig: 26, 26
+  offset: 0, 0
+  index: -1
+star6
+  rotate: false
+  xy: 2, 1003
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 star5
   rotate: false
-  xy: 2, 993
+  xy: 30, 975
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 star4
   rotate: false
-  xy: 20, 975
+  xy: 48, 975
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 star3
   rotate: false
-  xy: 38, 975
+  xy: 30, 993
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 star2
   rotate: false
-  xy: 20, 993
+  xy: 48, 993
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 star1
   rotate: false
-  xy: 38, 993
+  xy: 68, 777
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 bullet
   rotate: false
-  xy: 68, 777
+  xy: 86, 777
   size: 16, 16
   orig: 16, 16
   offset: 0, 0

@@ -13,7 +13,7 @@ public class FighterType extends Ship {
     private float[] leftGunPosition;
 
     public FighterType(GameController gameController, Piloting pilot) {
-        super(gameController, pilot, 240f, 120f, 120f, 60f, 120f, 90f, 0.1f, 600f);
+        super(gameController, pilot, 100f,240f, 120f, 120f, 60f, 120f, 90f, 0.1f, 600f);
         texture = Assets.getInstance().getTextureAtlas().findRegion("fighter");
         textureW = texture.getRegionWidth();
         textureH = texture.getRegionHeight();
