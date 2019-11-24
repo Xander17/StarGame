@@ -19,15 +19,25 @@ public class Player implements Piloting {
     private final int START_LIVES = 3;
     private final ShipTypes START_TYPE = ShipTypes.HORSESHOE;
 
-    GameController gameController;
+    private GameController gameController;
     private Ship ship;
     private int score;
     private int scoreView;
     private int lives;
+    private boolean deadStatus;
+
+    public void setDeadStatus(boolean status) {
+        this.deadStatus = status;
+    }
+
+    public boolean isDead() {
+        return deadStatus;
+    }
 
     public Player(GameController gameController) {
         this.gameController = gameController;
         ship = ShipFactory.getShip(START_TYPE, gameController, this);
+        deadStatus = false;
         score = 0;
         scoreView = 0;
         lives = START_LIVES;
@@ -37,7 +47,8 @@ public class Player implements Piloting {
         if (score - scoreView > 3000) scoreView += (score - scoreView) / 3f * dt;
         else scoreView += dt * 1000;
         if (scoreView > score) scoreView = score;
-        if (ship.getDurability() <= 0) {
+        if (deadStatus) return;
+        if (ship.isShipDestoyed()) {
             ship = ShipFactory.getShip(START_TYPE, gameController, this);
             lives--;
         }

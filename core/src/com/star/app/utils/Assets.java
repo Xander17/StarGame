@@ -44,6 +44,7 @@ public class Assets {
             case GAME:
                 assetManager.load(GAME_PACK_PATH, TextureAtlas.class);
                 createStandardFont("fonts/good times rg.ttf", 22, "font");
+                createStandardFont("fonts/good times rg.ttf", 64, "font");
                 createStandardFont("fonts/fragile bombers.ttf", 12, "debug");
                 assetManager.finishLoading();
                 textureAtlas = assetManager.get(GAME_PACK_PATH, TextureAtlas.class);

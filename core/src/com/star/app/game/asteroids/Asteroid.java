@@ -127,10 +127,10 @@ public class Asteroid implements Poolable, Collisional {
     @Override
     public boolean takeDamage(float amount) {
         health -= amount;
-        Gdx.app.log("damage",String.valueOf(amount));
+        //Gdx.app.log("damage",String.valueOf(amount));
         if (health <= 0) {
             destroy();
-            Gdx.app.log("damage","destroy");
+            //Gdx.app.log("damage","destroy");
             return true;
         }
         return false;

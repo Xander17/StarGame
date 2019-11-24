@@ -1,6 +1,5 @@
 package com.star.app.game.ships;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Circle;
@@ -36,6 +35,7 @@ public abstract class Ship {
     private Vector2 velocity;
     private Circle hitBox;
     private float durability;
+    private boolean shipDestoyed;
     private float angle;
     private float shootDelay;
 
@@ -45,6 +45,10 @@ public abstract class Ship {
 
     public Vector2 getVelocity() {
         return velocity;
+    }
+
+    public boolean isShipDestoyed() {
+        return shipDestoyed;
     }
 
     Ship(GameController gameController, Piloting pilot, float durability, float FORWARD_SPEED_MAX, float BACKWARD_SPEED_MAX,
@@ -57,6 +61,7 @@ public abstract class Ship {
         this.angle = 0.0f;
         hitBox = new Circle();
         this.durability = durability;
+        this.shipDestoyed = false;
         this.FORWARD_SPEED_MAX = FORWARD_SPEED_MAX;
         this.BACKWARD_SPEED_MAX = BACKWARD_SPEED_MAX;
         this.FORWARD_POWER = FORWARD_POWER;
@@ -68,6 +73,7 @@ public abstract class Ship {
     }
 
     public void render(SpriteBatch batch) {
+        if (shipDestoyed) return;
         batch.draw(texture, position.x - massCenterXY[0], position.y - massCenterXY[1],
                 massCenterXY[0], massCenterXY[1], textureW, textureH, 1, 1, angle);
 
@@ -198,15 +204,14 @@ public abstract class Ship {
 
         boolean velocityAndAngle = velocity.x * (objPosition.x - position.x) + velocity.y * (objPosition.y - position.y) > 0;
         if (velocity.dot(objVelocity) < 0 && velocityAndAngle) {
-            velocity.scl(-COLLISION_BREAK_FACTOR);
-            objVelocity.scl(-COLLISION_BREAK_FACTOR / obj.getMassFactor());
-            Gdx.app.log("p><a", velocity.toString());
+            //Gdx.app.log("p><a", velocity.toString());
+            headOnCollision(objVelocity, obj.getMassFactor());
         } else if (velocityAndAngle) {
-            Gdx.app.log("p>>a", velocity.toString());
-            behindCollision(velocity, objVelocity);
+//            Gdx.app.log("p>>a", velocity.toString());
+            oneWayCollision(velocity, objVelocity, 1, obj.getMassFactor());
         } else {
-            Gdx.app.log("p<<a", velocity.toString());
-            behindCollision(objVelocity, velocity);
+//            Gdx.app.log("p<<a", velocity.toString());
+            oneWayCollision(objVelocity, velocity, obj.getMassFactor(), 1);
         }
         takeDamage(obj.getMassFactor());
         obj.takeDamage(velocity.len() * dt);
@@ -214,20 +219,33 @@ public abstract class Ship {
     }
 
     private void takeDamage(float amount) {
-        Gdx.app.log("durability", String.valueOf(amount));
+        //Gdx.app.log("durability", String.valueOf(amount));
         durability -= amount;
+        if (durability <= 0) {
+            durability = 0;
+            shipDestoyed = true;
+            pilot.setDeadStatus(true);
+        }
     }
 
-    private void headOnCollision() {
-
+    private void headOnCollision(Vector2 objVelocity, float massFactor) {
+        float playerV = velocity.len();
+        float objV = objVelocity.len();
+        if (playerV > objV) {
+            objVelocity.mulAdd(velocity, 1 / massFactor);
+            velocity.scl(-COLLISION_BREAK_FACTOR);
+        } else {
+            objVelocity.scl(-COLLISION_BREAK_FACTOR / massFactor);
+            velocity.add(objVelocity);
+        }
     }
 
-    private void behindCollision(Vector2 behindV, Vector2 aheadV) {
-        float behindVLen = behindV.len();
-        float aheadVLen = aheadV.len();
-        float max = Math.max(behindVLen, aheadVLen);
-        aheadV.add(behindV);
-        if (aheadVLen > max) aheadV.scl(max / aheadVLen);
-        behindV.scl(-COLLISION_BREAK_FACTOR);
+    private void oneWayCollision(Vector2 behindVelocity, Vector2 aheadVelocity, float behindMassFactor, float aheadMassFactor) {
+        float behindV = behindVelocity.len();
+        float aheadV = aheadVelocity.len();
+        float max = Math.max(behindV, aheadV);
+        aheadVelocity.mulAdd(behindVelocity, 1 / aheadMassFactor);
+        if (aheadV > max) aheadVelocity.scl(max / aheadV);
+        behindVelocity.scl(-COLLISION_BREAK_FACTOR / behindMassFactor);
     }
 }

@@ -1,7 +1,5 @@
 package com.star.app.game;
 
-import com.badlogic.gdx.math.Circle;
-import com.badlogic.gdx.math.Vector2;
 import com.star.app.game.asteroids.Asteroid;
 import com.star.app.game.asteroids.AsteroidController;
 import com.star.app.game.bullets.Bullet;
@@ -13,6 +11,7 @@ import java.util.List;
 public class GameController {
     private final int ASTEROIDS_START_COUNT = 3;
     private final int ASTEROIDS_SCORE = 100;
+    private final float TIME_TO_RESPAWN = 3f;
 
     private Background background;
     private Player player;
@@ -20,6 +19,8 @@ public class GameController {
     private BulletController bulletController;
     private InfoOverlay infoOverlay;
     private DebugOverlay debugOverlay;
+    private float timeToRespawn;
+    private boolean gameOver;
 
     public Background getBackground() {
         return background;
@@ -52,16 +53,27 @@ public class GameController {
         asteroidController = new AsteroidController();
         infoOverlay = new InfoOverlay(this);
         debugOverlay = new DebugOverlay();
+        timeToRespawn=0;
         for (int i = 0; i < ASTEROIDS_START_COUNT; i++) asteroidController.createNew();
     }
 
+    public boolean isGameOver() {
+        return gameOver;
+    }
+
     public void update(float dt) {
+        if (player.isDead()&&player.getLives()==0) gameOver=true;
+        else if(player.isDead()) timeToRespawn+=dt;
+        if(timeToRespawn>=TIME_TO_RESPAWN) {
+            timeToRespawn=0;
+            player.setDeadStatus(false);
+        }
         background.update(dt);
         player.update(dt);
         bulletController.update(dt);
         asteroidController.update(dt);
         checkBulletsCollisions();
-        checkPlayerCollisions(dt);
+        if(!player.isDead()) checkPlayerCollisions(dt);
     }
 
     private void checkBulletsCollisions() {
@@ -72,7 +84,8 @@ public class GameController {
             for (int j = 0; j < asteroids.size(); j++) {
                 Asteroid asteroid = asteroids.get(j);
                 if (bullet.checkHit(asteroid)) {
-                    if (bullet.damageTarget(asteroid)) getPlayer().addScore((int) (ASTEROIDS_SCORE * asteroid.getMaxHealth()));
+                    if (bullet.damageTarget(asteroid))
+                        getPlayer().addScore((int) (ASTEROIDS_SCORE * asteroid.getMaxHealth()));
                     break;
                 }
             }
