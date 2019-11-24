@@ -24,7 +24,7 @@ public class Asteroid implements Poolable, Collisional {
     private final float ROTATION_BASE_SPEED_MAX = 10f;
     private final float ANGLE_NO_CREATE = 15f;
     private final float SCALE_BOTTOM_LIMIT = 0.2f;
-    private final float DESTROY_DOWNSCALE = 0.15f;
+    private final float DESTROY_DOWNSCALE = 0.10f;
     private final int PARTS_COUNT_MIN = 3;
     private final int PARTS_COUNT_MAX = 5;
 
@@ -143,7 +143,7 @@ public class Asteroid implements Poolable, Collisional {
     }
 
     private void getAsteroidPieces() {
-        float newScale = scale - DESTROY_DOWNSCALE;
+        float newScale = scale - MathUtils.random(0.9f, 1.1f) * DESTROY_DOWNSCALE;
         if (newScale < SCALE_BOTTOM_LIMIT) return;
         for (int i = 1; i < MathUtils.random(PARTS_COUNT_MIN, PARTS_COUNT_MAX); i++)
             asteroidController.createNew(position.x, position.y, newScale, (int) (maxHealth * (1 - DESTROY_DOWNSCALE)));

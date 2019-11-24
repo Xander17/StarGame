@@ -5,19 +5,20 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.star.app.game.helpers.Collisional;
 import com.star.app.game.helpers.Poolable;
+import com.star.app.utils.Assets;
 
 import static com.star.app.screen.ScreenManager.SCREEN_HEIGHT;
 import static com.star.app.screen.ScreenManager.SCREEN_WIDTH;
 
 public class Bullet implements Poolable {
-    private final int BASE_DAMAGE = 1;
 
     private TextureRegion texture;
     private int textureW;
     private int textureH;
     private Vector2 position;
-    float angle;
+    private float angle;
     private Vector2 velocity;
+    private int damage;
     private boolean isActive;
 
     @Override
@@ -25,12 +26,14 @@ public class Bullet implements Poolable {
         return isActive;
     }
 
-    Bullet(TextureRegion texture) {
-        this.texture = texture;
+    Bullet() {
+        this.texture = Assets.getInstance().getTextureAtlas().findRegion("bullet");
         this.textureW = texture.getRegionWidth();
         this.textureH = texture.getRegionHeight();
         position = new Vector2(0, 0);
         velocity = new Vector2(0, 0);
+        angle = 0;
+        damage = 1;
         isActive = false;
     }
 
@@ -41,7 +44,7 @@ public class Bullet implements Poolable {
         isActive = true;
     }
 
-    public void deactivate() {
+    private void deactivate() {
         isActive = false;
     }
 
@@ -64,14 +67,14 @@ public class Bullet implements Poolable {
 
     public boolean damageTarget(Collisional obj) {
         deactivate();
-        return obj.takeDamage(BASE_DAMAGE);
+        return obj.takeDamage(damage);
     }
 
-    public float getHitPointX() {
+    private float getHitPointX() {
         return position.x + (float) Math.cos(Math.toRadians(angle)) * textureW / 2f;
     }
 
-    public float getHitPointY() {
+    private float getHitPointY() {
         return position.y + (float) Math.sin(Math.toRadians(angle)) * textureW / 2f;
     }
 }

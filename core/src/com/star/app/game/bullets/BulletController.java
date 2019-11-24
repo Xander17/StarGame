@@ -1,24 +1,13 @@
 package com.star.app.game.bullets;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.star.app.game.GameController;
 import com.star.app.game.helpers.ObjectPool;
-import com.star.app.utils.Assets;
 
 public class BulletController extends ObjectPool<Bullet> {
 
-    TextureRegion texture;
-    GameController gameController;
-
     @Override
     public Bullet getNew() {
-        return new Bullet(texture);
-    }
-
-    public BulletController(GameController gameController) {
-        texture = Assets.getInstance().getTextureAtlas().findRegion("bullet");
-        this.gameController = gameController;
+        return new Bullet();
     }
 
     public void createNew(float x, float y, float angle, float velocityX, float velocityY) {

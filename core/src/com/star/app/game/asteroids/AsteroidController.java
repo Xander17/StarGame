@@ -1,9 +1,12 @@
 package com.star.app.game.asteroids;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.star.app.game.GameController;
 import com.star.app.game.helpers.ObjectPool;
 
 public class AsteroidController extends ObjectPool<Asteroid> {
+
+    private GameController gameController;
 
     @Override
     public Asteroid getNew() {
@@ -14,7 +17,7 @@ public class AsteroidController extends ObjectPool<Asteroid> {
         getActive().activate(x, y, scale, velocityX, velocityY, health);
     }
 
-    public void createNew(float x, float y, float scale, int health) {
+    void createNew(float x, float y, float scale, int health) {
         getActive().activate(x, y, scale, health);
     }
 
@@ -23,11 +26,16 @@ public class AsteroidController extends ObjectPool<Asteroid> {
     }
 
     public void update(float dt) {
+        if (activeList.size()==0) gameController.setWin(true);
         for (int i = 0; i < activeList.size(); i++) {
             Asteroid b = activeList.get(i);
             b.update(dt);
         }
         checkFreeObjects();
+    }
+
+    public AsteroidController(GameController gameController) {
+        this.gameController=gameController;
     }
 
     public void render(SpriteBatch batch) {

@@ -32,12 +32,14 @@ public class InfoOverlay {
         batch.draw(durability, 20, SCREEN_HEIGHT - 43);
         font22.draw(batch, String.valueOf(MathUtils.round(gameController.getPlayer().getShip().getDurability())), 50, SCREEN_HEIGHT - 20);
         stringBuilder.clear();
-        stringBuilder.append("SCORE: ").append(gameController.getPlayer().getScoreView());
+        stringBuilder.append("SCORE: ").append(gameController.getStatistic().getScoreView());
         font22.draw(batch, stringBuilder.toString(), 150, SCREEN_HEIGHT - 20);
         stringBuilder.clear();
         stringBuilder.append("LIVES: ").append(gameController.getPlayer().getLives());
         font22.draw(batch, stringBuilder.toString(), SCREEN_WIDTH - 130, SCREEN_HEIGHT - 20);
-        if (gameController.isGameOver())
+        if (gameController.isWin())
+            drawCenterAlign(batch, font64, "YOU WIN", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+        else if (gameController.isGameOver())
             drawCenterAlign(batch, font64, "GAME OVER", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
         else if (gameController.getPlayer().isDead())
             drawCenterAlign(batch, font64, "YOU ARE DEAD", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);

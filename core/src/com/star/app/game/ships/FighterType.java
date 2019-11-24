@@ -1,7 +1,5 @@
 package com.star.app.game.ships;
 
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.star.app.game.GameController;
 import com.star.app.game.helpers.Piloting;
 import com.star.app.utils.Assets;

@@ -21,13 +21,12 @@ public class Player implements Piloting {
 
     private GameController gameController;
     private Ship ship;
-    private int score;
-    private int scoreView;
     private int lives;
     private boolean deadStatus;
 
     public void setDeadStatus(boolean status) {
         this.deadStatus = status;
+        gameController.getStatistic().scoreDeadPenalty();
     }
 
     public boolean isDead() {
@@ -38,15 +37,10 @@ public class Player implements Piloting {
         this.gameController = gameController;
         ship = ShipFactory.getShip(START_TYPE, gameController, this);
         deadStatus = false;
-        score = 0;
-        scoreView = 0;
         lives = START_LIVES;
     }
 
     public void update(float dt) {
-        if (score - scoreView > 3000) scoreView += (score - scoreView) / 3f * dt;
-        else scoreView += dt * 1000;
-        if (scoreView > score) scoreView = score;
         if (deadStatus) return;
         if (ship.isShipDestoyed()) {
             ship = ShipFactory.getShip(START_TYPE, gameController, this);
@@ -61,19 +55,6 @@ public class Player implements Piloting {
 
     public Ship getShip() {
         return ship;
-    }
-
-    public int getScoreView() {
-        return scoreView;
-    }
-
-    public void addScore(int score) {
-        this.score += score;
-    }
-
-    public void subScore(int score) {
-        this.score -= score;
-        if (score < 0) score = 0;
     }
 
     public int getLives() {

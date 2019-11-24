@@ -19,8 +19,10 @@ public class GameController {
     private BulletController bulletController;
     private InfoOverlay infoOverlay;
     private DebugOverlay debugOverlay;
+    private Statistic statistic;
     private float timeToRespawn;
-    private boolean gameOver;
+    private boolean isGameOver;
+    private boolean isWin;
 
     public Background getBackground() {
         return background;
@@ -46,34 +48,53 @@ public class GameController {
         return debugOverlay;
     }
 
+    public Statistic getStatistic() {
+        return statistic;
+    }
+
     public GameController() {
         background = new Background(this);
         player = new Player(this);
-        bulletController = new BulletController(this);
-        asteroidController = new AsteroidController();
+        bulletController = new BulletController();
+        asteroidController = new AsteroidController(this);
         infoOverlay = new InfoOverlay(this);
         debugOverlay = new DebugOverlay();
-        timeToRespawn=0;
+        statistic = new Statistic();
+        timeToRespawn = 0;
         for (int i = 0; i < ASTEROIDS_START_COUNT; i++) asteroidController.createNew();
+        isWin = false;
+    }
+
+    public void setWin(boolean win) {
+        isWin = win;
+    }
+
+    public boolean isWin() {
+        return isWin;
     }
 
     public boolean isGameOver() {
-        return gameOver;
+        return isGameOver;
     }
 
     public void update(float dt) {
-        if (player.isDead()&&player.getLives()==0) gameOver=true;
-        else if(player.isDead()) timeToRespawn+=dt;
-        if(timeToRespawn>=TIME_TO_RESPAWN) {
-            timeToRespawn=0;
-            player.setDeadStatus(false);
-        }
+        checkRespawn(dt);
         background.update(dt);
-        player.update(dt);
+        statistic.update(dt);
+        if (!isGameOver &&!isWin) player.update(dt);
         bulletController.update(dt);
         asteroidController.update(dt);
         checkBulletsCollisions();
-        if(!player.isDead()) checkPlayerCollisions(dt);
+        if (!player.isDead()) checkPlayerCollisions(dt);
+    }
+
+    private void checkRespawn(float dt) {
+        if (player.isDead() && player.getLives() == 0) isGameOver = true;
+        else if (player.isDead()) timeToRespawn += dt;
+        if (timeToRespawn >= TIME_TO_RESPAWN) {
+            timeToRespawn = 0;
+            player.setDeadStatus(false);
+        }
     }
 
     private void checkBulletsCollisions() {
@@ -85,7 +106,7 @@ public class GameController {
                 Asteroid asteroid = asteroids.get(j);
                 if (bullet.checkHit(asteroid)) {
                     if (bullet.damageTarget(asteroid))
-                        getPlayer().addScore((int) (ASTEROIDS_SCORE * asteroid.getMaxHealth()));
+                        getStatistic().addScore((int) (ASTEROIDS_SCORE * asteroid.getMaxHealth()));
                     break;
                 }
             }
