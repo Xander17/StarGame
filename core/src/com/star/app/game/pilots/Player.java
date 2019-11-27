@@ -14,19 +14,22 @@ public class Player implements Piloting {
     private final int KEY_BACK = Input.Keys.DOWN;
     private final int KEY_LEFT = Input.Keys.LEFT;
     private final int KEY_RIGHT = Input.Keys.RIGHT;
-    private final int KEY_SHOT = Input.Keys.Z;
+    private final int KEY_FIRE = Input.Keys.Z;
 
-    private final int START_LIVES = 3;
-    private final ShipTypes START_TYPE = ShipTypes.HORSESHOE;
+    private final int START_LIVES = 2;
+    private final int SCORE_DEAD_PENALTY = 20000;
+    private final ShipTypes START_TYPE = ShipTypes.TRIDENT;
 
     private GameController gameController;
     private Ship ship;
     private int lives;
     private boolean deadStatus;
+    private int score;
+    private int cash;
 
     public void setDeadStatus(boolean status) {
         this.deadStatus = status;
-        gameController.getStatistic().scoreDeadPenalty();
+        subScore(SCORE_DEAD_PENALTY);
     }
 
     public boolean isDead() {
@@ -35,9 +38,10 @@ public class Player implements Piloting {
 
     public Player(GameController gameController) {
         this.gameController = gameController;
-        ship = ShipFactory.getShip(START_TYPE, gameController, this);
-        deadStatus = false;
-        lives = START_LIVES;
+        this.ship = ShipFactory.getShip(START_TYPE, gameController, this);
+        this.deadStatus = false;
+        this.lives = START_LIVES;
+        this.score = 0;
     }
 
     public void update(float dt) {
@@ -64,8 +68,8 @@ public class Player implements Piloting {
     @Override
     public boolean control(float dt) {
         boolean isTrust = false;
-        if (Gdx.input.isKeyPressed(KEY_SHOT)) {
-            ship.tryShooting();
+        if (Gdx.input.isKeyPressed(KEY_FIRE)) {
+            ship.fire();
         }
         if (Gdx.input.isKeyPressed(KEY_LEFT)) {
             ship.turnLeft(dt);
@@ -82,5 +86,26 @@ public class Player implements Piloting {
             isTrust = true;
         }
         return isTrust;
+    }
+
+    public int getCash() {
+        return cash;
+    }
+
+    public void addCash(int amount) {
+        this.cash += amount;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public void addScore(int amount) {
+        score += amount;
+    }
+
+    public void subScore(int amount) {
+        score -= amount;
+        if (score < 0) score = 0;
     }
 }

@@ -3,15 +3,17 @@ package com.star.app.game.ships;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.star.app.game.GameController;
+import com.star.app.game.drops.Drop;
 import com.star.app.game.helpers.Collisional;
 import com.star.app.game.helpers.Piloting;
 
 import static com.star.app.screen.ScreenManager.SCREEN_HEIGHT;
 import static com.star.app.screen.ScreenManager.SCREEN_WIDTH;
 
-public abstract class Ship {
+public class Ship {
     private final float BOUND_BREAK_FACTOR = 0.5f;
     private final float COLLISION_BREAK_FACTOR = 0.5f;
 
@@ -21,27 +23,23 @@ public abstract class Ship {
     private final float BACKWARD_POWER;
     private final float FRICTION_BREAK;
     private final float ROTATE_SPEED;
-    private final float SHOOT_DELAY_MIN;
-    private final float SHOT_VELOCITY;
 
     TextureRegion texture;
     int textureW;
     int textureH;
-    float[] massCenterXY;
+    Vector2 massCenter;
+    Vector2[] exhaustPoints;
+    Weapon weapon;
 
     private GameController gameController;
     private Piloting pilot;
     private Vector2 position;
     private Vector2 velocity;
     private Circle hitBox;
+    private float maxDurability;
     private float durability;
     private boolean shipDestoyed;
     private float angle;
-    private float shootDelay;
-
-    private void resetShootDelay() {
-        shootDelay = 0;
-    }
 
     public Vector2 getVelocity() {
         return velocity;
@@ -52,14 +50,15 @@ public abstract class Ship {
     }
 
     Ship(GameController gameController, Piloting pilot, float durability, float FORWARD_SPEED_MAX, float BACKWARD_SPEED_MAX,
-         float FORWARD_POWER, float BACKWARD_POWER, float FRICTION_BREAK, float ROTATE_SPEED,
-         float SHOOT_DELAY_MIN, float SHOT_VELOCITY) {
+         float FORWARD_POWER, float BACKWARD_POWER, float FRICTION_BREAK, float ROTATE_SPEED) {
         this.gameController = gameController;
         this.pilot = pilot;
         this.position = new Vector2(SCREEN_WIDTH / 2f, SCREEN_HEIGHT / 2f);
         this.velocity = new Vector2(0, 0);
         this.angle = 0.0f;
-        hitBox = new Circle();
+        this.massCenter = new Vector2(0, 0);
+        this.hitBox = new Circle();
+        this.maxDurability = durability;
         this.durability = durability;
         this.shipDestoyed = false;
         this.FORWARD_SPEED_MAX = FORWARD_SPEED_MAX;
@@ -68,40 +67,32 @@ public abstract class Ship {
         this.BACKWARD_POWER = BACKWARD_POWER;
         this.FRICTION_BREAK = FRICTION_BREAK;
         this.ROTATE_SPEED = ROTATE_SPEED;
-        this.SHOOT_DELAY_MIN = SHOOT_DELAY_MIN;
-        this.SHOT_VELOCITY = SHOT_VELOCITY;
+    }
+
+    public void setTextureSettings(TextureRegion texture, float massCenterX, float massCenterY, Vector2[] exhaustPoints) {
+        this.texture = texture;
+        this.textureW = texture.getRegionWidth();
+        this.textureH = texture.getRegionHeight();
+        this.massCenter.set(massCenterX, massCenterY);
+        this.exhaustPoints = exhaustPoints;
     }
 
     public void render(SpriteBatch batch) {
         if (shipDestoyed) return;
-        batch.draw(texture, position.x - massCenterXY[0], position.y - massCenterXY[1],
-                massCenterXY[0], massCenterXY[1], textureW, textureH, 1, 1, angle);
+        batch.draw(texture, position.x - massCenter.x, position.y - massCenter.y,
+                massCenter.x, massCenter.y, textureW, textureH, 1, 1, angle);
 
     }
 
     public void update(float dt) {
-        shootDelay += dt;
         if (!pilot.control(dt)) frictionBreak(dt);
         position.mulAdd(velocity, dt);
+        weapon.update(dt);
         checkBounds();
     }
 
-    protected abstract void shooting();
-
-    public void tryShooting() {
-        if (shootDelay < SHOOT_DELAY_MIN) return;
-        shooting();
-        resetShootDelay();
-    }
-
-    void engageBullet(float[] coords) {
-        engageBullet(coords, 0);
-    }
-
-    void engageBullet(float[] coords, float angleOffset) {
-        gameController.getBulletController().createNew(position.x + getShipSystemX(coords), position.y + getShipSystemY(coords), angle + angleOffset,
-                (float) Math.cos(Math.toRadians(angle + angleOffset)) * SHOT_VELOCITY + velocity.x,
-                (float) Math.sin(Math.toRadians(angle + angleOffset)) * SHOT_VELOCITY + velocity.y);
+    public void fire() {
+        weapon.fire();
     }
 
     public void turnLeft(float dt) {
@@ -115,17 +106,18 @@ public abstract class Ship {
     }
 
     public void moveForward(float dt) {
-        float directionX = (float) Math.cos(Math.toRadians(angle));
-        float directionY = (float) Math.sin(Math.toRadians(angle));
+        float directionX = MathUtils.cosDeg(angle);
+        float directionY = MathUtils.sinDeg(angle);
         boolean isForwardMoving = velocity.dot(directionX, directionY) >= 0;
         velocity.add(directionX * FORWARD_POWER * dt, directionY * FORWARD_POWER * dt);
         if (velocity.len() > FORWARD_SPEED_MAX && isForwardMoving)
             velocity.nor().scl(FORWARD_SPEED_MAX);
+        makeAccelerationParticles();
     }
 
     public void moveBack(float dt) {
-        float directionX = (float) Math.cos(Math.toRadians(angle));
-        float directionY = (float) Math.sin(Math.toRadians(angle));
+        float directionX = MathUtils.cosDeg(angle);
+        float directionY = MathUtils.sinDeg(angle);
         boolean isForwardMoving = velocity.dot(directionX, directionY) >= 0;
         velocity.sub(directionX * BACKWARD_POWER * dt, directionY * BACKWARD_POWER * dt);
         if (velocity.len() > BACKWARD_SPEED_MAX && !isForwardMoving)
@@ -140,21 +132,31 @@ public abstract class Ship {
         }
     }
 
-    private float getShipSystemX(float[] coords) {
-        return (float) (Math.cos(Math.toRadians(angle)) * coords[0] - Math.sin(Math.toRadians(angle)) * coords[1]);
+    private void makeAccelerationParticles() {
+        for (int i = 0; i < exhaustPoints.length; i++) {
+            gameController.getParticleController().getEffectBuilder().exhaust(
+                    position.x + getOffsetX(exhaustPoints[i].x, exhaustPoints[i].y),
+                    position.y + getOffsetY(exhaustPoints[i].x, exhaustPoints[i].y),
+                    velocity, angle, 8, 1f, 0.9f, 0.5f
+            );
+        }
     }
 
-    private float getShipSystemY(float[] coords) {
-        return (float) (Math.sin(Math.toRadians(angle)) * coords[0] + Math.cos(Math.toRadians(angle)) * coords[1]);
+    private float getOffsetX(float... coords) {
+        return MathUtils.cosDeg(angle) * coords[0] - MathUtils.sinDeg(angle) * coords[1];
     }
 
-    private float[] getTextureCenterCoords() {
-        return new float[]{textureW / 2f - massCenterXY[0], textureH / 2f - massCenterXY[1]};
+    private float getOffsetY(float... coords) {
+        return MathUtils.sinDeg(angle) * coords[0] + MathUtils.cosDeg(angle) * coords[1];
+    }
+
+    private float[] getTextureCenter() {
+        return new float[]{textureW / 2f - massCenter.x, textureH / 2f - massCenter.y};
     }
 
     private void checkBounds() {
-        float offsetX = getShipSystemX(getTextureCenterCoords());
-        float offsetY = getShipSystemY(getTextureCenterCoords());
+        float offsetX = getOffsetX(getTextureCenter());
+        float offsetY = getOffsetY(getTextureCenter());
         if (position.x + offsetX < textureW / 2f) {
             position.x = textureW / 2f - offsetX;
             velocity.x *= -BOUND_BREAK_FACTOR;
@@ -172,7 +174,7 @@ public abstract class Ship {
     }
 
     public Circle getHitBox() {
-        float[] coords = getTextureCenterCoords();
+        float[] coords = getTextureCenter();
         hitBox.set(position.x + coords[0], position.y + coords[1], textureH / 2f);
         return hitBox;
     }
@@ -181,8 +183,21 @@ public abstract class Ship {
         return durability;
     }
 
+    public void addDurability(float amount) {
+        durability += amount;
+        if (durability > maxDurability) durability = maxDurability;
+    }
+
     public Vector2 getPosition() {
         return position;
+    }
+
+    public float getAngle() {
+        return angle;
+    }
+
+    public Weapon getWeapon() {
+        return weapon;
     }
 
     public boolean checkCollision(Collisional obj, float dt) {
@@ -196,21 +211,18 @@ public abstract class Ship {
         if (collisionAngle < 0) collisionAngle += 360;
         if (collisionDistance < hitBox.radius + objHitBox.radius) {
             float offset = (hitBox.radius + objHitBox.radius - collisionDistance) / 2;
-            float offsetX = offset * (float) Math.cos(Math.toRadians(collisionAngle)) + 1;
-            float offsetY = offset * (float) Math.sin(Math.toRadians(collisionAngle)) + 1;
+            float offsetX = offset * MathUtils.cosDeg(collisionAngle) + 1;
+            float offsetY = offset * MathUtils.sinDeg(collisionAngle) + 1;
             position.sub(offsetX, offsetY);
             objPosition.add(offsetX, offsetY);
         }
 
         boolean velocityAndAngle = velocity.x * (objPosition.x - position.x) + velocity.y * (objPosition.y - position.y) > 0;
         if (velocity.dot(objVelocity) < 0 && velocityAndAngle) {
-            //Gdx.app.log("p><a", velocity.toString());
             headOnCollision(objVelocity, obj.getMassFactor());
         } else if (velocityAndAngle) {
-//            Gdx.app.log("p>>a", velocity.toString());
             oneWayCollision(velocity, objVelocity, 1, obj.getMassFactor());
         } else {
-//            Gdx.app.log("p<<a", velocity.toString());
             oneWayCollision(objVelocity, velocity, obj.getMassFactor(), 1);
         }
         takeDamage(obj.getMassFactor());
@@ -219,7 +231,6 @@ public abstract class Ship {
     }
 
     private void takeDamage(float amount) {
-        //Gdx.app.log("durability", String.valueOf(amount));
         durability -= amount;
         if (durability <= 0) {
             durability = 0;
@@ -247,5 +258,9 @@ public abstract class Ship {
         aheadVelocity.mulAdd(behindVelocity, 1 / aheadMassFactor);
         if (aheadV > max) aheadVelocity.scl(max / aheadV);
         behindVelocity.scl(-COLLISION_BREAK_FACTOR / behindMassFactor);
+    }
+
+    public void checkDropItem(Drop drop) {
+        if (hitBox.overlaps(drop.getHitBox())) drop.consume();
     }
 }

@@ -59,16 +59,51 @@ horseshoe
   orig: 64, 64
   offset: 0, 0
   index: -1
-fighter
+healdrop
   rotate: false
   xy: 2, 909
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-durability
+fighter
+  rotate: false
+  xy: 68, 777
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+cashdrop
+  rotate: false
+  xy: 134, 777
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+ammodrop
+  rotate: false
+  xy: 68, 843
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+durabilityicon
   rotate: false
   xy: 2, 975
+  size: 26, 26
+  orig: 26, 26
+  offset: 0, 0
+  index: -1
+cashicon
+  rotate: false
+  xy: 30, 975
+  size: 26, 26
+  orig: 26, 26
+  offset: 0, 0
+  index: -1
+ammoicon
+  rotate: false
+  xy: 200, 777
   size: 26, 26
   orig: 26, 26
   offset: 0, 0
@@ -82,42 +117,49 @@ star6
   index: -1
 star5
   rotate: false
-  xy: 30, 975
+  xy: 30, 1003
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 star4
   rotate: false
-  xy: 48, 975
+  xy: 48, 1003
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 star3
   rotate: false
-  xy: 30, 993
+  xy: 228, 777
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 star2
   rotate: false
-  xy: 48, 993
+  xy: 200, 805
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 star1
   rotate: false
-  xy: 68, 777
+  xy: 200, 823
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+particle1
+  rotate: false
+  xy: 218, 805
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 bullet
   rotate: false
-  xy: 86, 777
+  xy: 218, 823
   size: 16, 16
   orig: 16, 16
   offset: 0, 0

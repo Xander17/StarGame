@@ -2,6 +2,7 @@ package com.star.app.game.bullets;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.star.app.game.helpers.Collisional;
 import com.star.app.game.helpers.Poolable;
@@ -71,10 +72,10 @@ public class Bullet implements Poolable {
     }
 
     private float getHitPointX() {
-        return position.x + (float) Math.cos(Math.toRadians(angle)) * textureW / 2f;
+        return position.x + MathUtils.cosDeg(angle) * textureW / 2f;
     }
 
     private float getHitPointY() {
-        return position.y + (float) Math.sin(Math.toRadians(angle)) * textureW / 2f;
+        return position.y + MathUtils.sinDeg(angle) * textureW / 2f;
     }
 }
