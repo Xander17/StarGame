@@ -36,6 +36,7 @@ public class ParticleController extends ObjectPool<Particle> {
         for (int i = 0; i < activeList.size(); i++) {
             activeList.get(i).update(dt);
         }
+        checkFreeObjects();
     }
 
     public void render(SpriteBatch batch) {
