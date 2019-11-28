@@ -44,11 +44,11 @@ public class Drop implements Poolable {
 
     public void activate(Vector2 position, DropType type, TextureRegion texture, float[] rgb) {
         this.position.set(position);
-        checkBounds();
         this.type = type;
         this.texture = texture;
         this.textureW = texture.getRegionWidth();
         this.textureH = texture.getRegionHeight();
+        checkBounds();
         this.rgb = rgb;
         hitBox.set(this.position, textureW / 2);
         isActive = true;
@@ -83,7 +83,7 @@ public class Drop implements Poolable {
 
     public void consume() {
         controller.getEffect(type);
-        gameController.getParticleController().getEffectBuilder().circleBlast(gameController.getPlayer().getShip().getPosition(), rgb[0], rgb[1], rgb[2]);
+        gameController.getParticleController().getEffectBuilder().circleBlast(position, rgb[0], rgb[1], rgb[2]);
         deactivate();
     }
 

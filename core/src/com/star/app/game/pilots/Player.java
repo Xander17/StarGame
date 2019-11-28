@@ -18,7 +18,7 @@ public class Player implements Piloting {
 
     private final int START_LIVES = 2;
     private final int SCORE_DEAD_PENALTY = 20000;
-    private final ShipTypes START_TYPE = ShipTypes.TRIDENT;
+    private final ShipTypes START_TYPE = ShipTypes.HORSESHOE;
 
     private GameController gameController;
     private Ship ship;
