@@ -67,6 +67,10 @@ public class Weapon {
 
     public void addBullets(int amount) {
         this.bullets += amount;
-        //if (bullets > maxBullets) bullets = maxBullets;
+        if (bullets > maxBullets) bullets = maxBullets;
+    }
+
+    public int getMaxBullets() {
+        return maxBullets;
     }
 }

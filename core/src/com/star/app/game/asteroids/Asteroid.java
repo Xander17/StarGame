@@ -145,7 +145,7 @@ public class Asteroid implements Poolable, Collisional {
     }
 
     private void dropItem() {
-        if (Math.random() < getDropChance()) gameController.getDropController().getRandom(position);
+        gameController.getDropController().getRandom(position, getDropChance());
     }
 
     private float getDropChance() {

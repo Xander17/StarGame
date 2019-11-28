@@ -18,7 +18,7 @@ public class ShipFactory {
                                 new Vector2(-20, 28),
                                 new Vector2(-20, -28)
                         });
-                ship.weapon = new Weapon(gameController, ship, 0.1f, 500);
+                ship.weapon = new Weapon(gameController, ship, 0.1f, 1000);
                 ship.weapon.setGunSeparate(new Gun(1, -27, 600f, 0));
                 ship.weapon.setGunSeparate(new Gun(1, 27, 600f, 0));
                 break;
@@ -29,7 +29,7 @@ public class ShipFactory {
                                 new Vector2(-20, 18),
                                 new Vector2(-20, -18)
                         });
-                ship.weapon = new Weapon(gameController, ship, 0.1f, 500);
+                ship.weapon = new Weapon(gameController, ship, 0.1f, 1000);
                 ship.weapon.setGunGroup(new Gun[]{
                         new Gun(32, -14, 600f, 0),
                         new Gun(32, 14, 600f, 0)

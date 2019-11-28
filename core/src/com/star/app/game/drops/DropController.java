@@ -33,7 +33,8 @@ public class DropController extends ObjectPool<Drop> {
         return new Drop(gameController, this);
     }
 
-    public void getRandom(Vector2 position) {
+    public void getRandom(Vector2 position, float chance) {
+        if (Math.random() >= chance) return;
         DropType[] types = DropType.values();
         int i = MathUtils.random(types.length - 1);
         switch (types[i]) {

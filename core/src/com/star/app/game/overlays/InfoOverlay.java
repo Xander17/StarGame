@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.StringBuilder;
 import com.star.app.game.GameController;
 import com.star.app.utils.Assets;
@@ -66,17 +67,17 @@ public class InfoOverlay {
 
     public void render(SpriteBatch batch) {
         drawIconAmount(batch, durability, font22, 20, SCREEN_HEIGHT - 20, Math.round(durabilityView), 3);
-        drawIconAmount(batch, ammo, font22, 130, SCREEN_HEIGHT - 20, Math.round(ammoView), 4);
+        drawIconMaxAmount(batch, ammo, font22, 130, SCREEN_HEIGHT - 20, Math.round(ammoView), gameController.getPlayer().getShip().getWeapon().getMaxBullets(), 4);
         drawIconAmount(batch, cash, font22, 20, SCREEN_HEIGHT - 60, Math.round(cashView), 0);
-        drawCaptionAmount(batch, font22, 270, SCREEN_HEIGHT - 20, "SCORE: ", Math.round(scoreView));
+        drawCaptionAmount(batch, font22, 350, SCREEN_HEIGHT - 20, "SCORE: ", Math.round(scoreView));
         drawCaptionAmount(batch, font22, SCREEN_WIDTH - 130, SCREEN_HEIGHT - 20, "LIVES: ", gameController.getPlayer().getLives());
 
         if (gameController.isWin())
-            drawCenterAlign(batch, font64, "YOU WIN", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+            drawCenterAlign(batch, font64, "YOU WIN", 0, SCREEN_WIDTH, SCREEN_HEIGHT / 2);
         else if (gameController.isGameOver())
-            drawCenterAlign(batch, font64, "GAME OVER", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+            drawCenterAlign(batch, font64, "GAME OVER", 0, SCREEN_WIDTH, SCREEN_HEIGHT / 2);
         else if (gameController.getPlayer().isDead())
-            drawCenterAlign(batch, font64, "YOU ARE DEAD", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+            drawCenterAlign(batch, font64, "YOU ARE DEAD", 0, SCREEN_WIDTH, SCREEN_HEIGHT / 2);
     }
 
     private void drawIconAmount(SpriteBatch batch, TextureRegion texture, BitmapFont font, float x, float y, int amount, int zeros) {
@@ -87,14 +88,21 @@ public class InfoOverlay {
         font.draw(batch, s, x + texture.getRegionWidth() + 5, y);
     }
 
+    private void drawIconMaxAmount(SpriteBatch batch, TextureRegion texture, BitmapFont font, float x, float y, int amount, int maxAmount, int zeros) {
+        batch.draw(texture, x, y - texture.getRegionHeight() + 4);
+        String s;
+        if (zeros == 0) s = String.valueOf(amount);
+        else s = String.format("%0" + zeros + "d/%0" + zeros + "d", amount, maxAmount);
+        font.draw(batch, s, x + texture.getRegionWidth() + 5, y);
+    }
+
     private void drawCaptionAmount(SpriteBatch batch, BitmapFont font, float x, float y, String caption, int amount) {
         stringBuilder.clear();
         stringBuilder.append(caption).append(amount);
         font.draw(batch, stringBuilder.toString(), x, y);
     }
 
-    private void drawCenterAlign(SpriteBatch batch, BitmapFont font, String text, float x, float y) {
-        layout.setText(font, text);
-        font.draw(batch, text, x - layout.width / 2, y + layout.height / 2);
+    private void drawCenterAlign(SpriteBatch batch, BitmapFont font, String text, float regionStartX, float regionWidth, float y) {
+        font.draw(batch, text, regionStartX, y + font.getXHeight() / 2, regionWidth, Align.center, false);
     }
 }

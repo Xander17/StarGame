@@ -15,7 +15,7 @@ public class Drop implements Poolable {
     private final float SHINE_DELAY = 0.1f;
     private final float SHINE_ANGLE_STEP = 20;
 
-    GameController gameController;
+    private GameController gameController;
     private TextureRegion texture;
     private int textureW, textureH;
     private boolean isActive;
