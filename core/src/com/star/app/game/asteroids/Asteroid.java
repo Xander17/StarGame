@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.star.app.game.GameController;
 import com.star.app.game.helpers.Collisional;
 import com.star.app.game.helpers.Poolable;
+import com.star.app.game.pilots.PlayerStatistic;
 
 import static com.star.app.screen.ScreenManager.SCREEN_HEIGHT;
 import static com.star.app.screen.ScreenManager.SCREEN_WIDTH;
@@ -123,6 +124,7 @@ public class Asteroid implements Poolable, Collisional {
     @Override
     public boolean takeDamage(float amount) {
         health -= amount;
+        gameController.getPlayer().getPlayerStatistic().add(PlayerStatistic.Stats.DAMAGE_OVERALL, amount);
         if (health <= 0) {
             destroy();
             return true;
@@ -132,6 +134,7 @@ public class Asteroid implements Poolable, Collisional {
 
     @Override
     public void destroy() {
+        gameController.getPlayer().getPlayerStatistic().inc(PlayerStatistic.Stats.ASTEROIDS);
         deactivate();
         getAsteroidPieces();
         dropItem();

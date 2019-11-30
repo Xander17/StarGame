@@ -9,6 +9,7 @@ import com.star.app.game.GameController;
 import com.star.app.game.drops.Drop;
 import com.star.app.game.helpers.Collisional;
 import com.star.app.game.helpers.Piloting;
+import com.star.app.game.pilots.PlayerStatistic;
 
 import static com.star.app.screen.ScreenManager.SCREEN_HEIGHT;
 import static com.star.app.screen.ScreenManager.SCREEN_WIDTH;
@@ -231,6 +232,7 @@ public class Ship {
     }
 
     private void takeDamage(float amount) {
+        gameController.getPlayer().getPlayerStatistic().add(PlayerStatistic.Stats.DAMAGE_TAKEN, amount);
         durability -= amount;
         if (durability <= 0) {
             durability = 0;

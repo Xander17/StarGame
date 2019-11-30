@@ -10,7 +10,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.star.app.utils.Assets;
 
 public class ScreenManager {
-    public enum ScreenType {GAME, MENU, SETTINGS, GAMEOVER}
+    public enum ScreenType {GAME, MENU, GAMEOVER}
 
     public static final int SCREEN_WIDTH = 1280;
     public static final int SCREEN_HEIGHT = 720;
@@ -20,6 +20,7 @@ public class ScreenManager {
     private LoadingScreen loadingScreen;
     private GameScreen gameScreen;
     private MenuScreen menuScreen;
+    private GameOverScreen gameOverScreen;
     private Screen targetScreen;
     private ScreenType targetScreenType;
     private Viewport viewport;
@@ -41,6 +42,7 @@ public class ScreenManager {
         loadingScreen = new LoadingScreen(batch);
         gameScreen = new GameScreen(batch);
         menuScreen = new MenuScreen(batch);
+        gameOverScreen = new GameOverScreen(batch);
         camera = new OrthographicCamera(SCREEN_WIDTH, SCREEN_HEIGHT);
         viewport = new FitViewport(SCREEN_WIDTH, SCREEN_HEIGHT, camera);
     }
@@ -72,6 +74,10 @@ public class ScreenManager {
                 targetScreen = gameScreen;
                 Assets.getInstance().loadAssets(ScreenType.GAME);
                 break;
+            case GAMEOVER:
+                targetScreen = gameOverScreen;
+                Assets.getInstance().loadAssets(ScreenType.GAMEOVER);
+                break;
         }
     }
 
@@ -81,5 +87,9 @@ public class ScreenManager {
 
     public void goToTargetScreen() {
         game.setScreen(targetScreen);
+    }
+
+    public GameOverScreen getGameOverScreen() {
+        return gameOverScreen;
     }
 }

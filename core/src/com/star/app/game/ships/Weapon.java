@@ -1,6 +1,7 @@
 package com.star.app.game.ships;
 
 import com.star.app.game.GameController;
+import com.star.app.game.pilots.PlayerStatistic;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,6 +55,7 @@ public class Weapon {
             if (guns.get(i).getGroupIndex() == currentGunGroup) {
                 guns.get(i).fire(gameController, ship);
                 bullets--;
+                gameController.getPlayer().getPlayerStatistic().inc(PlayerStatistic.Stats.BULLETS_SPENT);
             }
         }
         currentDelay = 0;

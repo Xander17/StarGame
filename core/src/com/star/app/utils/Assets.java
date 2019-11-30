@@ -24,6 +24,7 @@ public class Assets {
 
     private final String GAME_PACK_PATH = "images/game.pack";
     private final String MENU_PACK_PATH = "images/menu.pack";
+    private final String GAMEOVER_PACK_PATH = "images/gameover.pack";
     private final String DEFAULT_FONT = "fonts/good times rg.ttf";
 
 
@@ -53,8 +54,13 @@ public class Assets {
             case MENU:
                 assetManager.load(MENU_PACK_PATH, TextureAtlas.class);
                 createFont(DEFAULT_FONT, 24, "font");
+                createFont(DEFAULT_FONT, 18, "font");
                 createFont(DEFAULT_FONT, 64, "font");
-                createFont("fonts/fragile bombers.ttf", 12, "debug");
+                break;
+            case GAMEOVER:
+                assetManager.load(GAMEOVER_PACK_PATH, TextureAtlas.class);
+                createFont(DEFAULT_FONT, 24, "font");
+                createFont(DEFAULT_FONT, 64, "font");
                 break;
         }
     }
@@ -80,6 +86,9 @@ public class Assets {
                 break;
             case MENU:
                 textureAtlas = assetManager.get(MENU_PACK_PATH, TextureAtlas.class);
+                break;
+            case GAMEOVER:
+                textureAtlas = assetManager.get(GAMEOVER_PACK_PATH, TextureAtlas.class);
                 break;
         }
     }

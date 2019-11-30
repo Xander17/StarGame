@@ -1,5 +1,7 @@
 package com.star.app.game;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.star.app.game.overlays.DebugOverlay;
 
@@ -21,7 +23,12 @@ public class WorldRenderer {
         gameController.getDropController().render(batch);
         gameController.getParticleController().render(batch);
         gameController.getInfoOverlay().render(batch);
+        if (gameController.isPaused()) gameController.getGamePauseOverlay().render(batch);
         DebugOverlay.render(batch);
         batch.end();
+    }
+
+    public SpriteBatch getBatch() {
+        return batch;
     }
 }

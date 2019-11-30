@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.star.app.game.GameController;
 import com.star.app.game.helpers.ObjectPool;
 import com.star.app.utils.Assets;
 
@@ -12,11 +13,13 @@ public class ParticleController extends ObjectPool<Particle> {
     private final float RANDOM_SCALE_COEFFICIENT = 3f;
     private final float RANDOM_SCALE_CHANCE = 0.03f;
 
+    GameController gameController;
     private TextureRegion texture;
     private int textureW, textureH;
     private EffectBuilder effectBuilder;
 
-    public ParticleController() {
+    public ParticleController(GameController gameController) {
+        this.gameController = gameController;
         texture = Assets.getInstance().getTextureAtlas().findRegion("particle1");
         this.textureW = texture.getRegionWidth();
         this.textureH = texture.getRegionHeight();
@@ -47,7 +50,7 @@ public class ParticleController extends ObjectPool<Particle> {
         batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
         for (int i = 0; i < activeList.size(); i++) {
             float scaleCoefficient = 1;
-            if (MathUtils.random() < RANDOM_SCALE_CHANCE) {
+            if (MathUtils.random() < RANDOM_SCALE_CHANCE && !gameController.isPaused()) {
                 scaleCoefficient = RANDOM_SCALE_COEFFICIENT;
             }
             activeList.get(i).render(batch, scaleCoefficient);

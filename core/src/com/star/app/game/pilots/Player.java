@@ -1,6 +1,7 @@
 package com.star.app.game.pilots;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.star.app.game.GameController;
 import com.star.app.game.helpers.Piloting;
@@ -17,15 +18,15 @@ public class Player implements Piloting {
     private GameController gameController;
     private Ship ship;
     private KeyControls keyControls;
+    private PlayerStatistic playerStatistic;
     private int playerNumber;
     private int lives;
     private boolean deadStatus;
-    private int score;
     private int cash;
 
     public void setDeadStatus(boolean status) {
         this.deadStatus = status;
-        subScore(SCORE_DEAD_PENALTY);
+        if (status) playerStatistic.add(PlayerStatistic.Stats.SCORE, -SCORE_DEAD_PENALTY);
     }
 
     public boolean isDead() {
@@ -39,7 +40,7 @@ public class Player implements Piloting {
         this.ship = ShipFactory.getShip(START_TYPE, gameController, this);
         this.deadStatus = false;
         this.lives = START_LIVES;
-        this.score = 0;
+        this.playerStatistic = new PlayerStatistic();
     }
 
     public void update(float dt) {
@@ -47,6 +48,7 @@ public class Player implements Piloting {
         if (ship.isShipDestoyed()) {
             ship = ShipFactory.getShip(START_TYPE, gameController, this);
             lives--;
+            playerStatistic.inc(PlayerStatistic.Stats.LIVES_LOST);
         }
         ship.update(dt);
     }
@@ -66,6 +68,7 @@ public class Player implements Piloting {
     @Override
     public boolean control(float dt) {
         boolean isTrust = false;
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) gameController.setPaused(true);
         if (Gdx.input.isKeyPressed(keyControls.fire)) {
             ship.fire();
         }
@@ -94,16 +97,7 @@ public class Player implements Piloting {
         this.cash += amount;
     }
 
-    public int getScore() {
-        return score;
-    }
-
-    public void addScore(int amount) {
-        score += amount;
-    }
-
-    public void subScore(int amount) {
-        score -= amount;
-        if (score < 0) score = 0;
+    public PlayerStatistic getPlayerStatistic() {
+        return playerStatistic;
     }
 }

@@ -1,20 +1,23 @@
 package com.star.app.screen;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.*;
+import com.badlogic.gdx.scenes.scene2d.ui.ButtonGroup;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.star.app.game.Background;
-import com.star.app.game.overlays.DebugOverlay;
 import com.star.app.utils.Assets;
+import com.star.app.utils.GameButtonStyle;
+import com.star.app.utils.Options;
+
+import java.util.Properties;
 
 import static com.star.app.screen.ScreenManager.SCREEN_HEIGHT;
 import static com.star.app.screen.ScreenManager.SCREEN_WIDTH;
@@ -22,9 +25,14 @@ import static com.star.app.screen.ScreenManager.SCREEN_WIDTH;
 public class MenuScreen extends AbstractScreen {
     private BitmapFont font64;
     private BitmapFont font24;
-    private TextureRegion buttonTexture;
+    private BitmapFont font18;
     private Background background;
     private Stage stage;
+    private Stage settingsStage;
+    private boolean settingsMode;
+    private ButtonGroup<TextButton> settingsButtons;
+    private int lastCheckedIndex;
+    private Properties properties;
 
     public MenuScreen(SpriteBatch batch) {
         super(batch);
@@ -32,37 +40,31 @@ public class MenuScreen extends AbstractScreen {
 
     @Override
     public void show() {
-        font24 = Assets.getInstance().getAssetManager().get("fonts/font24.ttf");
-        font64 = Assets.getInstance().getAssetManager().get("fonts/font64.ttf");
-        buttonTexture = Assets.getInstance().getTextureAtlas().findRegion("button");
+        font24 = Assets.getInstance().getAssetManager().get("fonts/font24.ttf", BitmapFont.class);
+        font18 = Assets.getInstance().getAssetManager().get("fonts/font18.ttf", BitmapFont.class);
+        font64 = Assets.getInstance().getAssetManager().get("fonts/font64.ttf", BitmapFont.class);
         background = new Background(null);
         stage = new Stage(ScreenManager.getInstance().getViewport(), batch);
-        setButtons();
+        settingsStage = new Stage(ScreenManager.getInstance().getViewport(), batch);
+        settingsMode = false;
+        lastCheckedIndex = -1;
+        properties = Options.loadProperties();
+        Gdx.input.setInputProcessor(stage);
+        setMenuButtons();
+        setSettingsButtons();
     }
 
-    private void setButtons() {
-        Gdx.input.setInputProcessor(stage);
-
-        Skin skin = new Skin();
-        skin.addRegions(Assets.getInstance().getTextureAtlas());
-
-        TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
-        textButtonStyle.up = skin.getDrawable("buttonmenuup");
-        textButtonStyle.down = skin.getDrawable("buttonmenudown");
-        textButtonStyle.over = skin.getDrawable("buttonmenuover");
-        textButtonStyle.pressedOffsetX=1f;
-        textButtonStyle.pressedOffsetY=-1f;
-textButtonStyle.overFontColor= Color.valueOf("c6f5ff");
-textButtonStyle.fontColor= Color.WHITE;
-        textButtonStyle.font = font24;
-        skin.add("buttonSkin", textButtonStyle);
+    private void setMenuButtons() {
+        TextButton.TextButtonStyle textButtonStyle = GameButtonStyle.getInstance().getDefaultStyle(font24);
 
         float textureW = textButtonStyle.up.getMinWidth();
         float textureH = textButtonStyle.up.getMinHeight();
-        Button btnNewGame = new TextButton("New Game", textButtonStyle);
-        Button btnExitGame = new TextButton("Exit Game", textButtonStyle);
-        btnNewGame.setPosition((SCREEN_WIDTH - textureW) / 2f, SCREEN_HEIGHT * 0.5f - textureH);
-        btnExitGame.setPosition((SCREEN_WIDTH - textureW) / 2f, SCREEN_HEIGHT * 0.5f - textureH * 3);
+        TextButton btnNewGame = new TextButton("New Game", textButtonStyle);
+        TextButton btnSettings = new TextButton("Settings", textButtonStyle);
+        TextButton btnExitGame = new TextButton("Exit Game", textButtonStyle);
+        btnNewGame.setPosition((SCREEN_WIDTH - textureW) / 2f, SCREEN_HEIGHT * 0.5f - 0.5f * textureH);
+        btnSettings.setPosition((SCREEN_WIDTH - textureW) / 2f, SCREEN_HEIGHT * 0.5f - 2.0f * textureH);
+        btnExitGame.setPosition((SCREEN_WIDTH - textureW) / 2f, SCREEN_HEIGHT * 0.5f - 5f * textureH);
 
         btnNewGame.addListener(new ChangeListener() {
             @Override
@@ -71,20 +73,122 @@ textButtonStyle.fontColor= Color.WHITE;
             }
         });
 
+        btnSettings.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                switchSettingsMode();
+            }
+        });
         btnExitGame.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 Gdx.app.exit();
             }
         });
+
         stage.addActor(btnNewGame);
+        stage.addActor(btnSettings);
         stage.addActor(btnExitGame);
-        skin.dispose();
+    }
+
+    private void setSettingsButtons() {
+        TextButton.TextButtonStyle textButtonStyle = GameButtonStyle.getInstance().getDefaultStyle(font24);
+
+        float textureW = textButtonStyle.up.getMinWidth();
+        float textureH = textButtonStyle.up.getMinHeight();
+        TextButton btnBack = new TextButton("Back", textButtonStyle);
+        btnBack.setPosition((SCREEN_WIDTH - textureW) / 2f, SCREEN_HEIGHT * 0.5f - 5f * textureH);
+
+        Label.LabelStyle labelStyle = new Label.LabelStyle(font24, Color.WHITE);
+        Label[] labels = new Label[]{
+                new Label("FORWARD", labelStyle),
+                new Label("BACKWARD", labelStyle),
+                new Label("RIGHT", labelStyle),
+                new Label("LEFT", labelStyle),
+                new Label("FIRE", labelStyle)
+        };
+
+        textButtonStyle = GameButtonStyle.getInstance().getKeyButtonStyle(font18);
+        textureH = textButtonStyle.up.getMinHeight();
+        settingsButtons = new ButtonGroup<>(
+                getPropertyKeyButton("PLAYER1_FORWARD", textButtonStyle),
+                getPropertyKeyButton("PLAYER1_BACKWARD", textButtonStyle),
+                getPropertyKeyButton("PLAYER1_RIGHT", textButtonStyle),
+                getPropertyKeyButton("PLAYER1_LEFT", textButtonStyle),
+                getPropertyKeyButton("PLAYER1_FIRE", textButtonStyle)
+        );
+        settingsButtons.setMaxCheckCount(1);
+        settingsButtons.setMinCheckCount(0);
+        settingsButtons.setUncheckLast(true);
+        ClickListener listener = new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (lastCheckedIndex != -1) {
+                    TextButton textButton = settingsButtons.getButtons().get(lastCheckedIndex);
+                    textButton.setText(Input.Keys.toString(Integer.parseInt(properties.getProperty(textButton.getName()))));
+                }
+                if (settingsButtons.getChecked() != null) {
+                    settingsButtons.getChecked().setText("");
+                    lastCheckedIndex = settingsButtons.getCheckedIndex();
+                }
+            }
+        };
+
+        for (int i = 0; i < settingsButtons.getButtons().size; i++) {
+            labels[i].setPosition(SCREEN_WIDTH * 0.3f, SCREEN_HEIGHT / 2f + (1.8f - 1.2f * i) * textureH);
+            settingsButtons.getButtons().get(i).setPosition(SCREEN_WIDTH * 0.7f, SCREEN_HEIGHT / 2f + (2.0f - 1.2f * i) * textureH, Align.right);
+            settingsButtons.getButtons().get(i).addListener(listener);
+            settingsStage.addActor(settingsButtons.getButtons().get(i));
+            settingsStage.addActor(labels[i]);
+        }
+
+        settingsStage.addListener(new InputListener() {
+            @Override
+            public boolean keyDown(InputEvent event, int keycode) {
+                if (settingsButtons.getChecked() != null) {
+                    saveNewProperty(settingsButtons.getChecked().getName(), String.valueOf(keycode));
+                    settingsButtons.getChecked().setText(Input.Keys.toString(keycode));
+                    settingsButtons.getChecked().setChecked(false);
+                }
+                return true;
+            }
+        });
+
+        btnBack.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                Options.saveProperties(properties);
+                settingsButtons.uncheckAll();
+                switchSettingsMode();
+            }
+        });
+        settingsStage.addActor(btnBack);
+    }
+
+    private TextButton getPropertyKeyButton(String property, TextButton.TextButtonStyle style) {
+        TextButton textButton = new TextButton(Input.Keys.toString(Integer.parseInt(properties.getProperty(property))), style);
+        textButton.setName(property);
+        return textButton;
+    }
+
+    private void saveNewProperty(String property, String key) {
+        properties.put(property, key);
+    }
+
+    private void switchSettingsMode() {
+        if (!settingsMode) {
+            settingsMode = true;
+            Gdx.input.setInputProcessor(settingsStage);
+        } else {
+            settingsMode = false;
+            Gdx.input.setInputProcessor(stage);
+        }
     }
 
     private void update(float dt) {
         background.update(dt);
-        stage.act();
+        if (settingsMode) settingsStage.act();
+        else stage.act();
     }
 
     @Override
@@ -92,10 +196,10 @@ textButtonStyle.fontColor= Color.WHITE;
         update(dt);
         batch.begin();
         background.render(batch);
-        font64.draw(batch, "STAR GAME 2019", 0, SCREEN_HEIGHT * 0.75f, SCREEN_WIDTH, Align.center, false);
-        DebugOverlay.render(batch);
+        font64.draw(batch, "STAR GAME 2019", 0, SCREEN_HEIGHT * 0.9f, SCREEN_WIDTH, Align.center, false);
         batch.end();
-        stage.draw();
+        if (settingsMode) settingsStage.draw();
+        else stage.draw();
     }
 
     @Override

@@ -1,7 +1,7 @@
 
 game1.png
 format: RGBA8888
-filter: Linear,Linear
+filter: Nearest,Nearest
 repeat: none
 asteroid4
   rotate: false
@@ -45,44 +45,72 @@ asteroid1
   orig: 256, 256
   offset: 0, 0
   index: -1
-trident
+buttonmenuup
   rotate: false
   xy: 2, 777
+  size: 256, 64
+  orig: 256, 64
+  offset: 0, 0
+  index: -1
+buttonmenuover
+  rotate: false
+  xy: 2, 843
+  size: 256, 64
+  orig: 256, 64
+  offset: 0, 0
+  index: -1
+buttonmenudown
+  rotate: false
+  xy: 2, 909
+  size: 256, 64
+  orig: 256, 64
+  offset: 0, 0
+  index: -1
+buttonmenucheck
+  rotate: false
+  xy: 518, 260
+  size: 256, 64
+  orig: 256, 64
+  offset: 0, 0
+  index: -1
+trident
+  rotate: false
+  xy: 776, 2
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 horseshoe
   rotate: false
-  xy: 2, 843
+  xy: 842, 2
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 healdrop
   rotate: false
-  xy: 2, 909
+  xy: 908, 2
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 fighter
   rotate: false
-  xy: 68, 777
+  xy: 776, 68
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 cashdrop
   rotate: false
-  xy: 134, 777
+  xy: 776, 134
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 ammodrop
   rotate: false
-  xy: 68, 843
+  xy: 842, 68
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
@@ -103,7 +131,7 @@ cashicon
   index: -1
 ammoicon
   rotate: false
-  xy: 200, 777
+  xy: 58, 975
   size: 26, 26
   orig: 26, 26
   offset: 0, 0
@@ -124,42 +152,42 @@ star5
   index: -1
 star4
   rotate: false
-  xy: 48, 1003
+  xy: 58, 1003
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 star3
   rotate: false
-  xy: 228, 777
+  xy: 86, 975
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 star2
   rotate: false
-  xy: 200, 805
+  xy: 86, 993
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 star1
   rotate: false
-  xy: 200, 823
+  xy: 104, 975
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 particle1
   rotate: false
-  xy: 218, 805
+  xy: 104, 993
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 bullet
   rotate: false
-  xy: 218, 823
+  xy: 122, 975
   size: 16, 16
   orig: 16, 16
   offset: 0, 0

@@ -68,6 +68,7 @@ public class Bullet implements Poolable {
 
     public boolean damageTarget(Collisional obj) {
         deactivate();
+
         return obj.takeDamage(damage);
     }
 

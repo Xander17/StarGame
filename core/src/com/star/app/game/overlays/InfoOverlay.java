@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.StringBuilder;
 import com.star.app.game.GameController;
+import com.star.app.game.pilots.PlayerStatistic;
 import com.star.app.utils.Assets;
 
 import static com.star.app.screen.ScreenManager.SCREEN_HEIGHT;
@@ -49,7 +50,7 @@ public class InfoOverlay {
     }
 
     public void update(float dt) {
-        scoreView = getViewAmount(gameController.getPlayer().getScore(), scoreView, SCORE_GAIN_PER_SEC, dt);
+        scoreView = getViewAmount(gameController.getPlayer().getPlayerStatistic().get(PlayerStatistic.Stats.SCORE), scoreView, SCORE_GAIN_PER_SEC, dt);
         cashView = getViewAmount(gameController.getPlayer().getCash(), cashView, CASH_GAIN_PER_SEC, dt);
         durabilityView = getViewAmount(gameController.getPlayer().getShip().getDurability(), durabilityView, DURABILITY_GAIN_PER_SEC, dt);
         ammoView = getViewAmount(gameController.getPlayer().getShip().getWeapon().getBullets(), ammoView, AMMO_GAIN_PER_SEC, dt);

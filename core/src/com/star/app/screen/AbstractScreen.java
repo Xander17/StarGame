@@ -10,6 +10,10 @@ public abstract class AbstractScreen implements Screen {
         this.batch = batch;
     }
 
+    public SpriteBatch getBatch() {
+        return batch;
+    }
+
     public abstract void show();
 
     public abstract void render(float dt);

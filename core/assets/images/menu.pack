@@ -12,56 +12,91 @@ buttonmenuup
   index: -1
 buttonmenuover
   rotate: false
-  xy: 260, 2
+  xy: 2, 68
   size: 256, 64
   orig: 256, 64
   offset: 0, 0
   index: -1
 buttonmenudown
   rotate: false
-  xy: 518, 2
+  xy: 2, 134
   size: 256, 64
   orig: 256, 64
   offset: 0, 0
   index: -1
+buttonmenucheck
+  rotate: false
+  xy: 260, 2
+  size: 256, 64
+  orig: 256, 64
+  offset: 0, 0
+  index: -1
+buttonkeyup
+  rotate: false
+  xy: 260, 68
+  size: 100, 64
+  orig: 100, 64
+  offset: 0, 0
+  index: -1
+buttonkeyover
+  rotate: false
+  xy: 260, 134
+  size: 100, 64
+  orig: 100, 64
+  offset: 0, 0
+  index: -1
+buttonkeydown
+  rotate: false
+  xy: 362, 68
+  size: 100, 64
+  orig: 100, 64
+  offset: 0, 0
+  index: -1
+buttonkeycheck
+  rotate: false
+  xy: 362, 134
+  size: 100, 64
+  orig: 100, 64
+  offset: 0, 0
+  index: -1
 star6
   rotate: false
-  xy: 2, 68
+  xy: 2, 200
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 star5
   rotate: false
-  xy: 2, 86
+  xy: 2, 218
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 star4
   rotate: false
-  xy: 2, 104
+  xy: 2, 236
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 star3
   rotate: false
-  xy: 20, 68
+  xy: 20, 200
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 star2
   rotate: false
-  xy: 20, 86
+  xy: 20, 218
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 star1
   rotate: false
-  xy: 20, 104
+  xy: 20, 236
   size: 16, 16
   orig: 16, 16
   offset: 0, 0

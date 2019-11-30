@@ -18,23 +18,13 @@ import com.star.app.utils.Options;
  *   - (?) collision
  *   - gun smoke
  * 5. 3 sec invulnerability after death
- * 6. Weapon shooting style
+ * 6. Weapon shooting styles
  * 7. Drop lifetime
  * 8. Loading line on Loading Screen
  * 9. Checking proper options
  * 10. Animation
+ * 11. Font separate from assets for loading screen
  * */
-
-// Домашнее задание:
-// 1. Разбор кода
-// 2. Кнопка паузы и выхода в меню на игровом экране
-// 3. Сделайте Game Over Screen. Если у корабля < 0 HP, то игра
-// переходит на Game Over Screen, и отображает там статистику игры
-// (допустим пока только счет). По нажатию на экране Game Over Screen'а
-// возвращаемся в меню
-// 4. * Настройки со сменой управления
-
-//Почему текст не отображается на loading screen
 
 public class StarGame extends Game {
     private SpriteBatch batch;
