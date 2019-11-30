@@ -1,27 +1,23 @@
 package com.star.app.game.pilots;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.star.app.game.GameController;
 import com.star.app.game.helpers.Piloting;
 import com.star.app.game.ships.Ship;
 import com.star.app.game.ships.ShipFactory;
 import com.star.app.game.ships.ShipTypes;
+import com.star.app.utils.Options;
 
 public class Player implements Piloting {
-    private final int KEY_FORWARD = Input.Keys.UP;
-    private final int KEY_BACK = Input.Keys.DOWN;
-    private final int KEY_LEFT = Input.Keys.LEFT;
-    private final int KEY_RIGHT = Input.Keys.RIGHT;
-    private final int KEY_FIRE = Input.Keys.Z;
-
     private final int START_LIVES = 2;
     private final int SCORE_DEAD_PENALTY = 20000;
     private final ShipTypes START_TYPE = ShipTypes.HORSESHOE;
 
     private GameController gameController;
     private Ship ship;
+    private KeyControls keyControls;
+    private int playerNumber;
     private int lives;
     private boolean deadStatus;
     private int score;
@@ -36,8 +32,10 @@ public class Player implements Piloting {
         return deadStatus;
     }
 
-    public Player(GameController gameController) {
+    public Player(GameController gameController, int playerNumber) {
         this.gameController = gameController;
+        this.playerNumber = playerNumber;
+        this.keyControls = new KeyControls(Options.loadProperties(), "PLAYER" + playerNumber);
         this.ship = ShipFactory.getShip(START_TYPE, gameController, this);
         this.deadStatus = false;
         this.lives = START_LIVES;
@@ -68,20 +66,20 @@ public class Player implements Piloting {
     @Override
     public boolean control(float dt) {
         boolean isTrust = false;
-        if (Gdx.input.isKeyPressed(KEY_FIRE)) {
+        if (Gdx.input.isKeyPressed(keyControls.fire)) {
             ship.fire();
         }
-        if (Gdx.input.isKeyPressed(KEY_LEFT)) {
+        if (Gdx.input.isKeyPressed(keyControls.left)) {
             ship.turnLeft(dt);
         }
-        if (Gdx.input.isKeyPressed(KEY_RIGHT)) {
+        if (Gdx.input.isKeyPressed(keyControls.right)) {
             ship.turnRight(dt);
         }
-        if (Gdx.input.isKeyPressed(KEY_FORWARD)) {
+        if (Gdx.input.isKeyPressed(keyControls.forward)) {
             ship.moveForward(dt);
             isTrust = true;
         }
-        if (Gdx.input.isKeyPressed(KEY_BACK)) {
+        if (Gdx.input.isKeyPressed(keyControls.backward)) {
             ship.moveBack(dt);
             isTrust = true;
         }

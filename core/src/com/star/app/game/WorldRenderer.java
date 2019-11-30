@@ -1,7 +1,5 @@
 package com.star.app.game;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.star.app.game.overlays.DebugOverlay;
 
@@ -15,8 +13,6 @@ public class WorldRenderer {
     }
 
     public void render() {
-        Gdx.gl.glClearColor(0, 0, 0, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
         gameController.getBackground().render(batch);
         gameController.getPlayer().render(batch);

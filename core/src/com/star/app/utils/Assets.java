@@ -23,6 +23,9 @@ public class Assets {
     }
 
     private final String GAME_PACK_PATH = "images/game.pack";
+    private final String MENU_PACK_PATH = "images/menu.pack";
+    private final String DEFAULT_FONT = "fonts/good times rg.ttf";
+
 
     private AssetManager assetManager;
     private TextureAtlas textureAtlas;
@@ -43,16 +46,20 @@ public class Assets {
         switch (type) {
             case GAME:
                 assetManager.load(GAME_PACK_PATH, TextureAtlas.class);
-                createStandardFont("fonts/good times rg.ttf", 22, "font");
-                createStandardFont("fonts/good times rg.ttf", 64, "font");
-                createStandardFont("fonts/fragile bombers.ttf", 12, "debug");
-                assetManager.finishLoading();
-                textureAtlas = assetManager.get(GAME_PACK_PATH, TextureAtlas.class);
+                createFont(DEFAULT_FONT, 22, "font");
+                createFont(DEFAULT_FONT, 64, "font");
+                createFont("fonts/fragile bombers.ttf", 12, "debug");
+                break;
+            case MENU:
+                assetManager.load(MENU_PACK_PATH, TextureAtlas.class);
+                createFont(DEFAULT_FONT, 24, "font");
+                createFont(DEFAULT_FONT, 64, "font");
+                createFont("fonts/fragile bombers.ttf", 12, "debug");
                 break;
         }
     }
 
-    private void createStandardFont(String filename, int size, String prefix) {
+    private void createFont(String filename, int size, String prefix) {
         FileHandleResolver resolver = new InternalFileHandleResolver();
         assetManager.setLoader(FreeTypeFontGenerator.class, new FreeTypeFontGeneratorLoader(resolver));
         assetManager.setLoader(BitmapFont.class, ".ttf", new FreetypeFontLoader(resolver));
@@ -64,6 +71,17 @@ public class Assets {
         parameter.fontParameters.shadowOffsetY = 1;
         parameter.fontParameters.shadowColor = Color.DARK_GRAY;
         assetManager.load("fonts/" + prefix + size + ".ttf", BitmapFont.class, parameter);
+    }
+
+    public void makeLinks() {
+        switch (ScreenManager.getInstance().getTargetScreenType()) {
+            case GAME:
+                textureAtlas = assetManager.get(GAME_PACK_PATH, TextureAtlas.class);
+                break;
+            case MENU:
+                textureAtlas = assetManager.get(MENU_PACK_PATH, TextureAtlas.class);
+                break;
+        }
     }
 
     public void clear() {

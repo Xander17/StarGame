@@ -59,7 +59,7 @@ public class GameController {
 
     public GameController() {
         background = new Background(this);
-        player = new Player(this);
+        player = new Player(this,1);
         bulletController = new BulletController();
         asteroidController = new AsteroidController(this);
         dropController = new DropController(this);
@@ -102,6 +102,10 @@ public class GameController {
             timeToRespawn = 0;
             player.setDeadStatus(false);
         }
+    }
+
+    public void dispose(){
+        background.dispose();
     }
 
     private void checkBulletsCollisions() {

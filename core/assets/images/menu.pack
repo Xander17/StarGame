@@ -1,0 +1,68 @@
+
+menu1.png
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+buttonmenuup
+  rotate: false
+  xy: 2, 2
+  size: 256, 64
+  orig: 256, 64
+  offset: 0, 0
+  index: -1
+buttonmenuover
+  rotate: false
+  xy: 260, 2
+  size: 256, 64
+  orig: 256, 64
+  offset: 0, 0
+  index: -1
+buttonmenudown
+  rotate: false
+  xy: 518, 2
+  size: 256, 64
+  orig: 256, 64
+  offset: 0, 0
+  index: -1
+star6
+  rotate: false
+  xy: 2, 68
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+star5
+  rotate: false
+  xy: 2, 86
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+star4
+  rotate: false
+  xy: 2, 104
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+star3
+  rotate: false
+  xy: 20, 68
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+star2
+  rotate: false
+  xy: 20, 86
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+star1
+  rotate: false
+  xy: 20, 104
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
