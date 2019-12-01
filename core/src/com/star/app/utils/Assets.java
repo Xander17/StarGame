@@ -22,9 +22,9 @@ public class Assets {
         return instance;
     }
 
-    private final String GAME_PACK_PATH = "images/game.pack";
-    private final String MENU_PACK_PATH = "images/menu.pack";
-    private final String GAMEOVER_PACK_PATH = "images/gameover.pack";
+    private final String GAME_PACK_PATH = "images/game.atlas";
+    private final String MENU_PACK_PATH = "images/menu.atlas";
+    private final String GAMEOVER_PACK_PATH = "images/gameover.atlas";
     private final String DEFAULT_FONT = "fonts/good times rg.ttf";
 
 

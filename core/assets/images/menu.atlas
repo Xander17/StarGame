@@ -1,102 +1,103 @@
 
-menu1.png
+menu.png
+size: 2048,128
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
-buttonmenuup
+buttonkeycheck
   rotate: false
-  xy: 2, 2
-  size: 256, 64
-  orig: 256, 64
-  offset: 0, 0
-  index: -1
-buttonmenuover
-  rotate: false
-  xy: 2, 68
-  size: 256, 64
-  orig: 256, 64
-  offset: 0, 0
-  index: -1
-buttonmenudown
-  rotate: false
-  xy: 2, 134
-  size: 256, 64
-  orig: 256, 64
-  offset: 0, 0
-  index: -1
-buttonmenucheck
-  rotate: false
-  xy: 260, 2
-  size: 256, 64
-  orig: 256, 64
-  offset: 0, 0
-  index: -1
-buttonkeyup
-  rotate: false
-  xy: 260, 68
-  size: 100, 64
-  orig: 100, 64
-  offset: 0, 0
-  index: -1
-buttonkeyover
-  rotate: false
-  xy: 260, 134
+  xy: 1340, 38
   size: 100, 64
   orig: 100, 64
   offset: 0, 0
   index: -1
 buttonkeydown
   rotate: false
-  xy: 362, 68
+  xy: 1238, 38
   size: 100, 64
   orig: 100, 64
   offset: 0, 0
   index: -1
-buttonkeycheck
+buttonkeyover
   rotate: false
-  xy: 362, 134
+  xy: 1034, 38
   size: 100, 64
   orig: 100, 64
   offset: 0, 0
   index: -1
-star6
+buttonkeyup
   rotate: false
-  xy: 2, 200
-  size: 16, 16
-  orig: 16, 16
+  xy: 1136, 38
+  size: 100, 64
+  orig: 100, 64
   offset: 0, 0
   index: -1
-star5
+buttonmenucheck
   rotate: false
-  xy: 2, 218
-  size: 16, 16
-  orig: 16, 16
+  xy: 2, 38
+  size: 256, 64
+  orig: 256, 64
   offset: 0, 0
   index: -1
-star4
+buttonmenudown
   rotate: false
-  xy: 2, 236
-  size: 16, 16
-  orig: 16, 16
+  xy: 776, 38
+  size: 256, 64
+  orig: 256, 64
   offset: 0, 0
   index: -1
-star3
+buttonmenuover
   rotate: false
-  xy: 20, 200
+  xy: 260, 38
+  size: 256, 64
+  orig: 256, 64
+  offset: 0, 0
+  index: -1
+buttonmenuup
+  rotate: false
+  xy: 518, 38
+  size: 256, 64
+  orig: 256, 64
+  offset: 0, 0
+  index: -1
+star1
+  rotate: false
+  xy: 2, 20
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 star2
   rotate: false
-  xy: 20, 218
+  xy: 1442, 86
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
-star1
+star3
   rotate: false
-  xy: 20, 236
+  xy: 2, 2
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+star4
+  rotate: false
+  xy: 20, 20
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+star5
+  rotate: false
+  xy: 1442, 68
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+star6
+  rotate: false
+  xy: 1460, 86
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
