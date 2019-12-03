@@ -9,6 +9,7 @@ import com.star.app.game.GameController;
 import com.star.app.game.drops.Drop;
 import com.star.app.game.helpers.Collisional;
 import com.star.app.game.helpers.Piloting;
+import com.star.app.game.particles.ParticleLayouts;
 import com.star.app.game.pilots.PlayerStatistic;
 
 import static com.star.app.screen.ScreenManager.SCREEN_HEIGHT;
@@ -17,6 +18,7 @@ import static com.star.app.screen.ScreenManager.SCREEN_WIDTH;
 public class Ship {
     private final float BOUND_BREAK_FACTOR = 0.5f;
     private final float COLLISION_BREAK_FACTOR = 0.5f;
+    private final float INVULNERABILITY_TIME = 3f;
 
     private final float FORWARD_SPEED_MAX;
     private final float BACKWARD_SPEED_MAX;
@@ -39,15 +41,16 @@ public class Ship {
     private Circle hitBox;
     private float maxDurability;
     private float durability;
-    private boolean shipDestoyed;
+    private boolean shipDestroyed;
     private float angle;
+    private float invulnerabilityTime;
 
     public Vector2 getVelocity() {
         return velocity;
     }
 
-    public boolean isShipDestoyed() {
-        return shipDestoyed;
+    public boolean isShipDestroyed() {
+        return shipDestroyed;
     }
 
     Ship(GameController gameController, Piloting pilot, float durability, float FORWARD_SPEED_MAX, float BACKWARD_SPEED_MAX,
@@ -61,7 +64,7 @@ public class Ship {
         this.hitBox = new Circle();
         this.maxDurability = durability;
         this.durability = durability;
-        this.shipDestoyed = false;
+        this.shipDestroyed = false;
         this.FORWARD_SPEED_MAX = FORWARD_SPEED_MAX;
         this.BACKWARD_SPEED_MAX = BACKWARD_SPEED_MAX;
         this.FORWARD_POWER = FORWARD_POWER;
@@ -79,16 +82,19 @@ public class Ship {
     }
 
     public void render(SpriteBatch batch) {
-        if (shipDestoyed) return;
+        if (shipDestroyed) return;
+        if (invulnerabilityTime > 0) batch.setColor(1, 1, 1, 0.6f);
         batch.draw(texture, position.x - massCenter.x, position.y - massCenter.y,
                 massCenter.x, massCenter.y, textureW, textureH, 1, 1, angle);
-
+        if (invulnerabilityTime > 0) batch.setColor(1, 1, 1, 1);
     }
 
     public void update(float dt) {
         if (!pilot.control(dt)) frictionBreak(dt);
+        if (invulnerabilityTime > 0) invulnerabilityTime -= dt;
         position.mulAdd(velocity, dt);
         weapon.update(dt);
+        updateHitBox();
         checkBounds();
     }
 
@@ -135,7 +141,7 @@ public class Ship {
 
     private void makeAccelerationParticles() {
         for (int i = 0; i < exhaustPoints.length; i++) {
-            gameController.getParticleController().getEffectBuilder().exhaust(
+            gameController.getParticleController().getEffectBuilder().exhaust(ParticleLayouts.SHIP,
                     position.x + getOffsetX(exhaustPoints[i].x, exhaustPoints[i].y),
                     position.y + getOffsetY(exhaustPoints[i].x, exhaustPoints[i].y),
                     velocity, angle, 8, 1f, 0.9f, 0.5f
@@ -151,13 +157,20 @@ public class Ship {
         return MathUtils.sinDeg(angle) * coords[0] + MathUtils.cosDeg(angle) * coords[1];
     }
 
-    private float[] getTextureCenter() {
+    private float[] getTextureCenterShipCS() {
         return new float[]{textureW / 2f - massCenter.x, textureH / 2f - massCenter.y};
     }
 
+    public float[] getTextureCenterRealCS() {
+        float[] center = getTextureCenterShipCS();
+        float offsetX = getOffsetX(center);
+        float offsetY = getOffsetY(center);
+        return new float[]{position.x + offsetX, position.y + offsetY};
+    }
+
     private void checkBounds() {
-        float offsetX = getOffsetX(getTextureCenter());
-        float offsetY = getOffsetY(getTextureCenter());
+        float offsetX = getOffsetX(getTextureCenterShipCS());
+        float offsetY = getOffsetY(getTextureCenterShipCS());
         if (position.x + offsetX < textureW / 2f) {
             position.x = textureW / 2f - offsetX;
             velocity.x *= -BOUND_BREAK_FACTOR;
@@ -174,10 +187,9 @@ public class Ship {
         }
     }
 
-    public Circle getHitBox() {
-        float[] coords = getTextureCenter();
+    private void updateHitBox() {
+        float[] coords = getTextureCenterShipCS();
         hitBox.set(position.x + coords[0], position.y + coords[1], textureH / 2f);
-        return hitBox;
     }
 
     public float getDurability() {
@@ -202,7 +214,7 @@ public class Ship {
     }
 
     public boolean checkCollision(Collisional obj, float dt) {
-        getHitBox();
+        updateHitBox();
         Circle objHitBox = obj.getHitBox();
         if (!objHitBox.overlaps(hitBox)) return false;
         Vector2 objVelocity = obj.getVelocity();
@@ -218,6 +230,20 @@ public class Ship {
             objPosition.add(offsetX, offsetY);
         }
 
+//        float v1 = velocity.len();
+//        float v2 = objVelocity.len();
+//        float angle1 = velocity.angle();
+//        float angle2 = objPosition.angle();
+//        Gdx.app.log("colA",collisionAngle+"");
+//        Gdx.app.log("v",v1+" "+angle1);
+//        Gdx.app.log("vo",v2+" "+angle2);
+//        float[] newV = getNewVelocity(v1, v2, angle1, angle2, collisionAngle, 1, obj.getMassFactor() );
+//        velocity.set(newV[0], newV[1]);
+//        newV = getNewVelocity(v2, v1, angle2, angle1, collisionAngle + 180, obj.getMassFactor() , 1);
+//        objVelocity.set(newV[0], newV[1]);
+//        Gdx.app.log("v",velocity.len()+" "+velocity.angle());
+//        Gdx.app.log("vo",objVelocity.len()+" "+objVelocity.angle());
+
         boolean velocityAndAngle = velocity.x * (objPosition.x - position.x) + velocity.y * (objPosition.y - position.y) > 0;
         if (velocity.dot(objVelocity) < 0 && velocityAndAngle) {
             headOnCollision(objVelocity, obj.getMassFactor());
@@ -226,9 +252,20 @@ public class Ship {
         } else {
             oneWayCollision(objVelocity, velocity, obj.getMassFactor(), 1);
         }
+        if (invulnerabilityTime > 0) return true;
         takeDamage(obj.getMassFactor());
         obj.takeDamage(velocity.len() * dt);
         return true;
+    }
+
+    private float[] getNewVelocity(float v1, float v2, float angle1, float angle2, float collisionAngle, float m1, float m2) {
+        if (collisionAngle > 360) collisionAngle -= 360;
+        float[] result = new float[2];
+        float a = (v1 * MathUtils.cosDeg(angle1 - collisionAngle) * (m1 - m2) + 2 * m2 * v2 * MathUtils.cosDeg(angle2 - collisionAngle)) / (m1 + m2);
+        float b = v1 * MathUtils.sinDeg(angle1 - collisionAngle);
+        result[0] = a * MathUtils.cosDeg(collisionAngle) + b * MathUtils.cosDeg(collisionAngle + 90);
+        result[1] = a * MathUtils.sinDeg(collisionAngle) + b * MathUtils.sinDeg(collisionAngle + 90);
+        return result;
     }
 
     private void takeDamage(float amount) {
@@ -236,7 +273,7 @@ public class Ship {
         durability -= amount;
         if (durability <= 0) {
             durability = 0;
-            shipDestoyed = true;
+            shipDestroyed = true;
             pilot.setDeadStatus(true);
         }
     }
@@ -264,5 +301,13 @@ public class Ship {
 
     public void checkDropItem(Drop drop) {
         if (hitBox.overlaps(drop.getHitBox())) drop.consume();
+    }
+
+    public void resetInvulnerability() {
+        invulnerabilityTime = INVULNERABILITY_TIME;
+    }
+
+    public void setVelocity(float x, float y) {
+        this.velocity.set(x, y);
     }
 }

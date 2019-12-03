@@ -60,6 +60,7 @@ public class Assets {
             case GAMEOVER:
                 assetManager.load(GAMEOVER_PACK_PATH, TextureAtlas.class);
                 createFont(DEFAULT_FONT, 24, "font");
+                createFont(DEFAULT_FONT, 16, "font");
                 createFont(DEFAULT_FONT, 64, "font");
                 break;
         }
@@ -77,6 +78,12 @@ public class Assets {
         parameter.fontParameters.shadowOffsetY = 1;
         parameter.fontParameters.shadowColor = Color.DARK_GRAY;
         assetManager.load("fonts/" + prefix + size + ".ttf", BitmapFont.class, parameter);
+    }
+
+    public BitmapFont getFont(String filename, int size) {
+        createFont(filename, size, "tmp");
+        assetManager.finishLoading();
+        return assetManager.get("fonts/tmp" + size + ".ttf");
     }
 
     public void makeLinks() {

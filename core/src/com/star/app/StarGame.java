@@ -17,13 +17,9 @@ import com.star.app.utils.Options;
  *   - bullet hit
  *   - (?) collision
  *   - gun smoke
- * 5. 3 sec invulnerability after death
  * 6. Weapon shooting styles
- * 7. Drop lifetime
- * 8. Loading line on Loading Screen
- * 9. Checking proper options
  * 10. Animation
- * 11. Font separate from assets for loading screen
+ * 11. Stage controller in Menu Screen
  * */
 
 public class StarGame extends Game {
@@ -32,9 +28,6 @@ public class StarGame extends Game {
     @Override
     public void create() {
         batch = new SpriteBatch();
-        if (!Options.isOptionsExists()) {
-            Options.createDefaultProperties();
-        }
         ScreenManager.getInstance().init(batch, this);
         ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.MENU);
     }

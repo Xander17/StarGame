@@ -104,7 +104,7 @@ buttonmenuup
   index: -1
 cashdrop
   rotate: false
-  xy: 518, 153
+  xy: 1808, 411
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
@@ -123,7 +123,21 @@ durabilityicon
   orig: 26, 26
   offset: 0, 0
   index: -1
+fighter
+  rotate: false
+  xy: 2, 20
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
 healdrop
+  rotate: false
+  xy: 518, 153
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+horseshoe
   rotate: false
   xy: 260, 87
   size: 64, 64
@@ -135,20 +149,6 @@ particle1
   xy: 326, 107
   size: 16, 16
   orig: 16, 16
-  offset: 0, 0
-  index: -1
-ship
-  rotate: false
-  xy: 1550, 246
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: -1
-ship2
-  rotate: false
-  xy: 2, 20
-  size: 64, 64
-  orig: 64, 64
   offset: 0, 0
   index: -1
 star1
@@ -195,7 +195,7 @@ star6
   index: -1
 trident
   rotate: false
-  xy: 1808, 411
+  xy: 1550, 246
   size: 64, 64
   orig: 64, 64
   offset: 0, 0

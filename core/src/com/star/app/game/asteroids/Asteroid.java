@@ -1,6 +1,5 @@
 package com.star.app.game.asteroids;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Circle;
@@ -24,7 +23,7 @@ public class Asteroid implements Poolable, Collisional {
     private final float ROTATION_BASE_SPEED_MIN = 60f;
     private final float ROTATION_BASE_SPEED_MAX = 10f;
     private final float ANGLE_NO_CREATE = 15f;
-    private final float SCALE_BOTTOM_LIMIT = 0.2f;
+    private final float SIZE_BOTTOM_LIMIT = 60f;
     private final float DESTROY_DOWNSCALE = 0.15f;
     private final int PARTS_COUNT_MIN = 3;
     private final int PARTS_COUNT_MAX = 5;
@@ -142,7 +141,7 @@ public class Asteroid implements Poolable, Collisional {
 
     private void getAsteroidPieces() {
         float newScale = scale - MathUtils.random(0.9f, 1.1f) * DESTROY_DOWNSCALE;
-        if (newScale < SCALE_BOTTOM_LIMIT) return;
+        if (newScale * textureW < SIZE_BOTTOM_LIMIT) return;
         for (int i = 1; i < MathUtils.random(PARTS_COUNT_MIN, PARTS_COUNT_MAX); i++)
             gameController.getAsteroidController().createNew(position.x, position.y, newScale, (int) (maxHealth * (1 - DESTROY_DOWNSCALE)));
     }
@@ -152,7 +151,7 @@ public class Asteroid implements Poolable, Collisional {
     }
 
     private float getDropChance() {
-        return DROP_CHANCE_MIN + (DROP_CHANCE_MAX - DROP_CHANCE_MIN) * (scale - SCALE_BOTTOM_LIMIT) / (BASE_SCALE_MAX - SCALE_BOTTOM_LIMIT);
+        return DROP_CHANCE_MIN + (DROP_CHANCE_MAX - DROP_CHANCE_MIN) * (scale - SIZE_BOTTOM_LIMIT) / (BASE_SCALE_MAX - SIZE_BOTTOM_LIMIT);
     }
 
     @Override

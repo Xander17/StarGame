@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.star.app.game.overlays.DebugOverlay;
+import com.star.app.game.particles.ParticleLayouts;
 
 public class WorldRenderer {
     private SpriteBatch batch;
@@ -18,10 +19,11 @@ public class WorldRenderer {
         batch.begin();
         gameController.getBackground().render(batch);
         gameController.getPlayer().render(batch);
+        gameController.getParticleController().render(batch, ParticleLayouts.SHIP);
         gameController.getBulletController().render(batch);
         gameController.getAsteroidController().render(batch);
         gameController.getDropController().render(batch);
-        gameController.getParticleController().render(batch);
+        gameController.getParticleController().render(batch,ParticleLayouts.TOP);
         gameController.getInfoOverlay().render(batch);
         if (gameController.isPaused()) gameController.getGamePauseOverlay().render(batch);
         DebugOverlay.render(batch);

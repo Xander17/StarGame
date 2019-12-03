@@ -26,7 +26,10 @@ public class Player implements Piloting {
 
     public void setDeadStatus(boolean status) {
         this.deadStatus = status;
-        if (status) playerStatistic.add(PlayerStatistic.Stats.SCORE, -SCORE_DEAD_PENALTY);
+        if (status) {
+            playerStatistic.add(PlayerStatistic.Stats.SCORE, -SCORE_DEAD_PENALTY);
+            ship.setVelocity(0,0);
+        }
     }
 
     public boolean isDead() {
@@ -45,10 +48,11 @@ public class Player implements Piloting {
 
     public void update(float dt) {
         if (deadStatus) return;
-        if (ship.isShipDestoyed()) {
+        if (ship.isShipDestroyed()) {
             ship = ShipFactory.getShip(START_TYPE, gameController, this);
             lives--;
             playerStatistic.inc(PlayerStatistic.Stats.LIVES_LOST);
+            ship.resetInvulnerability();
         }
         ship.update(dt);
     }

@@ -15,6 +15,7 @@ public class Particle implements Poolable {
     private float time;
     private float timeMax;
     private boolean isActive;
+    private ParticleLayouts layout;
 
     public Particle() {
         position = new Vector2(0, 0);
@@ -22,7 +23,8 @@ public class Particle implements Poolable {
         isActive = false;
     }
 
-    public void activate(TextureRegion texture, float x, float y, float vx, float vy, float timeMax, float r1, float g1, float b1, float a1, float size1, float r2, float g2, float b2, float a2, float size2) {
+    public void activate(TextureRegion texture,ParticleLayouts layout, float x, float y, float vx, float vy, float timeMax, float r1, float g1, float b1, float a1, float size1, float r2, float g2, float b2, float a2, float size2) {
+        this.layout=layout;
         this.texture = texture;
         this.textureW = texture.getRegionWidth();
         this.textureH = texture.getRegionHeight();
@@ -69,5 +71,9 @@ public class Particle implements Poolable {
 
     public float lerp(float value1, float value2, float point) {
         return value1 + (value2 - value1) * point;
+    }
+
+    public ParticleLayouts getLayout() {
+        return layout;
     }
 }

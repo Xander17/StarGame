@@ -1,6 +1,7 @@
 package com.star.app.screen;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -21,8 +22,7 @@ public class GameOverScreen extends AbstractScreen {
     private final float TIME_TO_GAIN_AMOUNT = 3f;
 
     private Background background;
-    private BitmapFont font24, font64;
-    private Stage stage;
+    private BitmapFont font16, font24, font64;
     private String[] statName;
     private int[] statValues;
     private float[] statViewValues;
@@ -34,22 +34,11 @@ public class GameOverScreen extends AbstractScreen {
 
     @Override
     public void show() {
+        font16 = Assets.getInstance().getAssetManager().get("fonts/font16.ttf", BitmapFont.class);
         font24 = Assets.getInstance().getAssetManager().get("fonts/font24.ttf", BitmapFont.class);
         font64 = Assets.getInstance().getAssetManager().get("fonts/font64.ttf", BitmapFont.class);
         background = new Background(null);
-        stage = new Stage(ScreenManager.getInstance().getViewport(), batch);
         readyForMenu = false;
-        setStage();
-    }
-
-    private void setStage() {
-        Gdx.input.setInputProcessor(stage);
-        stage.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                if (readyForMenu) ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.MENU);
-            }
-        });
     }
 
     public void uploadStatistic(PlayerStatistic statistic) {
@@ -69,7 +58,8 @@ public class GameOverScreen extends AbstractScreen {
     private void update(float dt) {
         if (!readyForMenu) readyForMenu = updateViewValues(dt);
         background.update(dt);
-        stage.act();
+        if (readyForMenu && Gdx.input.isKeyPressed(Input.Keys.ANY_KEY))
+            ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.MENU);
     }
 
     private boolean updateViewValues(float dt) {
@@ -97,6 +87,8 @@ public class GameOverScreen extends AbstractScreen {
         background.render(batch);
         font64.draw(batch, "GAME OVER", 0, SCREEN_HEIGHT * 0.85f, SCREEN_WIDTH, Align.center, false);
         drawStats();
+        if (readyForMenu)
+            font16.draw(batch, "Press any key", 0, SCREEN_HEIGHT * 0.15f, SCREEN_WIDTH, Align.center, false);
         batch.end();
     }
 

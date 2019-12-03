@@ -93,6 +93,7 @@ public class GameController {
 
     public void setWin(boolean win) {
         isWin = win;
+        if (isWin) player.getShip().setVelocity(0, 0);
     }
 
     public boolean isWin() {

@@ -13,13 +13,15 @@ import static com.star.app.screen.ScreenManager.SCREEN_WIDTH;
 
 public class Bullet implements Poolable {
 
+    private final float START_DAMAGE = 1;
+
     private TextureRegion texture;
     private int textureW;
     private int textureH;
     private Vector2 position;
     private float angle;
     private Vector2 velocity;
-    private int damage;
+    private float damage;
     private boolean isActive;
 
     @Override
@@ -34,7 +36,7 @@ public class Bullet implements Poolable {
         position = new Vector2(0, 0);
         velocity = new Vector2(0, 0);
         angle = 0;
-        damage = 1;
+        damage = START_DAMAGE;
         isActive = false;
     }
 

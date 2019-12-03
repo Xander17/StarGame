@@ -31,8 +31,8 @@ public class ParticleController extends ObjectPool<Particle> {
         return new Particle();
     }
 
-    public void setup(float x, float y, float vx, float vy, float timeMax, float r1, float g1, float b1, float a1, float size1, float r2, float g2, float b2, float a2, float size2) {
-        getActive().activate(texture, x, y, vx, vy, timeMax, r1, g1, b1, a1, size1, r2, g2, b2, a2, size2);
+    public void setup(ParticleLayouts layout, float x, float y, float vx, float vy, float timeMax, float r1, float g1, float b1, float a1, float size1, float r2, float g2, float b2, float a2, float size2) {
+        getActive().activate(texture, layout, x, y, vx, vy, timeMax, r1, g1, b1, a1, size1, r2, g2, b2, a2, size2);
     }
 
     public void update(float dt) {
@@ -42,10 +42,11 @@ public class ParticleController extends ObjectPool<Particle> {
         checkFreeObjects();
     }
 
-    public void render(SpriteBatch batch) {
+    public void render(SpriteBatch batch, ParticleLayouts layout) {
         batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         for (int i = 0; i < activeList.size(); i++) {
-            activeList.get(i).render(batch, 1);
+            Particle p = activeList.get(i);
+            if (p.getLayout() == layout) p.render(batch, 1);
         }
         batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
         for (int i = 0; i < activeList.size(); i++) {
@@ -53,7 +54,8 @@ public class ParticleController extends ObjectPool<Particle> {
             if (MathUtils.random() < RANDOM_SCALE_CHANCE && !gameController.isPaused()) {
                 scaleCoefficient = RANDOM_SCALE_COEFFICIENT;
             }
-            activeList.get(i).render(batch, scaleCoefficient);
+            Particle p = activeList.get(i);
+            if (p.getLayout() == layout) p.render(batch, scaleCoefficient);
         }
         batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         batch.setColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -64,29 +66,28 @@ public class ParticleController extends ObjectPool<Particle> {
     }
 
     public class EffectBuilder {
-        public void exhaust(float x, float y, Vector2 v, float angle, float size, float r, float g, float b) {
+        public void exhaust(ParticleLayouts layout, float x, float y, Vector2 v, float angle, float size, float r, float g, float b) {
             float newSize;
             for (int i = 0; i < 5; i++) {
                 newSize = (size / textureW) * MathUtils.random(0.9f, 1.1f);
-                setup(x + MathUtils.random(-0.3f * size, 0.3f * size), y + MathUtils.random(-0.3f * size, 0.3f * size),
+                setup(layout, x + MathUtils.random(-0.3f * size, 0.3f * size), y + MathUtils.random(-0.3f * size, 0.3f * size),
                         -(v.len() * MathUtils.cosDeg(angle)) * MathUtils.random(0.3f, 0.5f) + MathUtils.random(-0.5f * size, 0.5f * size),
                         -(v.len() * MathUtils.sinDeg(angle)) * MathUtils.random(0.3f, 0.5f) + MathUtils.random(-0.5f * size, 0.5f * size),
                         0.3f, r, g, b, 1, newSize, 1f, 0f, 0f, 0.1f, newSize * 0.1f);
             }
         }
 
-        public void circleShine(Vector2 position, float radius, float angle, float r, float g, float b) {
+        public void circleShine(ParticleLayouts layout, Vector2 position, float radius, float angle, float r, float g, float b) {
             float speed = 10;
-            setup(position.x + radius * MathUtils.cosDeg(angle), position.y + radius * MathUtils.sinDeg(angle),
-                    speed * MathUtils.cosDeg(angle), speed * MathUtils.sinDeg(angle), 0.5f, r, g, b, 1, 0.5f, r, g, b, 0.7f, 0.1f);
-            setup(position.x + radius * MathUtils.cosDeg(angle + 180), position.y + radius * MathUtils.sinDeg(angle + 180),
-                    speed * MathUtils.cosDeg(angle + 180), speed * MathUtils.sinDeg(angle + 180), 0.5f, r, g, b, 1, 0.5f, r, g, b, 0.7f, 0.1f);
+            setup(layout, position.x + radius * MathUtils.cosDeg(angle), position.y + radius * MathUtils.sinDeg(angle),
+                    speed * MathUtils.cosDeg(angle), speed * MathUtils.sinDeg(angle), 1f, r, g, b, 1, 0.5f, r, g, b, 0.7f, 0.1f);
+            setup(layout, position.x + radius * MathUtils.cosDeg(angle + 180), position.y + radius * MathUtils.sinDeg(angle + 180),
+                    speed * MathUtils.cosDeg(angle + 180), speed * MathUtils.sinDeg(angle + 180), 1f, r, g, b, 1, 0.5f, r, g, b, 0.7f, 0.1f);
         }
 
-        public void circleBlast(Vector2 position, float r, float g, float b) {
-            float speed = 200;
+        public void circleBlast(ParticleLayouts layout, Vector2 position, float r, float g, float b, float speed, float time) {
             for (int i = 0; i < 360; i += 18) {
-                setup(position.x, position.y, speed * MathUtils.cosDeg(i), speed * MathUtils.sinDeg(i), 1f,
+                setup(layout, position.x, position.y, speed * MathUtils.cosDeg(i), speed * MathUtils.sinDeg(i), time,
                         r, g, b, 1f, 0.5f, 1f, 1f, 1f, 0.3f, 0.1f);
             }
         }
