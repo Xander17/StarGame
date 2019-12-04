@@ -23,9 +23,10 @@ public class WorldRenderer {
         gameController.getBulletController().render(batch);
         gameController.getAsteroidController().render(batch);
         gameController.getDropController().render(batch);
-        gameController.getParticleController().render(batch,ParticleLayouts.TOP);
-        gameController.getInfoOverlay().render(batch);
-        if (gameController.isPaused()) gameController.getGamePauseOverlay().render(batch);
+        gameController.getParticleController().render(batch, ParticleLayouts.TOP);
+        if (gameController.getGameStatus() != GameController.GameStatus.PAUSED)
+            gameController.getInfoOverlay().render(batch);
+        else gameController.getGamePauseOverlay().render(batch);
         DebugOverlay.render(batch);
         batch.end();
     }

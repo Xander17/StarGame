@@ -9,12 +9,16 @@ public class Gun {
     private float velocity;
     private int groupIndex;
     private float angleOffset;
+    private float groupDamage;
+    private float countInGroup;
 
     public Gun(float x, float y, float velocity, float angleOffset) {
         this.position = new Vector2(x, y);
         this.groupIndex = 0;
         this.angleOffset = angleOffset;
         this.velocity = velocity;
+        this.groupDamage = 0;
+        this.countInGroup = 1;
     }
 
     public int getGroupIndex() {
@@ -25,12 +29,22 @@ public class Gun {
         this.groupIndex = groupIndex;
     }
 
+    public void setGroupDamage(float groupDamage, int countInGroup) {
+        this.groupDamage = groupDamage;
+        this.countInGroup = countInGroup;
+    }
+
+    public void updateGroupDamage(float amount) {
+        this.groupDamage += amount;
+    }
+
     public void fire(GameController gameController, Ship ship) {
         float shipAngle = ship.getAngle();
         gameController.getBulletController().createNew(ship.getPosition().x + position.x * MathUtils.cosDeg(shipAngle) - position.y * MathUtils.sinDeg(shipAngle),
                 ship.getPosition().y + position.y * MathUtils.cosDeg(shipAngle) + position.x * MathUtils.sinDeg(shipAngle),
                 ship.getAngle() + angleOffset,
                 MathUtils.cosDeg(ship.getAngle() + angleOffset) * velocity + ship.getVelocity().x,
-                MathUtils.sinDeg(ship.getAngle() + angleOffset) * velocity + ship.getVelocity().y);
+                MathUtils.sinDeg(ship.getAngle() + angleOffset) * velocity + ship.getVelocity().y,
+                groupDamage / countInGroup);
     }
 }

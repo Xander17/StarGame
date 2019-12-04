@@ -13,8 +13,6 @@ import static com.star.app.screen.ScreenManager.SCREEN_WIDTH;
 
 public class Bullet implements Poolable {
 
-    private final float START_DAMAGE = 1;
-
     private TextureRegion texture;
     private int textureW;
     private int textureH;
@@ -36,14 +34,14 @@ public class Bullet implements Poolable {
         position = new Vector2(0, 0);
         velocity = new Vector2(0, 0);
         angle = 0;
-        damage = START_DAMAGE;
         isActive = false;
     }
 
-    void activate(float x, float y, float angle, float velocityX, float velocityY) {
+    void activate(float x, float y, float angle, float velocityX, float velocityY,float damage) {
         position.set(x, y);
         this.angle = angle;
         velocity.set(velocityX, velocityY);
+        this.damage=damage;
         isActive = true;
     }
 

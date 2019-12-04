@@ -15,7 +15,8 @@ public class DebugOverlay {
     static Map<String, String> debugParams;
 
     static {
-        font = Assets.getInstance().getAssetManager().get("fonts/debug12.ttf", BitmapFont.class);
+        String DEFAULT_FONT = "fonts/fragile bombers.ttf";
+        font = Assets.getInstance().getInstanceFont(DEFAULT_FONT,12);
         debugParams = new TreeMap<>();
         stringBuilder = new StringBuilder();
     }

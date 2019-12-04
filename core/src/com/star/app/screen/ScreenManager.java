@@ -1,6 +1,7 @@
 package com.star.app.screen;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -12,8 +13,8 @@ import com.star.app.utils.Assets;
 public class ScreenManager {
     public enum ScreenType {GAME, MENU, GAMEOVER}
 
-    public static final int SCREEN_WIDTH = 1280;
-    public static final int SCREEN_HEIGHT = 720;
+    public static final int SCREEN_WIDTH = Gdx.graphics.getBackBufferWidth();
+    public static final int SCREEN_HEIGHT = Gdx.graphics.getBackBufferHeight();
 
     private SpriteBatch batch;
     private Game game;

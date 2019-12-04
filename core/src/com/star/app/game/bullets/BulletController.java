@@ -10,8 +10,8 @@ public class BulletController extends ObjectPool<Bullet> {
         return new Bullet();
     }
 
-    public void createNew(float x, float y, float angle, float velocityX, float velocityY) {
-        getActive().activate(x, y, angle, velocityX, velocityY);
+    public void createNew(float x, float y, float angle, float velocityX, float velocityY, float damage) {
+        getActive().activate(x, y, angle, velocityX, velocityY, damage);
     }
 
     public void update(float dt) {

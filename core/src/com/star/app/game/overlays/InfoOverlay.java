@@ -67,18 +67,29 @@ public class InfoOverlay {
     }
 
     public void render(SpriteBatch batch) {
-        drawIconAmount(batch, durability, font22, 20, SCREEN_HEIGHT - 20, Math.round(durabilityView), 3);
-        drawIconMaxAmount(batch, ammo, font22, 130, SCREEN_HEIGHT - 20, Math.round(ammoView), gameController.getPlayer().getShip().getWeapon().getMaxBullets(), 4);
+        drawIconMaxAmount(batch, durability, font22, 20, SCREEN_HEIGHT - 20, Math.round(durabilityView), Math.round(gameController.getPlayer().getShip().getMaxDurability()), 3);
+        drawIconMaxAmount(batch, ammo, font22, 180, SCREEN_HEIGHT - 20, Math.round(ammoView), gameController.getPlayer().getShip().getWeapon().getMaxBullets(), 4);
         drawIconAmount(batch, cash, font22, 20, SCREEN_HEIGHT - 60, Math.round(cashView), 0);
-        drawCaptionAmount(batch, font22, 350, SCREEN_HEIGHT - 20, "SCORE: ", Math.round(scoreView));
+        drawCaptionAmount(batch, font22, 380, SCREEN_HEIGHT - 20, "SCORE: ", Math.round(scoreView));
         drawCaptionAmount(batch, font22, SCREEN_WIDTH - 130, SCREEN_HEIGHT - 20, "LIVES: ", gameController.getPlayer().getLives());
 
-        if (gameController.isWin())
-            drawCenterAlign(batch, font64, "YOU WIN", 0, SCREEN_WIDTH, SCREEN_HEIGHT / 2);
-        else if (gameController.isGameOver())
-            drawCenterAlign(batch, font64, "GAME OVER", 0, SCREEN_WIDTH, SCREEN_HEIGHT / 2);
-        else if (gameController.getPlayer().isDead())
-            drawCenterAlign(batch, font64, "YOU ARE DEAD", 0, SCREEN_WIDTH, SCREEN_HEIGHT / 2);
+        switch (gameController.getGameStatus()) {
+            case WIN:
+                drawCenterAlign(batch, font64, "YOU WIN", 0, SCREEN_WIDTH, SCREEN_HEIGHT / 2);
+                break;
+            case GAME_OVER:
+                drawCenterAlign(batch, font64, "GAME OVER", 0, SCREEN_WIDTH, SCREEN_HEIGHT / 2);
+                break;
+            case DEAD:
+                drawCenterAlign(batch, font64, "YOU ARE DEAD", 0, SCREEN_WIDTH, SCREEN_HEIGHT / 2);
+                break;
+            case LEVEL_COMPLETE:
+                drawCenterAlign(batch, font64, "LEVEL COMPLETE", 0, SCREEN_WIDTH, SCREEN_HEIGHT / 2);
+                break;
+            case START:
+                drawCenterAlign(batch, font64, "LEVEL " + gameController.getLevel() + " STARTS!", 0, SCREEN_WIDTH, SCREEN_HEIGHT / 2);
+                break;
+        }
     }
 
     private void drawIconAmount(SpriteBatch batch, TextureRegion texture, BitmapFont font, float x, float y, int amount, int zeros) {

@@ -30,7 +30,7 @@ public class AsteroidController extends ObjectPool<Asteroid> {
     }
 
     void createNew(float x, float y, float scale, int health) {
-        getActive().activate(getRandomTexture(),x, y, scale, health);
+        getActive().activate(getRandomTexture(), x, y, scale, health);
     }
 
     public void createNew() {
@@ -38,7 +38,8 @@ public class AsteroidController extends ObjectPool<Asteroid> {
     }
 
     public void update(float dt) {
-        if (activeList.size()==0) gameController.setWin(true);
+        if (activeList.size() == 0 && gameController.getGameStatus() == GameController.GameStatus.ACTIVE)
+            gameController.setGameStatus(GameController.GameStatus.LEVEL_COMPLETE);
         for (int i = 0; i < activeList.size(); i++) {
             Asteroid b = activeList.get(i);
             b.update(dt);
@@ -47,7 +48,7 @@ public class AsteroidController extends ObjectPool<Asteroid> {
     }
 
     public AsteroidController(GameController gameController) {
-        this.gameController=gameController;
+        this.gameController = gameController;
     }
 
     public void render(SpriteBatch batch) {
@@ -56,7 +57,7 @@ public class AsteroidController extends ObjectPool<Asteroid> {
         }
     }
 
-    private TextureRegion getRandomTexture(){
+    private TextureRegion getRandomTexture() {
         return asteroidTypes[MathUtils.random(asteroidTypes.length - 1)];
     }
 }

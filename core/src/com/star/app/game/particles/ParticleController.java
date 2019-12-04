@@ -51,7 +51,7 @@ public class ParticleController extends ObjectPool<Particle> {
         batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
         for (int i = 0; i < activeList.size(); i++) {
             float scaleCoefficient = 1;
-            if (MathUtils.random() < RANDOM_SCALE_CHANCE && !gameController.isPaused()) {
+            if (MathUtils.random() < RANDOM_SCALE_CHANCE && gameController.getGameStatus() != GameController.GameStatus.PAUSED) {
                 scaleCoefficient = RANDOM_SCALE_COEFFICIENT;
             }
             Particle p = activeList.get(i);

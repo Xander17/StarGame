@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.utils.Align;
 import com.star.app.utils.Assets;
 
@@ -27,14 +26,8 @@ public class LoadingScreen extends AbstractScreen {
         pixmap.setColor(Color.rgb888(0, 144, 255));
         pixmap.fill();
         this.texture = new Texture(pixmap);
-        loadFont();
+        this.font=Assets.getInstance().getInstanceFont(DEFAULT_FONT,64);
         pixmap.dispose();
-    }
-
-    private void loadFont() {
-        BitmapFont tmpFont = Assets.getInstance().getFont(DEFAULT_FONT, 64);
-        this.font = new BitmapFont(tmpFont.getData(),
-                new TextureRegion(new Texture(tmpFont.getRegion().getTexture().getTextureData())), true);
     }
 
     @Override

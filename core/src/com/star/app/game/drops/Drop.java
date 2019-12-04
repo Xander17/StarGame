@@ -19,8 +19,8 @@ public class Drop implements Poolable {
     private final float SCALE_MAX = 1f;
     private final float SCALE_MIN = 0.8f;
     private final float SCALE_TIME = 1f;
-//    private final float RADIUS_ONCOMING_FACTOR = 3f;
-//    private final float SPEED = 10f;
+    private final float RADIUS_ONCOMING_FACTOR = 3f;
+    private final float SPEED = 15f;
 
     private GameController gameController;
     private TextureRegion texture;
@@ -93,23 +93,24 @@ public class Drop implements Poolable {
     }
 
     public void update(float dt) {
-//        checkShipOncoming();
+        checkShipOncoming();
         timeToLife -= dt;
         if (timeToLife <= 0) deactivate();
         position.mulAdd(velocity, dt);
+        hitBox.set(this.position, textureW / 2);
         activateParticles(dt);
         setNewScale(dt);
     }
 
-//    private void checkShipOncoming() {
-//        float[] playerPosition = gameController.getPlayer().getShip().getTextureCenterRealCS();
-//        float distanceSquare = (playerPosition[0] - position.x) * (playerPosition[0] - position.x) + (playerPosition[1] - position.y) * (playerPosition[1] - position.y);
-//        float angle = MathUtils.atan2((playerPosition[1] - position.y), (playerPosition[0] - position.x));
-//        float radius = RADIUS_ONCOMING_FACTOR * hitBox.radius;
-//        if (distanceSquare <= radius * radius)
-//            velocity.set(SPEED * MathUtils.cos(angle), SPEED * MathUtils.sin(angle));
-//        else velocity.set(0, 0);
-//    }
+    private void checkShipOncoming() {
+        float[] playerPosition = gameController.getPlayer().getShip().getTextureCenterRealCS();
+        float distanceSquare = (playerPosition[0] - position.x) * (playerPosition[0] - position.x) + (playerPosition[1] - position.y) * (playerPosition[1] - position.y);
+        float angle = MathUtils.atan2((playerPosition[1] - position.y), (playerPosition[0] - position.x));
+        float radius = RADIUS_ONCOMING_FACTOR * hitBox.radius;
+        if (distanceSquare <= radius * radius)
+            velocity.set(SPEED * MathUtils.cos(angle), SPEED * MathUtils.sin(angle));
+        else velocity.set(0, 0);
+    }
 
     public void render(SpriteBatch batch) {
         batch.draw(texture, position.x - textureW / 2f, position.y - textureH / 2f, textureW / 2f, textureH / 2f, textureW, textureH, scale, scale, 0);

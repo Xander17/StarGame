@@ -17,10 +17,14 @@ import com.star.app.screen.ScreenManager;
 import java.util.List;
 
 public class GameController {
-    private final int ASTEROIDS_START_COUNT = 3;
+    public enum GameStatus {
+        START, ACTIVE, DEAD, GAME_OVER, PAUSED, LEVEL_COMPLETE, WIN;
+    }
+
     private final int ASTEROIDS_SCORE = 100;
     private final float TIME_TO_RESPAWN = 3f;
-    private final float GAMEOVER_MESSAGE_TIME = 3f;
+    private final float GAME_OVER_MESSAGE_TIME = 3f;
+    private final float TIME_TO_LEVEL_MESSAGE = 2f;
 
     private Background background;
     private Player player;
@@ -31,10 +35,10 @@ public class GameController {
     private InfoOverlay infoOverlay;
     private GamePauseOverlay gamePauseOverlay;
     private float timeToRespawn;
-    private float timeToGameover;
-    private boolean isGameOver;
-    private boolean isWin;
-    private boolean paused;
+    private float timeToGameOver;
+    private float timeToStart;
+    private GameStatus gameStatus;
+    private int level;
 
     public Background getBackground() {
         return background;
@@ -64,12 +68,16 @@ public class GameController {
         return particleController;
     }
 
-    public void setPaused(boolean paused) {
-        this.paused = paused;
+    public int getLevel() {
+        return level;
     }
 
-    public boolean isPaused() {
-        return paused;
+    public void setGameStatus(GameStatus gameStatus) {
+        this.gameStatus = gameStatus;
+    }
+
+    public GameStatus getGameStatus() {
+        return gameStatus;
     }
 
     public GamePauseOverlay getGamePauseOverlay() {
@@ -85,38 +93,23 @@ public class GameController {
         particleController = new ParticleController(this);
         infoOverlay = new InfoOverlay(this);
         gamePauseOverlay = new GamePauseOverlay(this, batch);
+        gameStatus = GameStatus.START;
         timeToRespawn = 0;
-        isWin = false;
-        paused = false;
-        for (int i = 0; i < ASTEROIDS_START_COUNT; i++) asteroidController.createNew();
-    }
-
-    public void setWin(boolean win) {
-        isWin = win;
-        if (isWin) player.getShip().setVelocity(0, 0);
-    }
-
-    public boolean isWin() {
-        return isWin;
-    }
-
-    public boolean isGameOver() {
-        return isGameOver;
+        timeToGameOver = 0;
+        timeToStart = 0;
+        level = 1;
     }
 
     public void update(float dt) {
-        if (paused) {
+        if (gameStatus == GameStatus.PAUSED) {
             gamePauseOverlay.update();
             return;
         }
-        if (!isGameOver) checkRespawn(dt);
-        else timeToGameover += dt;
-        if (timeToGameover >= GAMEOVER_MESSAGE_TIME) {
-            ScreenManager.getInstance().getGameOverScreen().uploadStatistic(player.getPlayerStatistic());
-            ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.GAMEOVER);
-        }
+        betweenLevels(dt);
+        checkRespawn(dt);
+        gameOverCountDown(dt);
         background.update(dt);
-        if (!isGameOver && !isWin) player.update(dt);
+        if (gameStatus != GameStatus.GAME_OVER && gameStatus != GameStatus.WIN) player.update(dt);
         bulletController.update(dt);
         asteroidController.update(dt);
         dropController.update(dt);
@@ -126,13 +119,46 @@ public class GameController {
         if (!player.isDead()) checkPlayerCollisions(dt);
     }
 
+    private void betweenLevels(float dt) {
+        if (gameStatus == GameStatus.LEVEL_COMPLETE) {
+            timeToStart += dt;
+            if (timeToStart >= TIME_TO_LEVEL_MESSAGE) {
+                timeToStart = 0;
+                level++;
+                gameStatus = GameStatus.START;
+            }
+        }
+        if (gameStatus == GameStatus.START) {
+            timeToStart += dt;
+            if (timeToStart >= TIME_TO_LEVEL_MESSAGE) {
+                timeToStart = 0;
+                gameStatus = GameStatus.ACTIVE;
+                startNewLevel();
+            }
+        }
+    }
+
     private void checkRespawn(float dt) {
-        if (player.isDead() && player.getLives() == 0) isGameOver = true;
-        else if (player.isDead()) timeToRespawn += dt;
+        if (gameStatus != GameStatus.DEAD) return;
+        timeToRespawn += dt;
         if (timeToRespawn >= TIME_TO_RESPAWN) {
             timeToRespawn = 0;
             player.setDeadStatus(false);
+            gameStatus = GameStatus.ACTIVE;
         }
+    }
+
+    private void gameOverCountDown(float dt) {
+        if (gameStatus != GameStatus.GAME_OVER) return;
+        timeToGameOver += dt;
+        if (timeToGameOver >= GAME_OVER_MESSAGE_TIME) {
+            ScreenManager.getInstance().getGameOverScreen().uploadStatistic(player.getPlayerStatistic());
+            ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.GAMEOVER);
+        }
+    }
+
+    private void startNewLevel() {
+        for (int i = 0; i < 1 + level / 3; i++) asteroidController.createNew();
     }
 
     public void dispose() {

@@ -8,6 +8,7 @@ import com.star.app.game.helpers.Piloting;
 import com.star.app.game.ships.Ship;
 import com.star.app.game.ships.ShipFactory;
 import com.star.app.game.ships.ShipTypes;
+import com.star.app.game.ships.updates.Updates;
 import com.star.app.utils.Options;
 
 public class Player implements Piloting {
@@ -19,6 +20,7 @@ public class Player implements Piloting {
     private Ship ship;
     private KeyControls keyControls;
     private PlayerStatistic playerStatistic;
+    private Updates updates;
     private int playerNumber;
     private int lives;
     private boolean deadStatus;
@@ -28,7 +30,9 @@ public class Player implements Piloting {
         this.deadStatus = status;
         if (status) {
             playerStatistic.add(PlayerStatistic.Stats.SCORE, -SCORE_DEAD_PENALTY);
-            ship.setVelocity(0,0);
+            ship.setVelocity(0, 0);
+            if (lives == 0) gameController.setGameStatus(GameController.GameStatus.GAME_OVER);
+            else gameController.setGameStatus(GameController.GameStatus.DEAD);
         }
     }
 
@@ -40,7 +44,8 @@ public class Player implements Piloting {
         this.gameController = gameController;
         this.playerNumber = playerNumber;
         this.keyControls = new KeyControls(Options.loadProperties(), "PLAYER" + playerNumber);
-        this.ship = ShipFactory.getShip(START_TYPE, gameController, this);
+        this.updates = new Updates(gameController);
+        this.ship = ShipFactory.getShip(START_TYPE, gameController, this, updates);
         this.deadStatus = false;
         this.lives = START_LIVES;
         this.playerStatistic = new PlayerStatistic();
@@ -49,7 +54,7 @@ public class Player implements Piloting {
     public void update(float dt) {
         if (deadStatus) return;
         if (ship.isShipDestroyed()) {
-            ship = ShipFactory.getShip(START_TYPE, gameController, this);
+            ship = ShipFactory.getShip(START_TYPE, gameController, this, updates);
             lives--;
             playerStatistic.inc(PlayerStatistic.Stats.LIVES_LOST);
             ship.resetInvulnerability();
@@ -72,7 +77,10 @@ public class Player implements Piloting {
     @Override
     public boolean control(float dt) {
         boolean isTrust = false;
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) gameController.setPaused(true);
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            gameController.getGamePauseOverlay().setLastStatus(gameController.getGameStatus());
+            gameController.setGameStatus(GameController.GameStatus.PAUSED);
+        }
         if (Gdx.input.isKeyPressed(keyControls.fire)) {
             ship.fire();
         }
@@ -103,5 +111,9 @@ public class Player implements Piloting {
 
     public PlayerStatistic getPlayerStatistic() {
         return playerStatistic;
+    }
+
+    public Updates getUpdates() {
+        return updates;
     }
 }

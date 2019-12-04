@@ -14,10 +14,13 @@ import static com.star.app.screen.ScreenManager.SCREEN_HEIGHT;
 import static com.star.app.screen.ScreenManager.SCREEN_WIDTH;
 
 public class Asteroid implements Poolable, Collisional {
-    private final int HEALTH_POINTS_MIN = 8;
-    private final int HEALTH_POINTS_MAX = 10;
-    private final float BASE_SPEED_MIN = 100f;
-    private final float BASE_SPEED_MAX = 30f;
+    private final float HEALTH_POINTS_MIN = 8;
+    private final float HEALTH_POINTS_MAX = 10;
+    private final float HEALTH_LEVEL_FACTOR = 0.1f;
+    private final float MASS_LEVEL_FACTOR = 0.02f;
+    private final float BASE_SPEED_MIN = 30f;
+    private final float BASE_SPEED_MAX = 100f;
+    private final float SPEED_LEVEL_FACTOR = 0.05f;
     private final float BASE_SCALE_MIN = 0.8f;
     private final float BASE_SCALE_MAX = 1.0f;
     private final float ROTATION_BASE_SPEED_MIN = 60f;
@@ -53,20 +56,17 @@ public class Asteroid implements Poolable, Collisional {
     }
 
     void activate(TextureRegion texture) {
-        float speed = MathUtils.random(BASE_SPEED_MIN, BASE_SPEED_MAX);
-        float angle = 0;
-        while (angle % 90 < ANGLE_NO_CREATE || angle % 90 > (90 - ANGLE_NO_CREATE)) {
-            angle = MathUtils.random(0, 360);
-        }
+        float speed = getRandomOnLevel(BASE_SPEED_MIN, BASE_SPEED_MAX, SPEED_LEVEL_FACTOR);
+        float angle = getOutboundsRandomAngle();
         float scale = MathUtils.random(BASE_SCALE_MIN, BASE_SCALE_MAX);
-        float health = MathUtils.random(HEALTH_POINTS_MIN, HEALTH_POINTS_MAX);
-        activate(texture, getRandomStartPoint(scale), scale,
+        float health = getRandomOnLevel(HEALTH_POINTS_MIN, HEALTH_POINTS_MAX, HEALTH_LEVEL_FACTOR);
+        activate(texture, getRandomStartPoint(texture, scale), scale,
                 MathUtils.randomSign() * MathUtils.cosDeg(angle) * speed,
                 MathUtils.randomSign() * MathUtils.sinDeg(angle) * speed, health);
     }
 
     void activate(TextureRegion texture, float x, float y, float scale, float health) {
-        float speed = MathUtils.random(BASE_SPEED_MIN, BASE_SPEED_MAX);
+        float speed = getRandomOnLevel(BASE_SPEED_MIN, BASE_SPEED_MAX, SPEED_LEVEL_FACTOR);
         float angle = MathUtils.random(360);
         activate(texture, x, y, scale, MathUtils.randomSign() * MathUtils.cosDeg(angle) * speed,
                 MathUtils.randomSign() * MathUtils.sinDeg(angle) * speed, health);
@@ -94,6 +94,25 @@ public class Asteroid implements Poolable, Collisional {
         isActive = false;
     }
 
+    private float getRandomOnLevel(float min, float max, float factor) {
+        int level = gameController.getLevel();
+        return MathUtils.random((1 + factor * level) * min, (1 + factor * level) * max);
+    }
+
+    private float getOutboundsRandomAngle() {
+        float angle = 0;
+        while (angle % 90 < ANGLE_NO_CREATE || angle % 90 > (90 - ANGLE_NO_CREATE)) {
+            angle = MathUtils.random(0, 360);
+        }
+        return angle;
+    }
+
+    private Vector2 getRandomStartPoint(TextureRegion texture, float scale) {
+        if (MathUtils.randomBoolean())
+            return new Vector2(MathUtils.random(0, SCREEN_WIDTH), -texture.getRegionHeight() / 2f * scale);
+        else return new Vector2(-texture.getRegionWidth() / 2f * scale, MathUtils.random(0, SCREEN_HEIGHT));
+    }
+
     public void render(SpriteBatch batch) {
         batch.draw(texture, position.x - textureW / 2f, position.y - textureH / 2f,
                 textureW / 2f, textureH / 2f, textureW, textureH, scale, scale, rotationAngle);
@@ -108,11 +127,6 @@ public class Asteroid implements Poolable, Collisional {
         else if (position.y > SCREEN_HEIGHT + textureH / 2f * scale) position.y = -textureH / 2f * scale;
 
         rotationAngle += rotationSpeed * dt;
-    }
-
-    private Vector2 getRandomStartPoint(float scale) {
-        if (MathUtils.randomBoolean()) return new Vector2(MathUtils.random(0, SCREEN_WIDTH), -textureH / 2f * scale);
-        else return new Vector2(-textureW / 2f * scale, MathUtils.random(0, SCREEN_HEIGHT));
     }
 
     @Override
@@ -140,10 +154,11 @@ public class Asteroid implements Poolable, Collisional {
     }
 
     private void getAsteroidPieces() {
-        float newScale = scale - MathUtils.random(0.9f, 1.1f) * DESTROY_DOWNSCALE;
+        float downscale = MathUtils.random(0.9f, 1.1f) * DESTROY_DOWNSCALE;
+        float newScale = scale - downscale;
         if (newScale * textureW < SIZE_BOTTOM_LIMIT) return;
         for (int i = 1; i < MathUtils.random(PARTS_COUNT_MIN, PARTS_COUNT_MAX); i++)
-            gameController.getAsteroidController().createNew(position.x, position.y, newScale, (int) (maxHealth * (1 - DESTROY_DOWNSCALE)));
+            gameController.getAsteroidController().createNew(position.x, position.y, newScale, (int) (maxHealth * (1 - downscale)));
     }
 
     private void dropItem() {
@@ -174,6 +189,6 @@ public class Asteroid implements Poolable, Collisional {
 
     @Override
     public float getMassFactor() {
-        return (float) Math.ceil(scale * 10 / 3);
+        return (float) Math.ceil(scale * 10 / 3 * (1 + MASS_LEVEL_FACTOR * gameController.getLevel()));
     }
 }

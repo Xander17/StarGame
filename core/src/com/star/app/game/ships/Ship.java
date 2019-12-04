@@ -11,6 +11,7 @@ import com.star.app.game.helpers.Collisional;
 import com.star.app.game.helpers.Piloting;
 import com.star.app.game.particles.ParticleLayouts;
 import com.star.app.game.pilots.PlayerStatistic;
+import com.star.app.game.ships.updates.Updates;
 
 import static com.star.app.screen.ScreenManager.SCREEN_HEIGHT;
 import static com.star.app.screen.ScreenManager.SCREEN_WIDTH;
@@ -27,12 +28,12 @@ public class Ship {
     private final float FRICTION_BREAK;
     private final float ROTATE_SPEED;
 
-    TextureRegion texture;
-    int textureW;
-    int textureH;
-    Vector2 massCenter;
-    Vector2[] exhaustPoints;
-    Weapon weapon;
+    private TextureRegion texture;
+    private int textureW;
+    private int textureH;
+    private Vector2 massCenter;
+    private Vector2[] exhaustPoints;
+    private Weapon weapon;
 
     private GameController gameController;
     private Piloting pilot;
@@ -63,7 +64,7 @@ public class Ship {
         this.massCenter = new Vector2(0, 0);
         this.hitBox = new Circle();
         this.maxDurability = durability;
-        this.durability = durability;
+        this.durability = maxDurability;
         this.shipDestroyed = false;
         this.FORWARD_SPEED_MAX = FORWARD_SPEED_MAX;
         this.BACKWARD_SPEED_MAX = BACKWARD_SPEED_MAX;
@@ -209,6 +210,10 @@ public class Ship {
         return angle;
     }
 
+    public void setWeapon(Weapon weapon) {
+        this.weapon = weapon;
+    }
+
     public Weapon getWeapon() {
         return weapon;
     }
@@ -309,5 +314,14 @@ public class Ship {
 
     public void setVelocity(float x, float y) {
         this.velocity.set(x, y);
+    }
+
+    public float getMaxDurability() {
+        return maxDurability;
+    }
+
+    public void updateMaxDurability(float amount) {
+        this.maxDurability += amount;
+        this.durability += amount;
     }
 }

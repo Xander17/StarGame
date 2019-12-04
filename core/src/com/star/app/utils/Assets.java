@@ -4,8 +4,10 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
@@ -47,9 +49,10 @@ public class Assets {
         switch (type) {
             case GAME:
                 assetManager.load(GAME_PACK_PATH, TextureAtlas.class);
+                createFont(DEFAULT_FONT, 14, "font");
                 createFont(DEFAULT_FONT, 22, "font");
+                createFont(DEFAULT_FONT, 32, "font");
                 createFont(DEFAULT_FONT, 64, "font");
-                createFont("fonts/fragile bombers.ttf", 12, "debug");
                 break;
             case MENU:
                 assetManager.load(MENU_PACK_PATH, TextureAtlas.class);
@@ -84,6 +87,11 @@ public class Assets {
         createFont(filename, size, "tmp");
         assetManager.finishLoading();
         return assetManager.get("fonts/tmp" + size + ".ttf");
+    }
+
+    public BitmapFont getInstanceFont(String fontPath, int size) {
+        BitmapFont tmpFont = getFont(fontPath, size);
+        return new BitmapFont(tmpFont.getData(), new TextureRegion(new Texture(tmpFont.getRegion().getTexture().getTextureData())), true);
     }
 
     public void makeLinks() {

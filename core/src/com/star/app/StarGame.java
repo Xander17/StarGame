@@ -20,6 +20,14 @@ import com.star.app.utils.Options;
  * 6. Weapon shooting styles
  * 10. Animation
  * 11. Stage controller in Menu Screen
+ * 13. Damage info overlay
+ * 14. Statistic asteroids destroyed by bullet and by hit
+ * 15. Level complete fireworks
+ * 16. Drop random start speed
+ * 17. No bullets mode
+ * 18. Scope up by level
+ * 19. Updates costs map
+ * 20. Updates effects map
  * */
 
 public class StarGame extends Game {
@@ -29,7 +37,7 @@ public class StarGame extends Game {
     public void create() {
         batch = new SpriteBatch();
         ScreenManager.getInstance().init(batch, this);
-        ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.MENU);
+        ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.GAME);
     }
 
     @Override
