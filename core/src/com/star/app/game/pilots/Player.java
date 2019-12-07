@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.star.app.game.GameController;
 import com.star.app.game.helpers.Piloting;
+import com.star.app.game.overlays.DebugOverlay;
 import com.star.app.game.ships.Ship;
 import com.star.app.game.ships.ShipFactory;
 import com.star.app.game.ships.ShipTypes;
@@ -45,7 +46,7 @@ public class Player implements Piloting {
         this.playerNumber = playerNumber;
         this.keyControls = new KeyControls(Options.loadProperties(), "PLAYER" + playerNumber);
         this.updates = new Updates(gameController);
-        this.ship = ShipFactory.getShip(START_TYPE, gameController, this, updates);
+        this.ship = ShipFactory.getShip(START_TYPE, gameController, this, updates,true);
         this.deadStatus = false;
         this.lives = START_LIVES;
         this.playerStatistic = new PlayerStatistic();
@@ -54,16 +55,18 @@ public class Player implements Piloting {
     public void update(float dt) {
         if (deadStatus) return;
         if (ship.isShipDestroyed()) {
-            ship = ShipFactory.getShip(START_TYPE, gameController, this, updates);
+            ship = ShipFactory.getShip(START_TYPE, gameController, this, updates,true);
             lives--;
             playerStatistic.inc(PlayerStatistic.Stats.LIVES_LOST);
             ship.resetInvulnerability();
         }
         ship.update(dt);
+        DebugOverlay.setParam("x", ship.getPosition().x);
+        DebugOverlay.setParam("y", ship.getPosition().y);
     }
 
     public void render(SpriteBatch batch) {
-        ship.render(batch);
+        ship.renderPlayer(batch);
     }
 
     public Ship getShip() {
@@ -81,7 +84,7 @@ public class Player implements Piloting {
             gameController.getGamePauseOverlay().show();
         }
         if (Gdx.input.isKeyPressed(keyControls.fire)) {
-            ship.fire();
+            ship.fire(true);
         }
         if (Gdx.input.isKeyPressed(keyControls.left)) {
             ship.turnLeft(dt);

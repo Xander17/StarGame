@@ -53,12 +53,12 @@ public class Weapon {
         if (currentDelay < shootDelay) currentDelay += dt;
     }
 
-    void fire() {
+    void fire(boolean playerOwner) {
         if (currentDelay < shootDelay) return;
         for (int i = 0; i < guns.size(); i++) {
             if (bullets == 0) break;
             if (guns.get(i).getGroupIndex() == currentGunGroup) {
-                guns.get(i).fire(gameController, ship);
+                guns.get(i).fire(gameController, ship,playerOwner);
                 bullets--;
                 gameController.getPlayer().getPlayerStatistic().inc(PlayerStatistic.Stats.BULLETS_SPENT);
             }

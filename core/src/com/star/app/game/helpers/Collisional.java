@@ -15,4 +15,6 @@ public interface Collisional {
     Vector2 getPosition();
 
     float getMassFactor();
+
+    float[] getVisibleCoords();
 }

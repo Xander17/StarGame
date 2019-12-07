@@ -60,7 +60,7 @@ public class Particle implements Poolable {
     public void render(SpriteBatch batch, GameController gameController, float scaleCoefficient) {
         float t = time / timeMax;
         float scale = lerp(size1, size2, t) * scaleCoefficient;
-        int[] index = gameController.getSeamlessVisibleIndex(position, textureW / 2f * scale, textureH / 2f * scale);
+        float[] index = gameController.getSeamlessVisibleIndex(position, textureW / 2f * scale, textureH / 2f * scale);
         if (index == null) return;
         batch.setColor(lerp(r1, r2, t), lerp(g1, g2, t), lerp(b1, b2, t), lerp(a1, a2, t));
         batch.draw(texture, position.x - textureW / 2f + gameController.SPACE_WIDTH * index[0],

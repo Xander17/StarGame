@@ -15,8 +15,8 @@ public class DebugOverlay {
     static Map<String, String> debugParams;
 
     static {
-        String DEFAULT_FONT = "fonts/fragile bombers.ttf";
-        font = Assets.getInstance().getInstanceFont(DEFAULT_FONT,12);
+        String DEFAULT_FONT = "fonts/ShareTechMono-Regular.ttf";
+        font = Assets.getInstance().getInstanceFont(DEFAULT_FONT,16);
         debugParams = new TreeMap<>();
         stringBuilder = new StringBuilder();
     }
@@ -33,11 +33,12 @@ public class DebugOverlay {
         int size = debugParams.size();
         if (size == 0) return;
         int count = 0;
+        float fontH=font.getLineHeight();
         for (Map.Entry<String, String> entry : debugParams.entrySet()) {
             stringBuilder.clear();
             String k = entry.getKey();
             String v = entry.getValue();
-            font.draw(batch, stringBuilder.append(k).append(": ").append(v).toString(), 5, (size - count) * 12);
+            font.draw(batch, stringBuilder.append(k).append(": ").append(v).toString(), 5, (size - count) * fontH);
             count++;
         }
     }

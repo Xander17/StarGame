@@ -38,7 +38,7 @@ public class Drop implements Poolable {
     private float scale;
     private float scaleTime;
     private float scaleSign;
-    private int[] visibleIndex;
+    private float[] visibleIndex;
 
     @Override
     public boolean isActive() {

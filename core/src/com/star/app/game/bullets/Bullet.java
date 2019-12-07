@@ -23,7 +23,8 @@ public class Bullet implements Poolable {
     private float distancePassed;
     private float maxDistance;
     private boolean isActive;
-    private int[] visibleIndex;
+    private float[] visibleIndex;
+    private boolean playerOwner;
 
     @Override
     public boolean isActive() {
@@ -40,7 +41,7 @@ public class Bullet implements Poolable {
         this.isActive = false;
     }
 
-    void activate(float x, float y, float angle, float velocityX, float velocityY, float damage, float maxDistance) {
+    void activate(float x, float y, float angle, float velocityX, float velocityY, float damage, float maxDistance, boolean playerOwner) {
         this.position.set(x, y);
         this.angle = angle;
         this.velocity.set(velocityX, velocityY);
@@ -48,6 +49,7 @@ public class Bullet implements Poolable {
         this.distancePassed = 0;
         this.maxDistance = maxDistance * (1 + MathUtils.random(-MAX_DISTANCE_TOLERANCE, MAX_DISTANCE_TOLERANCE));
         this.isActive = true;
+        this.playerOwner = playerOwner;
     }
 
     private void deactivate() {
@@ -58,7 +60,7 @@ public class Bullet implements Poolable {
         position.mulAdd(velocity, dt);
         gameController.seamlessTranslate(position);
         checkPassedDistance(dt, gameController);
-        visibleIndex=gameController.getSeamlessVisibleIndex(position, textureW / 2f, textureH / 2f);
+        visibleIndex = gameController.getSeamlessVisibleIndex(position, textureW / 2f, textureH / 2f);
     }
 
     private void checkPassedDistance(float dt, GameController gameController) {
@@ -93,5 +95,9 @@ public class Bullet implements Poolable {
 
     private float getHitPointY() {
         return position.y + MathUtils.sinDeg(angle) * textureW / 2f;
+    }
+
+    public boolean isPlayerOwner() {
+        return playerOwner;
     }
 }

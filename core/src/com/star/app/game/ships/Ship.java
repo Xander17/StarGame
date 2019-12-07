@@ -9,13 +9,12 @@ import com.star.app.game.GameController;
 import com.star.app.game.drops.Drop;
 import com.star.app.game.helpers.Collisional;
 import com.star.app.game.helpers.Piloting;
-import com.star.app.game.overlays.DebugOverlay;
 import com.star.app.game.particles.ParticleLayouts;
 import com.star.app.game.pilots.PlayerStatistic;
 
 import static com.star.app.screen.ScreenManager.*;
 
-public class Ship {
+public class Ship implements Collisional {
     private final float COLLISION_BREAK_FACTOR = 0.5f;
     private final float INVULNERABILITY_TIME = 3f;
     private final float SCAN_DISTANCE = 2000f;
@@ -81,6 +80,11 @@ public class Ship {
         this.exhaustPoints = exhaustPoints;
     }
 
+    public void setRandomState() {
+        this.position.set(gameController.getRandomStartPoint(textureW / 2f, textureH / 2f));
+        this.angle = MathUtils.random(0, 359);
+    }
+
     public void update(float dt) {
         if (!pilot.control(dt)) frictionBreak(dt);
         if (invulnerabilityTime > 0) invulnerabilityTime -= dt;
@@ -88,30 +92,48 @@ public class Ship {
         weapon.update(dt);
         updateHitBox();
         gameController.seamlessTranslate(position);
-        DebugOverlay.setParam("x", position.x);
-        DebugOverlay.setParam("y", position.y);
     }
 
-    public void render(SpriteBatch batch) {
+    public void renderPlayer(SpriteBatch batch) {
+        renderEnemy(batch, new int[]{0, 0});
+    }
+
+    public void renderEnemy(SpriteBatch batch, int[] index) {
         if (shipDestroyed) return;
+        if (index == null) return;
         if (invulnerabilityTime > 0) batch.setColor(1, 1, 1, 0.6f);
-        batch.draw(texture, position.x - massCenter.x, position.y - massCenter.y,
+        batch.draw(texture, position.x - massCenter.x + gameController.SPACE_WIDTH * index[0],
+                position.y - massCenter.y + gameController.SPACE_HEIGHT * index[1],
                 massCenter.x, massCenter.y, textureW, textureH, 1, 1, angle);
         if (invulnerabilityTime > 0) batch.setColor(1, 1, 1, 1);
     }
 
-    public void fire() {
-        weapon.fire();
+    public void fire(boolean playerOwner) {
+        weapon.fire(playerOwner);
     }
 
     public void turnLeft(float dt) {
-        angle += rotationSpeed * dt;
-        if (angle >= 360) angle %= 360;
+        turn(dt, 1, -1);
+    }
+
+    public void turnLeft(float dt, float maxAngle) {
+        turn(dt, 1, maxAngle);
     }
 
     public void turnRight(float dt) {
-        angle -= rotationSpeed * dt;
-        if (angle < 0) angle = angle % 360 + 360;
+        turn(dt, -1, -1);
+    }
+
+    public void turnRight(float dt, float maxAngle) {
+        turn(dt, -1, maxAngle);
+    }
+
+    private void turn(float dt, int direction, float maxAngle) {
+        if (maxAngle == 0) return;
+        else if (maxAngle > 0 && rotationSpeed * dt > maxAngle) angle += direction * maxAngle;
+        else angle += direction * rotationSpeed * dt;
+        if (direction > 0 && angle >= 360) angle %= 360;
+        else if (direction < 0 && angle < 0) angle += angle % 360 + 360;
     }
 
     // TODO: 06.12.2019 проблема с ускорением, сбрасывается скорость на максимум, если она была больше по естественным причинам
@@ -207,8 +229,9 @@ public class Ship {
         if (!objHitBox.overlaps(hitBox)) return false;
         Vector2 objVelocity = obj.getVelocity();
         Vector2 objPosition = obj.getPosition();
-        float collisionDistance = position.dst(objPosition);
-        float collisionAngle = (float) Math.toDegrees(Math.atan2(objPosition.y - position.y, objPosition.x - position.x));
+        float[] objVisibleCoords = obj.getVisibleCoords();
+        float collisionDistance = position.dst(objVisibleCoords[0], objVisibleCoords[1]);
+        float collisionAngle = (float) Math.toDegrees(Math.atan2(objVisibleCoords[1] - position.y, objVisibleCoords[0] - position.x));
         if (collisionAngle < 0) collisionAngle += 360;
         if (collisionDistance < hitBox.radius + objHitBox.radius) {
             float offset = (hitBox.radius + objHitBox.radius - collisionDistance) / 2;
@@ -232,7 +255,7 @@ public class Ship {
 //        Gdx.app.log("v",velocity.len()+" "+velocity.angle());
 //        Gdx.app.log("vo",objVelocity.len()+" "+objVelocity.angle());
 
-        boolean velocityAndAngle = velocity.x * (objPosition.x - position.x) + velocity.y * (objPosition.y - position.y) > 0;
+        boolean velocityAndAngle = velocity.x * (objVisibleCoords[0] - position.x) + velocity.y * (objVisibleCoords[1] - position.y) > 0;
         if (velocity.dot(objVelocity) < 0 && velocityAndAngle) {
             headOnCollision(objVelocity, obj.getMassFactor());
         } else if (velocityAndAngle) {
@@ -240,7 +263,7 @@ public class Ship {
         } else {
             oneWayCollision(objVelocity, velocity, obj.getMassFactor(), 1);
         }
-        if (invulnerabilityTime > 0) return true;
+
         takeDamage(obj.getMassFactor());
         obj.takeDamage(velocity.len() * dt);
         return true;
@@ -254,16 +277,6 @@ public class Ship {
         result[0] = a * MathUtils.cosDeg(collisionAngle) + b * MathUtils.cosDeg(collisionAngle + 90);
         result[1] = a * MathUtils.sinDeg(collisionAngle) + b * MathUtils.sinDeg(collisionAngle + 90);
         return result;
-    }
-
-    private void takeDamage(float amount) {
-        gameController.getPlayer().getPlayerStatistic().add(PlayerStatistic.Stats.DAMAGE_TAKEN, amount);
-        durability -= amount;
-        if (durability <= 0) {
-            durability = 0;
-            shipDestroyed = true;
-            pilot.setDeadStatus(true);
-        }
     }
 
     private void headOnCollision(Vector2 objVelocity, float massFactor) {
@@ -285,6 +298,42 @@ public class Ship {
         aheadVelocity.mulAdd(behindVelocity, 1 / aheadMassFactor);
         if (aheadV > max) aheadVelocity.scl(max / aheadV);
         behindVelocity.scl(-COLLISION_BREAK_FACTOR / behindMassFactor);
+    }
+
+    @Override
+    public float getMassFactor() {
+        return 1;
+    }
+
+    // TODO: 07.12.2019 перенести visible index в корабль
+    @Override
+    public float[] getVisibleCoords() {
+        float[] c = getTextureCenterRealCS();
+        return gameController.getSeamlessVisibleIndex(c[0], c[1], textureH / 2f, textureH / 2f);
+    }
+
+    @Override
+    public void destroy() {
+        durability = 0;
+        shipDestroyed = true;
+        pilot.setDeadStatus(true);
+    }
+
+    @Override
+    public Circle getHitBox() {
+        return hitBox;
+    }
+
+    @Override
+    public boolean takeDamage(float amount) {
+        if (invulnerabilityTime > 0) return false;
+        gameController.getPlayer().getPlayerStatistic().add(PlayerStatistic.Stats.DAMAGE_TAKEN, amount);
+        durability -= amount;
+        if (durability <= 0) {
+            destroy();
+            return true;
+        }
+        return false;
     }
 
     public void checkDropItem(Drop drop) {
@@ -318,5 +367,10 @@ public class Ship {
 
     public float getSCAN_DISTANCE() {
         return SCAN_DISTANCE;
+    }
+
+    public int[] getDistIndex() {
+        float[] c = getTextureCenterRealCS();
+        return gameController.getSeamlessNearestIndex(c[0], c[1]);
     }
 }

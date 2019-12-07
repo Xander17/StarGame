@@ -8,7 +8,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.star.app.game.GameController;
 import com.star.app.game.helpers.Collisional;
 import com.star.app.game.helpers.Poolable;
-import com.star.app.game.overlays.DebugOverlay;
 import com.star.app.game.pilots.PlayerStatistic;
 
 import static com.star.app.screen.ScreenManager.*;
@@ -46,7 +45,7 @@ public class Asteroid implements Poolable, Collisional {
     private int textureH;
     private boolean isActive;
     private Circle hitBox;
-    private int[] visibleIndex;
+    private float[] visibleIndex;
     private boolean trackable;
     private Vector2 arrowPosition;
     private float arrowAngle;
@@ -68,7 +67,7 @@ public class Asteroid implements Poolable, Collisional {
         float health = getRandomOnLevel(HEALTH_POINTS_MIN, HEALTH_POINTS_MAX, HEALTH_LEVEL_FACTOR);
         this.textureW = texture.getRegionWidth();
         this.textureH = texture.getRegionHeight();
-        activate(texture, getRandomStartPoint(scale), scale,
+        activate(texture, gameController.getRandomStartPoint(textureW / 2f * scale, textureH / 2f * scale), scale,
                 MathUtils.randomSign() * MathUtils.cosDeg(angle) * speed,
                 MathUtils.randomSign() * MathUtils.sinDeg(angle) * speed, health);
     }
@@ -114,18 +113,6 @@ public class Asteroid implements Poolable, Collisional {
             angle = MathUtils.random(0, 360);
         }
         return angle;
-    }
-
-    private Vector2 getRandomStartPoint(float scale) {
-        Vector2 playerPosition = gameController.getPlayer().getShip().getPosition();
-        float x = playerPosition.x;
-        float y = playerPosition.y;
-        while (Math.abs(x - position.x) <= SCREEN_HALF_WIDTH + textureW / 2f * scale ||
-                Math.abs(y - position.y) <= SCREEN_HALF_HEIGHT + textureH / 2f * scale) {
-            x = MathUtils.random(0, gameController.SPACE_WIDTH);
-            y = MathUtils.random(0, gameController.SPACE_HEIGHT);
-        }
-        return new Vector2(x, y);
     }
 
     void update(float dt) {
@@ -212,7 +199,8 @@ public class Asteroid implements Poolable, Collisional {
 
     @Override
     public Circle getHitBox() {
-        hitBox.set(position.x, position.y, textureW / 2f * scale * 0.9f);
+        if(visibleIndex==null) hitBox.set(position.x , position.y , textureW / 2f * scale * 0.9f);
+        else hitBox.set(position.x + gameController.SPACE_WIDTH * visibleIndex[0], position.y + gameController.SPACE_HEIGHT * visibleIndex[1], textureW / 2f * scale * 0.9f);
         return hitBox;
     }
 
@@ -233,4 +221,10 @@ public class Asteroid implements Poolable, Collisional {
         return (float) Math.ceil(scale * 10 / 3 * (1 + MASS_LEVEL_FACTOR * gameController.getLevel()));
     }
 
+    public float[] getVisibleCoords() {
+        return new float[]{
+                position.x + gameController.SPACE_WIDTH * visibleIndex[0],
+                position.y + gameController.SPACE_HEIGHT * visibleIndex[1]
+        };
+    }
 }
