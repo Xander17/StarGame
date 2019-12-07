@@ -78,8 +78,7 @@ public class Player implements Piloting {
     public boolean control(float dt) {
         boolean isTrust = false;
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            gameController.getGamePauseOverlay().setLastStatus(gameController.getGameStatus());
-            gameController.setGameStatus(GameController.GameStatus.PAUSED);
+            gameController.getGamePauseOverlay().show();
         }
         if (Gdx.input.isKeyPressed(keyControls.fire)) {
             ship.fire();

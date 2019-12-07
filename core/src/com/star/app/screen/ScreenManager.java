@@ -6,15 +6,18 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.star.app.utils.Assets;
 
 public class ScreenManager {
-    public enum ScreenType {GAME, MENU, GAMEOVER}
+    public enum ScreenType {GAME, MENU, GAME_OVER}
 
     public static final int SCREEN_WIDTH = Gdx.graphics.getBackBufferWidth();
+    public static final int SCREEN_HALF_WIDTH = SCREEN_WIDTH / 2;
     public static final int SCREEN_HEIGHT = Gdx.graphics.getBackBufferHeight();
+    public static final int SCREEN_HALF_HEIGHT = SCREEN_HEIGHT / 2;
 
     private SpriteBatch batch;
     private Game game;
@@ -53,8 +56,16 @@ public class ScreenManager {
         viewport.apply();
     }
 
-    public void resetCamera() {
-        camera.position.set(SCREEN_WIDTH / 2f, SCREEN_HEIGHT / 2f, 0);
+    public void resetCameraToCenter() {
+        resetCamera(SCREEN_HALF_WIDTH, SCREEN_HALF_HEIGHT);
+    }
+
+    public void resetCamera(Vector2 position) {
+        resetCamera(position.x, position.y);
+    }
+
+    public void resetCamera(float x, float y) {
+        camera.position.set(x, y, 0);
         camera.update();
         batch.setProjectionMatrix(camera.combined);
     }
@@ -64,7 +75,7 @@ public class ScreenManager {
         Screen screen = game.getScreen();
         Assets.getInstance().clear();
         if (screen != null) screen.dispose();
-        resetCamera();
+        resetCameraToCenter();
         game.setScreen(loadingScreen);
         switch (type) {
             case MENU:
@@ -75,9 +86,9 @@ public class ScreenManager {
                 targetScreen = gameScreen;
                 Assets.getInstance().loadAssets(ScreenType.GAME);
                 break;
-            case GAMEOVER:
+            case GAME_OVER:
                 targetScreen = gameOverScreen;
-                Assets.getInstance().loadAssets(ScreenType.GAMEOVER);
+                Assets.getInstance().loadAssets(ScreenType.GAME_OVER);
                 break;
         }
     }
@@ -92,5 +103,9 @@ public class ScreenManager {
 
     public GameOverScreen getGameOverScreen() {
         return gameOverScreen;
+    }
+
+    public Camera getCamera() {
+        return camera;
     }
 }

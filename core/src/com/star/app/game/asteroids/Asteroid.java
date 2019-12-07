@@ -8,10 +8,10 @@ import com.badlogic.gdx.math.Vector2;
 import com.star.app.game.GameController;
 import com.star.app.game.helpers.Collisional;
 import com.star.app.game.helpers.Poolable;
+import com.star.app.game.overlays.DebugOverlay;
 import com.star.app.game.pilots.PlayerStatistic;
 
-import static com.star.app.screen.ScreenManager.SCREEN_HEIGHT;
-import static com.star.app.screen.ScreenManager.SCREEN_WIDTH;
+import static com.star.app.screen.ScreenManager.*;
 
 public class Asteroid implements Poolable, Collisional {
     private final float HEALTH_POINTS_MIN = 8;
@@ -46,11 +46,17 @@ public class Asteroid implements Poolable, Collisional {
     private int textureH;
     private boolean isActive;
     private Circle hitBox;
+    private int[] visibleIndex;
+    private boolean trackable;
+    private Vector2 arrowPosition;
+    private float arrowAngle;
+    private float arrowScale;
 
     Asteroid(GameController gameController) {
         this.gameController = gameController;
         position = new Vector2(0, 0);
         velocity = new Vector2(0, 0);
+        arrowPosition = new Vector2(0, 0);
         hitBox = new Circle();
         isActive = false;
     }
@@ -60,7 +66,9 @@ public class Asteroid implements Poolable, Collisional {
         float angle = getOutboundsRandomAngle();
         float scale = MathUtils.random(BASE_SCALE_MIN, BASE_SCALE_MAX);
         float health = getRandomOnLevel(HEALTH_POINTS_MIN, HEALTH_POINTS_MAX, HEALTH_LEVEL_FACTOR);
-        activate(texture, getRandomStartPoint(texture, scale), scale,
+        this.textureW = texture.getRegionWidth();
+        this.textureH = texture.getRegionHeight();
+        activate(texture, getRandomStartPoint(scale), scale,
                 MathUtils.randomSign() * MathUtils.cosDeg(angle) * speed,
                 MathUtils.randomSign() * MathUtils.sinDeg(angle) * speed, health);
     }
@@ -88,6 +96,7 @@ public class Asteroid implements Poolable, Collisional {
         this.maxHealth = health;
         this.health = health;
         this.isActive = true;
+        this.trackable = false;
     }
 
     private void deactivate() {
@@ -107,26 +116,58 @@ public class Asteroid implements Poolable, Collisional {
         return angle;
     }
 
-    private Vector2 getRandomStartPoint(TextureRegion texture, float scale) {
-        if (MathUtils.randomBoolean())
-            return new Vector2(MathUtils.random(0, SCREEN_WIDTH), -texture.getRegionHeight() / 2f * scale);
-        else return new Vector2(-texture.getRegionWidth() / 2f * scale, MathUtils.random(0, SCREEN_HEIGHT));
-    }
-
-    public void render(SpriteBatch batch) {
-        batch.draw(texture, position.x - textureW / 2f, position.y - textureH / 2f,
-                textureW / 2f, textureH / 2f, textureW, textureH, scale, scale, rotationAngle);
+    private Vector2 getRandomStartPoint(float scale) {
+        Vector2 playerPosition = gameController.getPlayer().getShip().getPosition();
+        float x = playerPosition.x;
+        float y = playerPosition.y;
+        while (Math.abs(x - position.x) <= SCREEN_HALF_WIDTH + textureW / 2f * scale ||
+                Math.abs(y - position.y) <= SCREEN_HALF_HEIGHT + textureH / 2f * scale) {
+            x = MathUtils.random(0, gameController.SPACE_WIDTH);
+            y = MathUtils.random(0, gameController.SPACE_HEIGHT);
+        }
+        return new Vector2(x, y);
     }
 
     void update(float dt) {
         position.x += velocity.x * dt;
+        gameController.seamlessTranslate(position);
         position.y += velocity.y * dt;
-        if (position.x < -textureW / 2f * scale) position.x = SCREEN_WIDTH + textureW / 2f * scale;
-        else if (position.x > SCREEN_WIDTH + textureW / 2f * scale) position.x = -textureW / 2f * scale;
-        if (position.y < -textureH / 2f * scale) position.y = SCREEN_HEIGHT + textureH / 2f * scale;
-        else if (position.y > SCREEN_HEIGHT + textureH / 2f * scale) position.y = -textureH / 2f * scale;
-
         rotationAngle += rotationSpeed * dt;
+        visibleIndex = gameController.getSeamlessVisibleIndex(position, textureW / 2f * scale, textureH / 2f * scale);
+        checkTrack();
+    }
+
+    private void checkTrack() {
+        Vector2 playerPosition = gameController.getPlayer().getShip().getPosition();
+        int[] index = gameController.getSeamlessNearestIndex(position);
+        float calcX = position.x + gameController.SPACE_WIDTH * index[0];
+        float calcY = position.y + gameController.SPACE_HEIGHT * index[1];
+        float dst = Vector2.dst(playerPosition.x, playerPosition.y, calcX, calcY);
+        trackable = (dst <= gameController.getPlayer().getShip().getSCAN_DISTANCE()) &&
+                (Math.abs(playerPosition.x - calcX) > SCREEN_HALF_WIDTH + textureW / 2f) ||
+                (Math.abs(playerPosition.y - calcY) > SCREEN_HALF_HEIGHT + textureH / 2f);
+        if (trackable) {
+            arrowAngle = (float) Math.toDegrees(Math.atan2(calcY - playerPosition.y, calcX - playerPosition.x));
+            if (arrowAngle < 0) arrowAngle += 360;
+            arrowPosition.set(playerPosition.x + 400 * MathUtils.cosDeg(arrowAngle), playerPosition.y + 400 * MathUtils.sinDeg(arrowAngle));
+            arrowScale = 1.2f - 0.9f * dst / gameController.getPlayer().getShip().getSCAN_DISTANCE();
+        }
+    }
+
+    public void render(SpriteBatch batch) {
+        if (visibleIndex == null) return;
+        batch.draw(texture, position.x - textureW / 2f + gameController.SPACE_WIDTH * visibleIndex[0],
+                position.y - textureH / 2f + gameController.SPACE_HEIGHT * visibleIndex[1],
+                textureW / 2f, textureH / 2f, textureW, textureH, scale, scale, rotationAngle);
+    }
+
+    public void renderArrow(SpriteBatch batch, TextureRegion texture) {
+        if (trackable) {
+            int textureW = texture.getRegionWidth();
+            int textureH = texture.getRegionHeight();
+            batch.draw(texture, arrowPosition.x - textureW, arrowPosition.y - textureH / 2f,
+                    textureW, textureH / 2f, textureW, textureH, arrowScale, arrowScale, arrowAngle);
+        }
     }
 
     @Override
@@ -191,4 +232,5 @@ public class Asteroid implements Poolable, Collisional {
     public float getMassFactor() {
         return (float) Math.ceil(scale * 10 / 3 * (1 + MASS_LEVEL_FACTOR * gameController.getLevel()));
     }
+
 }

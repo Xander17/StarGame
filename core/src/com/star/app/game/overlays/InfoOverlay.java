@@ -10,8 +10,7 @@ import com.star.app.game.GameController;
 import com.star.app.game.pilots.PlayerStatistic;
 import com.star.app.utils.Assets;
 
-import static com.star.app.screen.ScreenManager.SCREEN_HEIGHT;
-import static com.star.app.screen.ScreenManager.SCREEN_WIDTH;
+import static com.star.app.screen.ScreenManager.*;
 
 public class InfoOverlay {
     private float MAX_SEC_TO_GAIN_AMOUNT = 1f;
@@ -73,23 +72,8 @@ public class InfoOverlay {
         drawCaptionAmount(batch, font22, 380, SCREEN_HEIGHT - 20, "SCORE: ", Math.round(scoreView));
         drawCaptionAmount(batch, font22, SCREEN_WIDTH - 130, SCREEN_HEIGHT - 20, "LIVES: ", gameController.getPlayer().getLives());
 
-        switch (gameController.getGameStatus()) {
-            case WIN:
-                drawCenterAlign(batch, font64, "YOU WIN", 0, SCREEN_WIDTH, SCREEN_HEIGHT / 2);
-                break;
-            case GAME_OVER:
-                drawCenterAlign(batch, font64, "GAME OVER", 0, SCREEN_WIDTH, SCREEN_HEIGHT / 2);
-                break;
-            case DEAD:
-                drawCenterAlign(batch, font64, "YOU ARE DEAD", 0, SCREEN_WIDTH, SCREEN_HEIGHT / 2);
-                break;
-            case LEVEL_COMPLETE:
-                drawCenterAlign(batch, font64, "LEVEL COMPLETE", 0, SCREEN_WIDTH, SCREEN_HEIGHT / 2);
-                break;
-            case START:
-                drawCenterAlign(batch, font64, "LEVEL " + gameController.getLevel() + " STARTS!", 0, SCREEN_WIDTH, SCREEN_HEIGHT / 2);
-                break;
-        }
+        String statusMsg = gameController.getGameStatus().getMsg(String.valueOf(gameController.getLevel()));
+        if (statusMsg != null) drawCenterAlign(batch, font64, statusMsg, SCREEN_HALF_WIDTH,0, SCREEN_HALF_HEIGHT);
     }
 
     private void drawIconAmount(SpriteBatch batch, TextureRegion texture, BitmapFont font, float x, float y, int amount, int zeros) {

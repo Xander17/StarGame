@@ -19,8 +19,7 @@ import com.star.app.utils.Options;
 
 import java.util.Properties;
 
-import static com.star.app.screen.ScreenManager.SCREEN_HEIGHT;
-import static com.star.app.screen.ScreenManager.SCREEN_WIDTH;
+import static com.star.app.screen.ScreenManager.*;
 
 public class MenuScreen extends AbstractScreen {
     private BitmapFont font64;
@@ -62,9 +61,9 @@ public class MenuScreen extends AbstractScreen {
         TextButton btnNewGame = new TextButton("New Game", textButtonStyle);
         TextButton btnSettings = new TextButton("Settings", textButtonStyle);
         TextButton btnExitGame = new TextButton("Exit Game", textButtonStyle);
-        btnNewGame.setPosition((SCREEN_WIDTH - textureW) / 2f, SCREEN_HEIGHT * 0.5f - 0.5f * textureH);
-        btnSettings.setPosition((SCREEN_WIDTH - textureW) / 2f, SCREEN_HEIGHT * 0.5f - 2.0f * textureH);
-        btnExitGame.setPosition((SCREEN_WIDTH - textureW) / 2f, SCREEN_HEIGHT * 0.5f - 5f * textureH);
+        btnNewGame.setPosition((SCREEN_WIDTH - textureW) / 2f, SCREEN_HALF_HEIGHT - 0.5f * textureH);
+        btnSettings.setPosition((SCREEN_WIDTH - textureW) / 2f, SCREEN_HALF_HEIGHT - 2.0f * textureH);
+        btnExitGame.setPosition((SCREEN_WIDTH - textureW) / 2f, SCREEN_HALF_HEIGHT - 5f * textureH);
 
         btnNewGame.addListener(new ChangeListener() {
             @Override
@@ -97,7 +96,7 @@ public class MenuScreen extends AbstractScreen {
         float textureW = textButtonStyle.up.getMinWidth();
         float textureH = textButtonStyle.up.getMinHeight();
         TextButton btnBack = new TextButton("Back", textButtonStyle);
-        btnBack.setPosition((SCREEN_WIDTH - textureW) / 2f, SCREEN_HEIGHT * 0.5f - 5f * textureH);
+        btnBack.setPosition((SCREEN_WIDTH - textureW) / 2f, SCREEN_HALF_HEIGHT - 5f * textureH);
 
         Label.LabelStyle labelStyle = new Label.LabelStyle(font24, Color.WHITE);
         Label[] labels = new Label[]{
@@ -135,8 +134,8 @@ public class MenuScreen extends AbstractScreen {
         };
 
         for (int i = 0; i < settingsButtons.getButtons().size; i++) {
-            labels[i].setPosition(SCREEN_WIDTH * 0.3f, SCREEN_HEIGHT / 2f + (1.8f - 1.2f * i) * textureH);
-            settingsButtons.getButtons().get(i).setPosition(SCREEN_WIDTH * 0.7f, SCREEN_HEIGHT / 2f + (2.0f - 1.2f * i) * textureH, Align.right);
+            labels[i].setPosition(SCREEN_WIDTH * 0.3f, SCREEN_HALF_HEIGHT + (1.8f - 1.2f * i) * textureH);
+            settingsButtons.getButtons().get(i).setPosition(SCREEN_WIDTH * 0.7f, SCREEN_HALF_HEIGHT + (2.0f - 1.2f * i) * textureH, Align.right);
             settingsButtons.getButtons().get(i).addListener(listener);
             settingsStage.addActor(settingsButtons.getButtons().get(i));
             settingsStage.addActor(labels[i]);

@@ -60,7 +60,7 @@ public class Assets {
                 createFont(DEFAULT_FONT, 18, "font");
                 createFont(DEFAULT_FONT, 64, "font");
                 break;
-            case GAMEOVER:
+            case GAME_OVER:
                 assetManager.load(GAMEOVER_PACK_PATH, TextureAtlas.class);
                 createFont(DEFAULT_FONT, 24, "font");
                 createFont(DEFAULT_FONT, 16, "font");
@@ -102,7 +102,7 @@ public class Assets {
             case MENU:
                 textureAtlas = assetManager.get(MENU_PACK_PATH, TextureAtlas.class);
                 break;
-            case GAMEOVER:
+            case GAME_OVER:
                 textureAtlas = assetManager.get(GAMEOVER_PACK_PATH, TextureAtlas.class);
                 break;
         }

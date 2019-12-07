@@ -19,7 +19,7 @@ public class ShipFactory {
         }
         switch (type) {
             case FIGHTER:
-                ship = new Ship(gameController, pilot, 100f + durabilityUpdate, 240f, 120f, 120f, 60f, 120f, 90f);
+                ship = new Ship(gameController, pilot, 100f + durabilityUpdate, 240f, 120f, 120f, 80f, 60f, 90f);
                 ship.setTextureSettings(Assets.getInstance().getTextureAtlas().findRegion("fighter"),
                         23, 32, new Vector2[]{
                                 new Vector2(-20, 28),
@@ -30,7 +30,7 @@ public class ShipFactory {
                 ship.getWeapon().setGunSeparate(new Gun(1, 27, 600f, 0));
                 break;
             case HORSESHOE:
-                ship = new Ship(gameController, pilot, 100f, 300f, 100f, 200f, 50f, 100f, 90f);
+                ship = new Ship(gameController, pilot, 100f, 300f, 100f, 200f, 80f, 70f, 90f);
                 ship.setTextureSettings(Assets.getInstance().getTextureAtlas().findRegion("horseshoe"),
                         23, 32, new Vector2[]{
                                 new Vector2(-20, 18),
@@ -43,7 +43,7 @@ public class ShipFactory {
                 });
                 break;
             case TRIDENT:
-                ship = new Ship(gameController, pilot, 100f, 240f, 120f, 150f, 80f, 140f, 180f);
+                ship = new Ship(gameController, pilot, 100f, 240f, 120f, 150f, 100f, 80f, 180f);
                 ship.setTextureSettings(Assets.getInstance().getTextureAtlas().findRegion("trident"),
                         40, 32, new Vector2[]{
                                 new Vector2(-37, 16),

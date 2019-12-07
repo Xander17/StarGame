@@ -9,11 +9,10 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Align;
 import com.star.app.utils.Assets;
 
-import static com.star.app.screen.ScreenManager.SCREEN_HEIGHT;
-import static com.star.app.screen.ScreenManager.SCREEN_WIDTH;
+import static com.star.app.screen.ScreenManager.*;
 
 public class LoadingScreen extends AbstractScreen {
-    private final float LOADING_LINE_WIDTH = SCREEN_WIDTH / 2;
+    private final float LOADING_LINE_WIDTH = SCREEN_HALF_WIDTH;
     private final float LOADING_LINE_HEIGHT = 10;
     private final String DEFAULT_FONT = "fonts/good times rg.ttf";
 
@@ -43,8 +42,8 @@ public class LoadingScreen extends AbstractScreen {
         }
         float offset = font.getXHeight();
         batch.begin();
-        font.draw(batch, "LOADING...", 0, SCREEN_HEIGHT / 2f + offset, SCREEN_WIDTH, Align.center, false);
-        batch.draw(texture, (SCREEN_WIDTH - LOADING_LINE_WIDTH) / 2, SCREEN_HEIGHT / 2f - offset,
+        font.draw(batch, "LOADING...", 0, SCREEN_HALF_HEIGHT + offset, SCREEN_WIDTH, Align.center, false);
+        batch.draw(texture, (SCREEN_WIDTH - LOADING_LINE_WIDTH) / 2, SCREEN_HALF_HEIGHT  - offset,
                 Assets.getInstance().getAssetManager().getProgress() * LOADING_LINE_WIDTH, LOADING_LINE_HEIGHT);
         batch.end();
     }

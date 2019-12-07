@@ -20,8 +20,7 @@ import com.star.app.screen.ScreenManager;
 import com.star.app.utils.Assets;
 import com.star.app.utils.GameButtonStyle;
 
-import static com.star.app.screen.ScreenManager.SCREEN_HEIGHT;
-import static com.star.app.screen.ScreenManager.SCREEN_WIDTH;
+import static com.star.app.screen.ScreenManager.*;
 
 public class GamePauseOverlay {
     private GameController gameController;
@@ -49,18 +48,18 @@ public class GamePauseOverlay {
 
     private void setStage() {
         Gdx.input.setInputProcessor(stage);
-        setButtons();
-        setUpdates();
+        setControlStage();
+        setUpdatesStage();
     }
 
-    private void setButtons() {
+    private void setControlStage() {
         TextButton.TextButtonStyle textButtonStyle = GameButtonStyle.getInstance().getDefaultStyle(fontButton);
         float textureW = textButtonStyle.up.getMinWidth();
         float textureH = textButtonStyle.up.getMinHeight();
         TextButton btnResume = new TextButton("Resume", textButtonStyle);
         TextButton btnMenu = new TextButton("Main Menu", textButtonStyle);
-        btnResume.setPosition(SCREEN_WIDTH * 3 / 4f - textureW / 2f, SCREEN_HEIGHT / 2f + textureH);
-        btnMenu.setPosition(SCREEN_WIDTH * 3 / 4f - textureW / 2f, SCREEN_HEIGHT / 2f - textureH);
+        btnResume.setPosition(SCREEN_WIDTH * 3 / 4f - textureW / 2f, SCREEN_HALF_HEIGHT + textureH);
+        btnMenu.setPosition(SCREEN_WIDTH * 3 / 4f - textureW / 2f, SCREEN_HALF_HEIGHT - textureH);
 
         btnResume.addListener(new ChangeListener() {
             @Override
@@ -79,44 +78,39 @@ public class GamePauseOverlay {
         stage.addActor(btnMenu);
     }
 
-    private void setUpdates() {
+    private void setUpdatesStage() {
         Label.LabelStyle labelStyle = new Label.LabelStyle(fontMainLabel, Color.WHITE);
         Label mainLabel = new Label("Updates", labelStyle);
         mainLabel.setPosition(SCREEN_WIDTH / 4f, SCREEN_HEIGHT * 0.9f, Align.center);
-        ChangeListener listener = getUpdateListener();
+        ChangeListener listener = new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                ((UpdateGroup) actor.getParent()).execute(gameController.getPlayer().getUpdates());
+            }
+        };
         Updates updates = gameController.getPlayer().getUpdates();
         UpdateGroup updateGroup1 = new UpdateGroup(Updates.Types.MAX_HEALTH, fontButton, "healupdate", listener, updates.getCost(Updates.Types.MAX_HEALTH));
         updateGroup1.setPosition(SCREEN_WIDTH * 0.1f, SCREEN_HEIGHT * 0.7f);
         UpdateGroup updateGroup2 = new UpdateGroup(Updates.Types.DAMAGE, fontButton, "damageupdate", listener, updates.getCost(Updates.Types.DAMAGE));
         updateGroup2.setPosition(SCREEN_WIDTH * 0.2f, SCREEN_HEIGHT * 0.7f);
+        UpdateGroup updateGroup3 = new UpdateGroup(Updates.Types.ROTATION_SPEED, fontButton, "rotationspeed", listener, updates.getCost(Updates.Types.ROTATION_SPEED));
+        updateGroup3.setPosition(SCREEN_WIDTH * 0.1f, SCREEN_HEIGHT * 0.5f);
+        UpdateGroup updateGroup4 = new UpdateGroup(Updates.Types.FORWARD_SPEED, fontButton, "forwardspeed", listener, updates.getCost(Updates.Types.FORWARD_SPEED));
+        updateGroup4.setPosition(SCREEN_WIDTH * 0.2f, SCREEN_HEIGHT * 0.5f);
         stage.addActor(mainLabel);
         stage.addActor(updateGroup1);
         stage.addActor(updateGroup2);
+        stage.addActor(updateGroup3);
+        stage.addActor(updateGroup4);
     }
 
-    private ChangeListener getUpdateListener() {
-        return new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                Updates updates = gameController.getPlayer().getUpdates();
-                TextButton button = (TextButton) actor;
-                UpdateGroup group = (UpdateGroup) actor.getParent();
-                Updates.Types type = group.getType();
-                int newLevel = updates.improve(type);
-                updates.update(type);
-                if (newLevel >= 0) {
-                    if (!updates.isUpdatable(type)) {
-                        button.setDisabled(true);
-                        button.setText("MAX");
-                        group.getLabel().setText("-");
-                        group.getLabel().setAlignment(Align.center);
-                    } else {
-                        button.setText(String.valueOf(newLevel));
-                        group.getLabel().setText("$ " + updates.getCost(type));
-                    }
-                }
-            }
-        };
+    public void show() {
+        lastStatus = gameController.getGameStatus();
+        gameController.setGameStatus(GameController.GameStatus.PAUSED);
+        updateAvailablePrices();
+    }
+
+    private void updateAvailablePrices() {
     }
 
     public void update() {
@@ -133,9 +127,5 @@ public class GamePauseOverlay {
         batch.end();
         stage.draw();
         batch.begin();
-    }
-
-    public void setLastStatus(GameController.GameStatus lastStatus) {
-        this.lastStatus = lastStatus;
     }
 }

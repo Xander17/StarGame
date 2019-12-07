@@ -9,24 +9,21 @@ import com.star.app.game.GameController;
 import com.star.app.game.drops.Drop;
 import com.star.app.game.helpers.Collisional;
 import com.star.app.game.helpers.Piloting;
+import com.star.app.game.overlays.DebugOverlay;
 import com.star.app.game.particles.ParticleLayouts;
 import com.star.app.game.pilots.PlayerStatistic;
-import com.star.app.game.ships.updates.Updates;
 
-import static com.star.app.screen.ScreenManager.SCREEN_HEIGHT;
-import static com.star.app.screen.ScreenManager.SCREEN_WIDTH;
+import static com.star.app.screen.ScreenManager.*;
 
 public class Ship {
-    private final float BOUND_BREAK_FACTOR = 0.5f;
     private final float COLLISION_BREAK_FACTOR = 0.5f;
     private final float INVULNERABILITY_TIME = 3f;
+    private final float SCAN_DISTANCE = 2000f;
 
-    private final float FORWARD_SPEED_MAX;
     private final float BACKWARD_SPEED_MAX;
     private final float FORWARD_POWER;
     private final float BACKWARD_POWER;
     private final float FRICTION_BREAK;
-    private final float ROTATE_SPEED;
 
     private TextureRegion texture;
     private int textureW;
@@ -42,6 +39,8 @@ public class Ship {
     private Circle hitBox;
     private float maxDurability;
     private float durability;
+    private float forwardMaxSpeed;
+    private float rotationSpeed;
     private boolean shipDestroyed;
     private float angle;
     private float invulnerabilityTime;
@@ -54,11 +53,11 @@ public class Ship {
         return shipDestroyed;
     }
 
-    Ship(GameController gameController, Piloting pilot, float durability, float FORWARD_SPEED_MAX, float BACKWARD_SPEED_MAX,
-         float FORWARD_POWER, float BACKWARD_POWER, float FRICTION_BREAK, float ROTATE_SPEED) {
+    Ship(GameController gameController, Piloting pilot, float durability, float forwardMaxSpeed, float BACKWARD_SPEED_MAX,
+         float FORWARD_POWER, float BACKWARD_POWER, float FRICTION_BREAK, float rotationSpeed) {
         this.gameController = gameController;
         this.pilot = pilot;
-        this.position = new Vector2(SCREEN_WIDTH / 2f, SCREEN_HEIGHT / 2f);
+        this.position = new Vector2(SCREEN_HALF_WIDTH, SCREEN_HALF_HEIGHT);
         this.velocity = new Vector2(0, 0);
         this.angle = 0.0f;
         this.massCenter = new Vector2(0, 0);
@@ -66,12 +65,12 @@ public class Ship {
         this.maxDurability = durability;
         this.durability = maxDurability;
         this.shipDestroyed = false;
-        this.FORWARD_SPEED_MAX = FORWARD_SPEED_MAX;
+        this.forwardMaxSpeed = forwardMaxSpeed;
         this.BACKWARD_SPEED_MAX = BACKWARD_SPEED_MAX;
         this.FORWARD_POWER = FORWARD_POWER;
         this.BACKWARD_POWER = BACKWARD_POWER;
         this.FRICTION_BREAK = FRICTION_BREAK;
-        this.ROTATE_SPEED = ROTATE_SPEED;
+        this.rotationSpeed = rotationSpeed;
     }
 
     public void setTextureSettings(TextureRegion texture, float massCenterX, float massCenterY, Vector2[] exhaustPoints) {
@@ -82,6 +81,17 @@ public class Ship {
         this.exhaustPoints = exhaustPoints;
     }
 
+    public void update(float dt) {
+        if (!pilot.control(dt)) frictionBreak(dt);
+        if (invulnerabilityTime > 0) invulnerabilityTime -= dt;
+        position.mulAdd(velocity, dt);
+        weapon.update(dt);
+        updateHitBox();
+        gameController.seamlessTranslate(position);
+        DebugOverlay.setParam("x", position.x);
+        DebugOverlay.setParam("y", position.y);
+    }
+
     public void render(SpriteBatch batch) {
         if (shipDestroyed) return;
         if (invulnerabilityTime > 0) batch.setColor(1, 1, 1, 0.6f);
@@ -90,36 +100,28 @@ public class Ship {
         if (invulnerabilityTime > 0) batch.setColor(1, 1, 1, 1);
     }
 
-    public void update(float dt) {
-        if (!pilot.control(dt)) frictionBreak(dt);
-        if (invulnerabilityTime > 0) invulnerabilityTime -= dt;
-        position.mulAdd(velocity, dt);
-        weapon.update(dt);
-        updateHitBox();
-        checkBounds();
-    }
-
     public void fire() {
         weapon.fire();
     }
 
     public void turnLeft(float dt) {
-        angle += ROTATE_SPEED * dt;
+        angle += rotationSpeed * dt;
         if (angle >= 360) angle %= 360;
     }
 
     public void turnRight(float dt) {
-        angle -= ROTATE_SPEED * dt;
+        angle -= rotationSpeed * dt;
         if (angle < 0) angle = angle % 360 + 360;
     }
 
+    // TODO: 06.12.2019 проблема с ускорением, сбрасывается скорость на максимум, если она была больше по естественным причинам
     public void moveForward(float dt) {
         float directionX = MathUtils.cosDeg(angle);
         float directionY = MathUtils.sinDeg(angle);
         boolean isForwardMoving = velocity.dot(directionX, directionY) >= 0;
         velocity.add(directionX * FORWARD_POWER * dt, directionY * FORWARD_POWER * dt);
-        if (velocity.len() > FORWARD_SPEED_MAX && isForwardMoving)
-            velocity.nor().scl(FORWARD_SPEED_MAX);
+        if (velocity.len() > forwardMaxSpeed && isForwardMoving)
+            velocity.nor().scl(forwardMaxSpeed);
         makeAccelerationParticles();
     }
 
@@ -167,25 +169,6 @@ public class Ship {
         float offsetX = getOffsetX(center);
         float offsetY = getOffsetY(center);
         return new float[]{position.x + offsetX, position.y + offsetY};
-    }
-
-    private void checkBounds() {
-        float offsetX = getOffsetX(getTextureCenterShipCS());
-        float offsetY = getOffsetY(getTextureCenterShipCS());
-        if (position.x + offsetX < textureW / 2f) {
-            position.x = textureW / 2f - offsetX;
-            velocity.x *= -BOUND_BREAK_FACTOR;
-        } else if (position.x + offsetX > SCREEN_WIDTH - textureW / 2f) {
-            position.x = SCREEN_WIDTH - textureW / 2f - offsetX;
-            velocity.x *= -BOUND_BREAK_FACTOR;
-        }
-        if (position.y + offsetY < textureH / 2f) {
-            position.y = textureH / 2f - offsetY;
-            velocity.y *= -BOUND_BREAK_FACTOR;
-        } else if (position.y + offsetY > SCREEN_HEIGHT - textureH / 2f) {
-            position.y = SCREEN_HEIGHT - textureH / 2f - offsetY;
-            velocity.y *= -BOUND_BREAK_FACTOR;
-        }
     }
 
     private void updateHitBox() {
@@ -320,8 +303,20 @@ public class Ship {
         return maxDurability;
     }
 
-    public void updateMaxDurability(float amount) {
+    public void updateMaxDurability(int amount) {
         this.maxDurability += amount;
         this.durability += amount;
+    }
+
+    public void updateRotationSpeed(int amount) {
+        this.rotationSpeed += amount;
+    }
+
+    public void updateForwardMaxSpeed(int amount) {
+        this.forwardMaxSpeed += amount;
+    }
+
+    public float getSCAN_DISTANCE() {
+        return SCAN_DISTANCE;
     }
 }

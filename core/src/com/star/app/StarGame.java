@@ -3,9 +3,7 @@ package com.star.app;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.star.app.screen.GameScreen;
 import com.star.app.screen.ScreenManager;
-import com.star.app.utils.Options;
 
 /* TODO
  * 1. Stars split texture
@@ -25,9 +23,11 @@ import com.star.app.utils.Options;
  * 15. Level complete fireworks
  * 16. Drop random start speed
  * 17. No bullets mode
- * 18. Scope up by level
+ * 18. Score up by level
  * 19. Updates costs map
  * 20. Updates effects map
+ * 21. Update menu via group
+ * 22. Background and stars seamless parallax
  * */
 
 public class StarGame extends Game {

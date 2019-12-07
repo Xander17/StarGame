@@ -2,6 +2,7 @@ package com.star.app.game.pilots;
 
 import java.util.Comparator;
 import java.util.TreeMap;
+import java.util.function.ToIntFunction;
 
 public class PlayerStatistic {
     public enum Stats {
@@ -28,7 +29,12 @@ public class PlayerStatistic {
     private TreeMap<Stats, Float> map;
 
     public PlayerStatistic() {
-        map = new TreeMap<>(Comparator.comparingInt(Enum::ordinal));
+        map = new TreeMap<>(new Comparator<Stats>() {
+            @Override
+            public int compare(Stats o1, Stats o2) {
+                return o1.ordinal() - o2.ordinal();
+            }
+        });
         for (Stats stat : Stats.values()) {
             map.put(stat, 0f);
         }

@@ -13,7 +13,7 @@ import com.star.app.utils.GameButtonStyle;
 public class UpdateGroup extends Group {
     private Updates.Types type;
     private Label label;
-    TextButton button;
+    private TextButton button;
 
     public UpdateGroup(Updates.Types type, BitmapFont font, String texturePrefix, ChangeListener listener, int initialCost) {
         this.type = type;
@@ -29,11 +29,19 @@ public class UpdateGroup extends Group {
         this.addActor(label);
     }
 
-    public Updates.Types getType() {
-        return type;
-    }
-
-    public Label getLabel() {
-        return label;
+    public void execute(Updates updates) {
+        int newLevel = updates.improve(type);
+        updates.applyUpdate(type);
+        if (newLevel >= 0) {
+            if (!updates.isUpdatable(type)) {
+                button.setDisabled(true);
+                button.setText("MAX");
+                label.setText("-");
+                label.setAlignment(Align.center);
+            } else {
+                button.setText(String.valueOf(newLevel));
+                label.setText("$ " + updates.getCost(type));
+            }
+        }
     }
 }

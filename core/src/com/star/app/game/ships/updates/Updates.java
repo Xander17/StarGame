@@ -1,14 +1,15 @@
 package com.star.app.game.ships.updates;
 
 import com.star.app.game.GameController;
-import com.star.app.game.ships.Ship;
 
 import java.util.HashMap;
 
 public class Updates {
     public enum Types {
         MAX_HEALTH(20),
-        DAMAGE(20);
+        DAMAGE(20),
+        ROTATION_SPEED(20),
+        FORWARD_SPEED(20);
 
         private int maxLevel;
 
@@ -44,7 +45,7 @@ public class Updates {
         return (map.get(type) + 1) * 10;
     }
 
-    public void update(Types type) {
+    public void applyUpdate(Types type) {
         int effect = getLevelEffect(type);
         switch (type) {
             case MAX_HEALTH:
@@ -53,6 +54,11 @@ public class Updates {
             case DAMAGE:
                 gameController.getPlayer().getShip().getWeapon().updateGroupDamage(effect);
                 break;
+            case ROTATION_SPEED:
+                gameController.getPlayer().getShip().updateRotationSpeed(effect);
+                break;
+            case FORWARD_SPEED:
+                gameController.getPlayer().getShip().updateForwardMaxSpeed(effect);
         }
     }
 
@@ -69,6 +75,10 @@ public class Updates {
                 return levels * 10;
             case DAMAGE:
                 return levels;
+            case ROTATION_SPEED:
+                return levels * 7;
+            case FORWARD_SPEED:
+                return levels * 6;
         }
         return 0;
     }

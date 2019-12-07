@@ -4,14 +4,14 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.star.app.game.GameController;
 import com.star.app.game.helpers.Collisional;
 import com.star.app.game.helpers.Poolable;
+import com.star.app.game.particles.ParticleLayouts;
 import com.star.app.utils.Assets;
 
-import static com.star.app.screen.ScreenManager.SCREEN_HEIGHT;
-import static com.star.app.screen.ScreenManager.SCREEN_WIDTH;
-
 public class Bullet implements Poolable {
+    private final float MAX_DISTANCE_TOLERANCE = 0.05f;
 
     private TextureRegion texture;
     private int textureW;
@@ -20,7 +20,10 @@ public class Bullet implements Poolable {
     private float angle;
     private Vector2 velocity;
     private float damage;
+    private float distancePassed;
+    private float maxDistance;
     private boolean isActive;
+    private int[] visibleIndex;
 
     @Override
     public boolean isActive() {
@@ -31,33 +34,45 @@ public class Bullet implements Poolable {
         this.texture = Assets.getInstance().getTextureAtlas().findRegion("bullet");
         this.textureW = texture.getRegionWidth();
         this.textureH = texture.getRegionHeight();
-        position = new Vector2(0, 0);
-        velocity = new Vector2(0, 0);
-        angle = 0;
-        isActive = false;
+        this.position = new Vector2(0, 0);
+        this.velocity = new Vector2(0, 0);
+        this.angle = 0;
+        this.isActive = false;
     }
 
-    void activate(float x, float y, float angle, float velocityX, float velocityY,float damage) {
-        position.set(x, y);
+    void activate(float x, float y, float angle, float velocityX, float velocityY, float damage, float maxDistance) {
+        this.position.set(x, y);
         this.angle = angle;
-        velocity.set(velocityX, velocityY);
-        this.damage=damage;
-        isActive = true;
+        this.velocity.set(velocityX, velocityY);
+        this.damage = damage;
+        this.distancePassed = 0;
+        this.maxDistance = maxDistance * (1 + MathUtils.random(-MAX_DISTANCE_TOLERANCE, MAX_DISTANCE_TOLERANCE));
+        this.isActive = true;
     }
 
     private void deactivate() {
         isActive = false;
     }
 
-    public void update(float dt) {
+    public void update(float dt, GameController gameController) {
         position.mulAdd(velocity, dt);
-        if (position.x < -textureW / 2f || position.x > SCREEN_WIDTH + textureW / 2f ||
-                position.y < -textureH / 2f || position.y > SCREEN_HEIGHT + textureH / 2f)
-            deactivate();
+        gameController.seamlessTranslate(position);
+        checkPassedDistance(dt, gameController);
+        visibleIndex=gameController.getSeamlessVisibleIndex(position, textureW / 2f, textureH / 2f);
     }
 
-    void render(SpriteBatch batch) {
-        batch.draw(texture, position.x - textureW / 2f, position.y - textureH / 2f,
+    private void checkPassedDistance(float dt, GameController gameController) {
+        distancePassed += velocity.len() * dt;
+        if (distancePassed >= maxDistance) {
+            gameController.getParticleController().getEffectBuilder().bulletDeactivate(ParticleLayouts.SHIP, getHitPointX(), getHitPointY(), velocity, textureW, textureH);
+            deactivate();
+        }
+    }
+
+    void render(SpriteBatch batch, GameController gameController) {
+        if (visibleIndex == null) return;
+        batch.draw(texture, position.x - textureW / 2f + gameController.SPACE_WIDTH * visibleIndex[0],
+                position.y - textureH / 2f + gameController.SPACE_HEIGHT * visibleIndex[1],
                 textureW / 2f, textureH / 2f, textureW, textureH,
                 1, 1, angle);
     }

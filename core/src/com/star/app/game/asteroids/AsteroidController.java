@@ -19,6 +19,7 @@ public class AsteroidController extends ObjectPool<Asteroid> {
     };
 
     private GameController gameController;
+    private TextureRegion arrowTexture;
 
     @Override
     public Asteroid getNew() {
@@ -49,11 +50,18 @@ public class AsteroidController extends ObjectPool<Asteroid> {
 
     public AsteroidController(GameController gameController) {
         this.gameController = gameController;
+        this.arrowTexture = Assets.getInstance().getTextureAtlas().findRegion("arrow");
     }
 
     public void render(SpriteBatch batch) {
         for (int i = 0; i < activeList.size(); i++) {
             activeList.get(i).render(batch);
+        }
+    }
+
+    public void renderArrows(SpriteBatch batch) {
+        for (int i = 0; i < activeList.size(); i++) {
+            activeList.get(i).renderArrow(batch, arrowTexture);
         }
     }
 

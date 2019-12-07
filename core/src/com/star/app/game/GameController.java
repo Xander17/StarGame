@@ -1,12 +1,16 @@
 package com.star.app.game;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import com.star.app.game.asteroids.Asteroid;
 import com.star.app.game.asteroids.AsteroidController;
 import com.star.app.game.bullets.Bullet;
 import com.star.app.game.bullets.BulletController;
 import com.star.app.game.drops.Drop;
 import com.star.app.game.drops.DropController;
+import com.star.app.game.overlays.DebugOverlay;
 import com.star.app.game.overlays.InfoOverlay;
 import com.star.app.game.overlays.GamePauseOverlay;
 import com.star.app.game.particles.ParticleController;
@@ -16,11 +20,31 @@ import com.star.app.screen.ScreenManager;
 
 import java.util.List;
 
+import static com.star.app.screen.ScreenManager.*;
+
 public class GameController {
     public enum GameStatus {
-        START, ACTIVE, DEAD, GAME_OVER, PAUSED, LEVEL_COMPLETE, WIN;
+        START("LEVEL %s STARTS!"), ACTIVE(null), DEAD("YOU ARE DEAD"), GAME_OVER("GAME OVER"), PAUSED(null), LEVEL_COMPLETE("LEVEL COMPLETE"), WIN("YOU WIN");
+
+        private String msg;
+
+        GameStatus(String msg) {
+            this.msg = msg;
+        }
+
+        public String getMsg(Object... strings) {
+            if (msg == null) return null;
+            return String.format(msg, strings);
+        }
+
+        public String getMsg() {
+            if (msg == null) return null;
+            return msg;
+        }
     }
 
+    public final int SPACE_WIDTH = 4000;
+    public final int SPACE_HEIGHT = 4000;
     private final int ASTEROIDS_SCORE = 100;
     private final float TIME_TO_RESPAWN = 3f;
     private final float GAME_OVER_MESSAGE_TIME = 3f;
@@ -39,6 +63,7 @@ public class GameController {
     private float timeToStart;
     private GameStatus gameStatus;
     private int level;
+    private int[] seamlessMatrix;
 
     public Background getBackground() {
         return background;
@@ -87,7 +112,7 @@ public class GameController {
     public GameController(SpriteBatch batch) {
         background = new Background(this);
         player = new Player(this, 1);
-        bulletController = new BulletController();
+        bulletController = new BulletController(this);
         asteroidController = new AsteroidController(this);
         dropController = new DropController(this);
         particleController = new ParticleController(this);
@@ -98,6 +123,7 @@ public class GameController {
         timeToGameOver = 0;
         timeToStart = 0;
         level = 1;
+        seamlessMatrix = new int[]{0, 0};
     }
 
     public void update(float dt) {
@@ -109,7 +135,10 @@ public class GameController {
         checkRespawn(dt);
         gameOverCountDown(dt);
         background.update(dt);
-        if (gameStatus != GameStatus.GAME_OVER && gameStatus != GameStatus.WIN) player.update(dt);
+        if (gameStatus != GameStatus.GAME_OVER && gameStatus != GameStatus.WIN) {
+            player.update(dt);
+            updateSeamlessMatrix();
+        }
         bulletController.update(dt);
         asteroidController.update(dt);
         dropController.update(dt);
@@ -117,6 +146,47 @@ public class GameController {
         infoOverlay.update(dt);
         checkBulletsCollisions();
         if (!player.isDead()) checkPlayerCollisions(dt);
+    }
+
+    private void updateSeamlessMatrix() {
+        Vector2 playerPosition = getPlayer().getShip().getPosition();
+        if (playerPosition.x + SCREEN_HALF_WIDTH > SPACE_WIDTH) seamlessMatrix[0] = 1;
+        else if (playerPosition.x - SCREEN_HALF_WIDTH < 0) seamlessMatrix[0] = -1;
+        else seamlessMatrix[0] = 0;
+        if (playerPosition.y + SCREEN_HALF_HEIGHT > SPACE_HEIGHT) seamlessMatrix[1] = 1;
+        else if (playerPosition.y - SCREEN_HALF_HEIGHT < 0) seamlessMatrix[1] = -1;
+        else seamlessMatrix[1] = 0;
+    }
+
+    public int[] getSeamlessVisibleIndex(Vector2 position, float halfWidth, float halfHeight) {
+        Vector2 playerPosition = getPlayer().getShip().getPosition();
+        int signX = (int) Math.signum(seamlessMatrix[0]);
+        int signY = (int) Math.signum(seamlessMatrix[1]);
+        for (int j = 0; j <= Math.abs(signY); j++) {
+            for (int i = 0; i <= Math.abs(signX); i++) {
+                if (Math.abs(playerPosition.x - (position.x + SPACE_WIDTH * i * signX)) <= SCREEN_HALF_WIDTH + halfWidth &&
+                        Math.abs(playerPosition.y - (position.y + SPACE_HEIGHT * j * signY)) <= SCREEN_HALF_HEIGHT + halfHeight)
+                    return new int[]{i * signX, j * signY};
+            }
+        }
+        return null;
+    }
+
+    public int[] getSeamlessNearestIndex(Vector2 position) {
+        Vector2 playerPosition = getPlayer().getShip().getPosition();
+        float minDst = SPACE_WIDTH + SPACE_HEIGHT;
+        int[] index = {0, 0};
+        for (int j = -1; j <= 1; j++) {
+            for (int i = -1; i <= 1; i++) {
+                float dst = Vector2.dst(playerPosition.x, playerPosition.y, position.x + SPACE_WIDTH * i, position.y + SPACE_HEIGHT * j);
+                if (dst < minDst) {
+                    minDst = dst;
+                    index[0] = i;
+                    index[1] = j;
+                }
+            }
+        }
+        return index;
     }
 
     private void betweenLevels(float dt) {
@@ -153,16 +223,19 @@ public class GameController {
         timeToGameOver += dt;
         if (timeToGameOver >= GAME_OVER_MESSAGE_TIME) {
             ScreenManager.getInstance().getGameOverScreen().uploadStatistic(player.getPlayerStatistic());
-            ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.GAMEOVER);
+            ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.GAME_OVER);
         }
     }
 
     private void startNewLevel() {
-        for (int i = 0; i < 1 + level / 3; i++) asteroidController.createNew();
+        for (int i = 0; i < 10 + level / 3; i++) asteroidController.createNew();
     }
 
-    public void dispose() {
-        background.dispose();
+    public void seamlessTranslate(Vector2 position) {
+        if (position.x < 0) position.x += SPACE_WIDTH;
+        else if (position.x > SPACE_WIDTH) position.x -= SPACE_WIDTH;
+        if (position.y < 0) position.y += SPACE_HEIGHT;
+        else if (position.y > SPACE_HEIGHT) position.y -= SPACE_HEIGHT;
     }
 
     private void checkBulletsCollisions() {
@@ -190,5 +263,9 @@ public class GameController {
         for (int i = 0; i < drops.size(); i++) {
             getPlayer().getShip().checkDropItem(drops.get(i));
         }
+    }
+
+    public void dispose() {
+        background.dispose();
     }
 }

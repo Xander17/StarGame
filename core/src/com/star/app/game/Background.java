@@ -9,8 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.star.app.game.overlays.DebugOverlay;
 import com.star.app.utils.Assets;
 
-import static com.star.app.screen.ScreenManager.SCREEN_HEIGHT;
-import static com.star.app.screen.ScreenManager.SCREEN_WIDTH;
+import static com.star.app.screen.ScreenManager.*;
 
 public class Background {
     private final int STARS_COUNT = 600;
@@ -25,7 +24,7 @@ public class Background {
 
     public Background(GameController gameController) {
         this.gameController = gameController;
-        this.texture = new Texture("images/background.jpg");
+        this.texture = new Texture("images/background_sl.jpg");
         parallaxSettings();
         this.stars = new Star[STARS_COUNT];
         for (int i = 0; i < stars.length; i++) {
@@ -38,14 +37,8 @@ public class Background {
         srcY = PARALLAX_PERCENT * texture.getHeight();
         srcW = (int) (texture.getWidth() - 2 * srcX);
         srcH = (int) (texture.getHeight() - 2 * srcY);
-        parallaxStepX = PARALLAX_PERCENT * texture.getWidth() / (SCREEN_WIDTH / 2f);
-        parallaxStepY = PARALLAX_PERCENT * texture.getHeight() / (SCREEN_HEIGHT / 2f);
-    }
-
-    public void render(SpriteBatch batch) {
-        batch.draw(texture, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT,
-                (int) srcX, (int) srcY, srcW, srcH, false, false);
-        for (int i = 0; i < stars.length; i++) stars[i].render(batch);
+        parallaxStepX = PARALLAX_PERCENT * texture.getWidth() / SCREEN_HALF_WIDTH;
+        parallaxStepY = PARALLAX_PERCENT * texture.getHeight() / SCREEN_HALF_HEIGHT;
     }
 
     public void update(float dt) {
@@ -56,7 +49,15 @@ public class Background {
             srcX = parallaxStepX * Gdx.input.getX();
             srcY = parallaxStepY * Gdx.input.getY();
         }
+        srcX=0;
+        srcY=0;
         for (int i = 0; i < stars.length; i++) stars[i].update(dt);
+    }
+
+    public void render(SpriteBatch batch) {
+        batch.draw(texture, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT,
+                (int) srcX, (int) srcY, srcW, srcH, false, false);
+        for (int i = 0; i < stars.length; i++) stars[i].render(batch);
     }
 
     public void dispose() {
