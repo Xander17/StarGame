@@ -101,7 +101,7 @@ public class MenuScreen extends AbstractScreen {
         Label.LabelStyle labelStyle = new Label.LabelStyle(font24, Color.WHITE);
         Label[] labels = new Label[]{
                 new Label("FORWARD", labelStyle),
-                new Label("BACKWARD", labelStyle),
+                new Label("REVERSE", labelStyle),
                 new Label("RIGHT", labelStyle),
                 new Label("LEFT", labelStyle),
                 new Label("FIRE", labelStyle)
@@ -111,7 +111,7 @@ public class MenuScreen extends AbstractScreen {
         textureH = textButtonStyle.up.getMinHeight();
         settingsButtons = new ButtonGroup<>(
                 getPropertyKeyButton("PLAYER1_FORWARD", textButtonStyle),
-                getPropertyKeyButton("PLAYER1_BACKWARD", textButtonStyle),
+                getPropertyKeyButton("PLAYER1_REVERSE", textButtonStyle),
                 getPropertyKeyButton("PLAYER1_RIGHT", textButtonStyle),
                 getPropertyKeyButton("PLAYER1_LEFT", textButtonStyle),
                 getPropertyKeyButton("PLAYER1_FIRE", textButtonStyle)

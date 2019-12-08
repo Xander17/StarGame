@@ -10,7 +10,7 @@ import java.util.Properties;
 public class Options {
     public enum DefaultOptions {
         PLAYER1_FORWARD(Input.Keys.UP),
-        PLAYER1_BACKWARD(Input.Keys.DOWN),
+        PLAYER1_REVERSE(Input.Keys.DOWN),
         PLAYER1_LEFT(Input.Keys.LEFT),
         PLAYER1_RIGHT(Input.Keys.RIGHT),
         PLAYER1_FIRE(Input.Keys.Z);

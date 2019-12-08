@@ -9,6 +9,7 @@ import com.star.app.game.GameController;
 import com.star.app.game.drops.Drop;
 import com.star.app.game.helpers.Collisional;
 import com.star.app.game.helpers.Piloting;
+import com.star.app.game.helpers.RenderPosition;
 import com.star.app.game.particles.ParticleLayouts;
 import com.star.app.game.pilots.PlayerStatistic;
 
@@ -19,9 +20,8 @@ public class Ship implements Collisional {
     private final float INVULNERABILITY_TIME = 3f;
     private final float SCAN_DISTANCE = 2000f;
 
-    private final float BACKWARD_SPEED_MAX;
     private final float FORWARD_POWER;
-    private final float BACKWARD_POWER;
+    private final float REVERSE_POWER;
     private final float FRICTION_BREAK;
 
     private TextureRegion texture;
@@ -34,6 +34,7 @@ public class Ship implements Collisional {
     private GameController gameController;
     private Piloting pilot;
     private Vector2 position;
+    private RenderPosition renderPosition;
     private Vector2 velocity;
     private Circle hitBox;
     private float maxDurability;
@@ -52,11 +53,12 @@ public class Ship implements Collisional {
         return shipDestroyed;
     }
 
-    Ship(GameController gameController, Piloting pilot, float durability, float forwardMaxSpeed, float BACKWARD_SPEED_MAX,
-         float FORWARD_POWER, float BACKWARD_POWER, float FRICTION_BREAK, float rotationSpeed) {
+    Ship(GameController gameController, Piloting pilot, float durability, float forwardMaxSpeed,
+         float FORWARD_POWER, float REVERSE_POWER, float FRICTION_BREAK, float rotationSpeed) {
         this.gameController = gameController;
         this.pilot = pilot;
         this.position = new Vector2(SCREEN_HALF_WIDTH, SCREEN_HALF_HEIGHT);
+        this.renderPosition = new RenderPosition(position);
         this.velocity = new Vector2(0, 0);
         this.angle = 0.0f;
         this.massCenter = new Vector2(0, 0);
@@ -65,9 +67,8 @@ public class Ship implements Collisional {
         this.durability = maxDurability;
         this.shipDestroyed = false;
         this.forwardMaxSpeed = forwardMaxSpeed;
-        this.BACKWARD_SPEED_MAX = BACKWARD_SPEED_MAX;
         this.FORWARD_POWER = FORWARD_POWER;
-        this.BACKWARD_POWER = BACKWARD_POWER;
+        this.REVERSE_POWER = REVERSE_POWER;
         this.FRICTION_BREAK = FRICTION_BREAK;
         this.rotationSpeed = rotationSpeed;
     }
@@ -85,31 +86,44 @@ public class Ship implements Collisional {
         this.angle = MathUtils.random(0, 359);
     }
 
-    public void update(float dt) {
-        if (!pilot.control(dt)) frictionBreak(dt);
+    public void updatePlayer(float dt) {
+        update(dt);
         if (invulnerabilityTime > 0) invulnerabilityTime -= dt;
+    }
+
+    public void updateEnemy(float dt) {
+        update(dt);
+        float[] centerCoords = getTextureCenterShipCS();
+        renderPosition.recalculate(gameController, textureW / 2f, textureH / 2f, centerCoords[0], centerCoords[1]);
+    }
+
+    private void update(float dt) {
+        if (!pilot.control(dt)) frictionBreak(dt);
         position.mulAdd(velocity, dt);
         weapon.update(dt);
-        updateHitBox();
         gameController.seamlessTranslate(position);
+        updateHitBox();
     }
 
     public void renderPlayer(SpriteBatch batch) {
-        renderEnemy(batch, new int[]{0, 0});
-    }
-
-    public void renderEnemy(SpriteBatch batch, int[] index) {
         if (shipDestroyed) return;
-        if (index == null) return;
         if (invulnerabilityTime > 0) batch.setColor(1, 1, 1, 0.6f);
-        batch.draw(texture, position.x - massCenter.x + gameController.SPACE_WIDTH * index[0],
-                position.y - massCenter.y + gameController.SPACE_HEIGHT * index[1],
-                massCenter.x, massCenter.y, textureW, textureH, 1, 1, angle);
+        render(batch, position);
         if (invulnerabilityTime > 0) batch.setColor(1, 1, 1, 1);
     }
 
-    public void fire(boolean playerOwner) {
-        weapon.fire(playerOwner);
+    public void renderEnemy(SpriteBatch batch) {
+        if (!renderPosition.isRenderable()) return;
+        render(batch, renderPosition);
+    }
+
+    private void render(SpriteBatch batch, Vector2 position) {
+        batch.draw(texture, position.x - massCenter.x, position.y - massCenter.y,
+                massCenter.x, massCenter.y, textureW, textureH, 1, 1, angle);
+    }
+
+    public void fire(boolean playerIsOwner) {
+        weapon.fire(playerIsOwner);
     }
 
     public void turnLeft(float dt) {
@@ -136,7 +150,6 @@ public class Ship implements Collisional {
         else if (direction < 0 && angle < 0) angle += angle % 360 + 360;
     }
 
-    // TODO: 06.12.2019 проблема с ускорением, сбрасывается скорость на максимум, если она была больше по естественным причинам
     public void moveForward(float dt) {
         float directionX = MathUtils.cosDeg(angle);
         float directionY = MathUtils.sinDeg(angle);
@@ -147,13 +160,8 @@ public class Ship implements Collisional {
         makeAccelerationParticles();
     }
 
-    public void moveBack(float dt) {
-        float directionX = MathUtils.cosDeg(angle);
-        float directionY = MathUtils.sinDeg(angle);
-        boolean isForwardMoving = velocity.dot(directionX, directionY) >= 0;
-        velocity.sub(directionX * BACKWARD_POWER * dt, directionY * BACKWARD_POWER * dt);
-        if (velocity.len() > BACKWARD_SPEED_MAX && !isForwardMoving)
-            velocity.nor().scl(BACKWARD_SPEED_MAX);
+    public void reverse(float dt) {
+        velocity.sub(REVERSE_POWER * MathUtils.cosDeg(angle) * dt, REVERSE_POWER * MathUtils.sinDeg(angle) * dt);
     }
 
     private void frictionBreak(float dt) {
@@ -229,9 +237,9 @@ public class Ship implements Collisional {
         if (!objHitBox.overlaps(hitBox)) return false;
         Vector2 objVelocity = obj.getVelocity();
         Vector2 objPosition = obj.getPosition();
-        float[] objVisibleCoords = obj.getVisibleCoords();
-        float collisionDistance = position.dst(objVisibleCoords[0], objVisibleCoords[1]);
-        float collisionAngle = (float) Math.toDegrees(Math.atan2(objVisibleCoords[1] - position.y, objVisibleCoords[0] - position.x));
+        float[] objVisibleCoords = renderPosition.recalculate(gameController, obj.getPosition(), textureW / 2f, textureH / 2f);
+        float collisionDistance = renderPosition.dst(objVisibleCoords[0], objVisibleCoords[1]);
+        float collisionAngle = (float) Math.toDegrees(Math.atan2(objVisibleCoords[1] - renderPosition.y, objVisibleCoords[0] - renderPosition.x));
         if (collisionAngle < 0) collisionAngle += 360;
         if (collisionDistance < hitBox.radius + objHitBox.radius) {
             float offset = (hitBox.radius + objHitBox.radius - collisionDistance) / 2;
@@ -239,6 +247,8 @@ public class Ship implements Collisional {
             float offsetY = offset * MathUtils.sinDeg(collisionAngle) + 1;
             position.sub(offsetX, offsetY);
             objPosition.add(offsetX, offsetY);
+            float[] centerCoords = getTextureCenterShipCS();
+            renderPosition.recalculate(gameController, textureW / 2f, textureH / 2f, centerCoords[0], centerCoords[1]);
         }
 
 //        float v1 = velocity.len();
@@ -305,13 +315,6 @@ public class Ship implements Collisional {
         return 1;
     }
 
-    // TODO: 07.12.2019 перенести visible index в корабль
-    @Override
-    public float[] getVisibleCoords() {
-        float[] c = getTextureCenterRealCS();
-        return gameController.getSeamlessVisibleIndex(c[0], c[1], textureH / 2f, textureH / 2f);
-    }
-
     @Override
     public void destroy() {
         durability = 0;
@@ -369,8 +372,7 @@ public class Ship implements Collisional {
         return SCAN_DISTANCE;
     }
 
-    public int[] getDistIndex() {
-        float[] c = getTextureCenterRealCS();
-        return gameController.getSeamlessNearestIndex(c[0], c[1]);
+    public RenderPosition getRenderPosition() {
+        return renderPosition;
     }
 }

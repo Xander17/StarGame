@@ -13,7 +13,6 @@ public class Enemy implements Piloting, Poolable {
     private boolean isActive;
     private GameController gameController;
     private Vector2 targetVector;
-    private int[] visibleIndex;
 
     public Enemy(GameController gameController) {
         this.gameController = gameController;
@@ -37,13 +36,10 @@ public class Enemy implements Piloting, Poolable {
         final float SHOT_DIST = 1000f;
 
         boolean isTrust = false;
-        visibleIndex = ship.getDistIndex();
         Vector2 playerPos = gameController.getPlayer().getShip().getPosition();
-        Vector2 shipPos = ship.getPosition();
-        float shipX = shipPos.x + gameController.SPACE_WIDTH * visibleIndex[0];
-        float shipY = shipPos.y + gameController.SPACE_HEIGHT * visibleIndex[1];
-        targetVector.set(playerPos.x - shipX,
-                playerPos.y - shipY);
+        Vector2 shipPos = ship.getRenderPosition();
+        targetVector.set(playerPos.x - shipPos.x,
+                playerPos.y - shipPos.y);
         float ang = (targetVector.angle() - ship.getAngle()) % 360;
         if (ang < 0) ang += 360;
         if (ang <= 180) {
@@ -51,7 +47,7 @@ public class Enemy implements Piloting, Poolable {
         } else {
             ship.turnRight(dt, ang);
         }
-        float dst = Vector2.dst(playerPos.x, playerPos.y, shipX, shipY);
+        float dst = playerPos.dst(shipPos);
         if ((ang < 90 || ang > 270) && dst >= SAFE_DIST) {
             ship.moveForward(dt);
             isTrust = true;
@@ -63,11 +59,11 @@ public class Enemy implements Piloting, Poolable {
     }
 
     public void update(float dt) {
-        ship.update(dt);
+        ship.updateEnemy(dt);
     }
 
     public void render(SpriteBatch batch) {
-        ship.renderEnemy(batch, visibleIndex);
+        ship.renderEnemy(batch);
     }
 
     @Override

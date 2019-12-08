@@ -1,6 +1,5 @@
 package com.star.app.game;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
@@ -10,7 +9,6 @@ import com.star.app.game.bullets.Bullet;
 import com.star.app.game.bullets.BulletController;
 import com.star.app.game.drops.Drop;
 import com.star.app.game.drops.DropController;
-import com.star.app.game.overlays.DebugOverlay;
 import com.star.app.game.overlays.InfoOverlay;
 import com.star.app.game.overlays.GamePauseOverlay;
 import com.star.app.game.particles.ParticleController;
@@ -147,7 +145,6 @@ public class GameController {
         background.update(dt);
         if (gameStatus != GameStatus.GAME_OVER && gameStatus != GameStatus.WIN) {
             player.update(dt);
-            updateSeamlessMatrix();
         }
         enemyController.update(dt);
         bulletController.update(dt);
@@ -157,55 +154,6 @@ public class GameController {
         infoOverlay.update(dt);
         checkBulletsCollisions();
         if (!player.isDead()) checkPlayerCollisions(dt);
-    }
-
-    private void updateSeamlessMatrix() {
-        Vector2 playerPosition = getPlayer().getShip().getPosition();
-        if (playerPosition.x + SCREEN_HALF_WIDTH > SPACE_WIDTH) seamlessMatrix[0] = 1;
-        else if (playerPosition.x - SCREEN_HALF_WIDTH < 0) seamlessMatrix[0] = -1;
-        else seamlessMatrix[0] = 0;
-        if (playerPosition.y + SCREEN_HALF_HEIGHT > SPACE_HEIGHT) seamlessMatrix[1] = 1;
-        else if (playerPosition.y - SCREEN_HALF_HEIGHT < 0) seamlessMatrix[1] = -1;
-        else seamlessMatrix[1] = 0;
-    }
-
-    public float[] getSeamlessVisibleIndex(Vector2 position, float halfWidth, float halfHeight) {
-        return getSeamlessVisibleIndex(position.x, position.y, halfWidth, halfHeight);
-    }
-
-    public float[] getSeamlessVisibleIndex(float posX, float posY, float halfWidth, float halfHeight) {
-        Vector2 playerPosition = getPlayer().getShip().getPosition();
-        int signX = (int) Math.signum(seamlessMatrix[0]);
-        int signY = (int) Math.signum(seamlessMatrix[1]);
-        for (int j = 0; j <= Math.abs(signY); j++) {
-            for (int i = 0; i <= Math.abs(signX); i++) {
-                if (Math.abs(playerPosition.x - (posX + SPACE_WIDTH * i * signX)) <= SCREEN_HALF_WIDTH + halfWidth &&
-                        Math.abs(playerPosition.y - (posY + SPACE_HEIGHT * j * signY)) <= SCREEN_HALF_HEIGHT + halfHeight)
-                    return new float[]{i * signX, j * signY};
-            }
-        }
-        return null;
-    }
-
-    public int[] getSeamlessNearestIndex(Vector2 position) {
-        return getSeamlessNearestIndex(position.x, position.y);
-    }
-
-    public int[] getSeamlessNearestIndex(float posX, float posY) {
-        Vector2 playerPosition = getPlayer().getShip().getPosition();
-        float minDst = SPACE_WIDTH + SPACE_HEIGHT;
-        int[] index = {0, 0};
-        for (int j = -1; j <= 1; j++) {
-            for (int i = -1; i <= 1; i++) {
-                float dst = Vector2.dst(playerPosition.x, playerPosition.y, posX + SPACE_WIDTH * i, posY + SPACE_HEIGHT * j);
-                if (dst < minDst) {
-                    minDst = dst;
-                    index[0] = i;
-                    index[1] = j;
-                }
-            }
-        }
-        return index;
     }
 
     private void betweenLevels(float dt) {
@@ -248,7 +196,7 @@ public class GameController {
 
     private void startNewLevel() {
         for (int i = 0; i < 10 + level / 3; i++) asteroidController.createNew();
-        for (int i = 0; i < 10 + level / 3; i++) enemyController.createNew();
+        for (int i = 0; i < 10 + level / 5; i++) enemyController.createNew();
     }
 
     public Vector2 getRandomStartPoint(float textureRealSizeHalfW, float textureRealSizeHalfH) {
@@ -278,7 +226,7 @@ public class GameController {
             for (int j = 0; j < asteroids.size(); j++) {
                 Asteroid asteroid = asteroids.get(j);
                 if (bullet.checkHit(asteroid)) {
-                    if (bullet.damageTarget(asteroid) && bullet.isPlayerOwner())
+                    if (bullet.damageTarget(asteroid) && bullet.isPlayerIsOwner())
                         getPlayer().getPlayerStatistic().add(PlayerStatistic.Stats.SCORE, ASTEROIDS_SCORE * asteroid.getMaxHealth());
                     break;
                 }
@@ -287,7 +235,7 @@ public class GameController {
             for (int j = 0; j < enemies.size(); j++) {
                 Ship ship = enemies.get(j).getShip();
                 if (bullet.checkHit(ship)) {
-                    if (bullet.damageTarget(ship) && bullet.isPlayerOwner())
+                    if (bullet.damageTarget(ship) && bullet.isPlayerIsOwner())
                         getPlayer().getPlayerStatistic().add(PlayerStatistic.Stats.SCORE, ENEMY_SCORE * ship.getMaxDurability());
                     break;
                 }

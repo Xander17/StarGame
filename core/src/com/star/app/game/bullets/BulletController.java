@@ -30,7 +30,7 @@ public class BulletController extends ObjectPool<Bullet> {
 
     public void render(SpriteBatch batch) {
         for (int i = 0; i < activeList.size(); i++) {
-            activeList.get(i).render(batch,gameController);
+            activeList.get(i).render(batch);
         }
     }
 }

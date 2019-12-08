@@ -16,5 +16,4 @@ public interface Collisional {
 
     float getMassFactor();
 
-    float[] getVisibleCoords();
 }

@@ -5,9 +5,11 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.star.app.game.GameController;
 import com.star.app.game.helpers.Poolable;
+import com.star.app.game.helpers.RenderPosition;
 
 public class Particle implements Poolable {
     private Vector2 position;
+    private RenderPosition renderPosition;
     private Vector2 velocity;
     private TextureRegion texture;
     private int textureW, textureH;
@@ -20,6 +22,7 @@ public class Particle implements Poolable {
 
     public Particle() {
         position = new Vector2(0, 0);
+        renderPosition = new RenderPosition(position);
         velocity = new Vector2(0, 0);
         isActive = false;
     }
@@ -54,17 +57,16 @@ public class Particle implements Poolable {
         time += dt;
         position.mulAdd(velocity, dt);
         gameController.seamlessTranslate(position);
+        renderPosition.recalculate(gameController, textureW / 2f, textureH / 2f);
         if (time > timeMax) deactivate();
     }
 
     public void render(SpriteBatch batch, GameController gameController, float scaleCoefficient) {
+        if (!renderPosition.isRenderable()) return;
         float t = time / timeMax;
         float scale = lerp(size1, size2, t) * scaleCoefficient;
-        float[] index = gameController.getSeamlessVisibleIndex(position, textureW / 2f * scale, textureH / 2f * scale);
-        if (index == null) return;
         batch.setColor(lerp(r1, r2, t), lerp(g1, g2, t), lerp(b1, b2, t), lerp(a1, a2, t));
-        batch.draw(texture, position.x - textureW / 2f + gameController.SPACE_WIDTH * index[0],
-                position.y - textureH / 2f + gameController.SPACE_HEIGHT * index[1],
+        batch.draw(texture, renderPosition.x - textureW / 2f, renderPosition.y - textureH / 2f,
                 textureW / 2f, textureH / 2f, textureW, textureH,
                 scale, scale, 0);
     }

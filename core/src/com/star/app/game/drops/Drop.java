@@ -7,10 +7,8 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.star.app.game.GameController;
 import com.star.app.game.helpers.Poolable;
+import com.star.app.game.helpers.RenderPosition;
 import com.star.app.game.particles.ParticleLayouts;
-
-import static com.star.app.screen.ScreenManager.SCREEN_HEIGHT;
-import static com.star.app.screen.ScreenManager.SCREEN_WIDTH;
 
 public class Drop implements Poolable {
     private final float SHINE_DELAY = 0.1f;
@@ -28,6 +26,7 @@ public class Drop implements Poolable {
     private boolean isActive;
     private DropType type;
     private Vector2 position;
+    private RenderPosition renderPosition;
     private Vector2 velocity;
     private DropController controller;
     private Circle hitBox;
@@ -36,9 +35,7 @@ public class Drop implements Poolable {
     private float shineCurrentAngle;
     private float timeToLife;
     private float scale;
-    private float scaleTime;
     private float scaleSign;
-    private float[] visibleIndex;
 
     @Override
     public boolean isActive() {
@@ -50,11 +47,11 @@ public class Drop implements Poolable {
         this.controller = controller;
         this.isActive = false;
         this.position = new Vector2(0, 0);
+        this.renderPosition = new RenderPosition(position);
         this.velocity = new Vector2(0, 0);
         this.hitBox = new Circle();
         this.shineCurrentDelay = SHINE_DELAY;
         this.shineCurrentAngle = MathUtils.random(0, 360);
-        this.scaleTime = 0;
         this.scale = MathUtils.random(SCALE_MIN, SCALE_MAX);
         this.scaleSign = MathUtils.randomSign();
     }
@@ -65,7 +62,6 @@ public class Drop implements Poolable {
         this.texture = texture;
         this.textureW = texture.getRegionWidth();
         this.textureH = texture.getRegionHeight();
-        checkBounds();
         this.rgb = rgb;
         this.hitBox.set(this.position, textureW / 2);
         this.isActive = true;
@@ -80,13 +76,6 @@ public class Drop implements Poolable {
         } else shineCurrentDelay += dt;
     }
 
-    private void checkBounds() {
-        if (position.x < textureW / 2f) position.x = textureW / 2;
-        else if (position.x > SCREEN_WIDTH - textureW / 2f) position.x = SCREEN_WIDTH - textureW / 2f;
-        if (position.y < textureH / 2f) position.y = textureH / 2;
-        else if (position.y > SCREEN_HEIGHT - textureH / 2f) position.y = SCREEN_HEIGHT - textureH / 2f;
-    }
-
     private void deactivate() {
         isActive = false;
         if (timeToLife <= 0)
@@ -97,24 +86,18 @@ public class Drop implements Poolable {
         timeToLife -= dt;
         if (timeToLife <= 0) deactivate();
         position.mulAdd(velocity, dt);
-        hitBox.set(this.position, textureW / 2);
-        visibleIndex = gameController.getSeamlessVisibleIndex(position, textureW / 2f, textureH / 2f);
+        renderPosition.recalculate(gameController, textureW / 2f, textureH / 2f);
         checkShipOncoming();
         activateParticles(dt);
         setNewScale(dt);
     }
 
     private void checkShipOncoming() {
-        if (visibleIndex == null) {
-            velocity.set(0, 0);
-            return;
-        }
+        if (!renderPosition.isRenderable()) return;
         float[] playerPosition = gameController.getPlayer().getShip().getTextureCenterRealCS();
-        float newX = position.x + gameController.SPACE_WIDTH * visibleIndex[0];
-        float newY = position.y + gameController.SPACE_HEIGHT * visibleIndex[1];
-        float distanceSquare = (playerPosition[0] - newX) * (playerPosition[0] - newX) +
-                (playerPosition[1] - newY) * (playerPosition[1] - newY);
-        float angle = MathUtils.atan2((playerPosition[1] - newY), (playerPosition[0] - newX));
+        float distanceSquare = (playerPosition[0] - renderPosition.x) * (playerPosition[0] - renderPosition.x) +
+                (playerPosition[1] - renderPosition.y) * (playerPosition[1] - renderPosition.y);
+        float angle = MathUtils.atan2((playerPosition[1] - renderPosition.y), (playerPosition[0] - renderPosition.x));
         float radius = RADIUS_ONCOMING_FACTOR * hitBox.radius;
         if (distanceSquare <= radius * radius)
             velocity.set(SPEED * MathUtils.cos(angle), SPEED * MathUtils.sin(angle));
@@ -122,9 +105,8 @@ public class Drop implements Poolable {
     }
 
     public void render(SpriteBatch batch) {
-        if (visibleIndex == null) return;
-        batch.draw(texture, position.x - textureW / 2f + gameController.SPACE_WIDTH * visibleIndex[0],
-                position.y - textureH / 2f + gameController.SPACE_HEIGHT * visibleIndex[1],
+        if (!renderPosition.isRenderable()) return;
+        batch.draw(texture, renderPosition.x - textureW / 2f, renderPosition.y - textureH / 2f,
                 textureW / 2f, textureH / 2f, textureW, textureH, scale, scale, 0);
     }
 
@@ -146,6 +128,7 @@ public class Drop implements Poolable {
     }
 
     public Circle getHitBox() {
+        hitBox.set(renderPosition, textureW / 2);
         return hitBox;
     }
 }

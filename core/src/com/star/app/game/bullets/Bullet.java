@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.star.app.game.GameController;
 import com.star.app.game.helpers.Collisional;
 import com.star.app.game.helpers.Poolable;
+import com.star.app.game.helpers.RenderPosition;
 import com.star.app.game.particles.ParticleLayouts;
 import com.star.app.utils.Assets;
 
@@ -17,14 +18,14 @@ public class Bullet implements Poolable {
     private int textureW;
     private int textureH;
     private Vector2 position;
+    private RenderPosition renderPosition;
     private float angle;
     private Vector2 velocity;
     private float damage;
     private float distancePassed;
     private float maxDistance;
     private boolean isActive;
-    private float[] visibleIndex;
-    private boolean playerOwner;
+    private boolean playerIsOwner;
 
     @Override
     public boolean isActive() {
@@ -36,6 +37,7 @@ public class Bullet implements Poolable {
         this.textureW = texture.getRegionWidth();
         this.textureH = texture.getRegionHeight();
         this.position = new Vector2(0, 0);
+        this.renderPosition = new RenderPosition(position);
         this.velocity = new Vector2(0, 0);
         this.angle = 0;
         this.isActive = false;
@@ -49,7 +51,7 @@ public class Bullet implements Poolable {
         this.distancePassed = 0;
         this.maxDistance = maxDistance * (1 + MathUtils.random(-MAX_DISTANCE_TOLERANCE, MAX_DISTANCE_TOLERANCE));
         this.isActive = true;
-        this.playerOwner = playerOwner;
+        this.playerIsOwner = playerOwner;
     }
 
     private void deactivate() {
@@ -60,7 +62,7 @@ public class Bullet implements Poolable {
         position.mulAdd(velocity, dt);
         gameController.seamlessTranslate(position);
         checkPassedDistance(dt, gameController);
-        visibleIndex = gameController.getSeamlessVisibleIndex(position, textureW / 2f, textureH / 2f);
+        renderPosition.recalculate(gameController, textureW / 2f, textureH / 2f);
     }
 
     private void checkPassedDistance(float dt, GameController gameController) {
@@ -71,10 +73,9 @@ public class Bullet implements Poolable {
         }
     }
 
-    void render(SpriteBatch batch, GameController gameController) {
-        if (visibleIndex == null) return;
-        batch.draw(texture, position.x - textureW / 2f + gameController.SPACE_WIDTH * visibleIndex[0],
-                position.y - textureH / 2f + gameController.SPACE_HEIGHT * visibleIndex[1],
+    void render(SpriteBatch batch) {
+        if (!renderPosition.isRenderable()) return;
+        batch.draw(texture, renderPosition.x - textureW / 2f, renderPosition.y - textureH / 2f,
                 textureW / 2f, textureH / 2f, textureW, textureH,
                 1, 1, angle);
     }
@@ -97,7 +98,7 @@ public class Bullet implements Poolable {
         return position.y + MathUtils.sinDeg(angle) * textureW / 2f;
     }
 
-    public boolean isPlayerOwner() {
-        return playerOwner;
+    public boolean isPlayerIsOwner() {
+        return playerIsOwner;
     }
 }

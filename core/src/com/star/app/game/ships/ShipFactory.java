@@ -27,9 +27,8 @@ public class ShipFactory {
         switch (type) {
             case FIGHTER:
                 ship = new Ship(gameController, pilot, enemyWeakFactor * 100f + durabilityUpdate,
-                        enemyWeakFactor * 240f + forwardSpeedUpdate,
-                        enemyWeakFactor * 120f, enemyWeakFactor * 120f,
-                        enemyWeakFactor * 80f, enemyWeakFactor * 60f,
+                        enemyWeakFactor * 240f + forwardSpeedUpdate, enemyWeakFactor * 120f,
+                        enemyWeakFactor * 30f, enemyWeakFactor * 60f,
                         enemyWeakFactor * 90f + rotationSpeedUpdate);
                 ship.setTextureSettings(Assets.getInstance().getTextureAtlas().findRegion("fighter"),
                         23, 32, new Vector2[]{
@@ -42,9 +41,8 @@ public class ShipFactory {
                 break;
             case HORSESHOE:
                 ship = new Ship(gameController, pilot, enemyWeakFactor * 100f + durabilityUpdate,
-                        enemyWeakFactor * 300f + forwardSpeedUpdate,
-                        enemyWeakFactor * 100f, enemyWeakFactor * 200f,
-                        enemyWeakFactor * 80f, enemyWeakFactor * 70f,
+                        enemyWeakFactor * 300f + forwardSpeedUpdate, enemyWeakFactor * 200f,
+                        enemyWeakFactor * 50f, enemyWeakFactor * 70f,
                         enemyWeakFactor * 90f + rotationSpeedUpdate);
                 ship.setTextureSettings(Assets.getInstance().getTextureAtlas().findRegion("horseshoe"),
                         23, 32, new Vector2[]{
@@ -59,16 +57,15 @@ public class ShipFactory {
                 break;
             case TRIDENT:
                 ship = new Ship(gameController, pilot, enemyWeakFactor * 100f + durabilityUpdate,
-                        enemyWeakFactor * 240f + forwardSpeedUpdate,
-                        enemyWeakFactor * 120f, enemyWeakFactor * 150f,
-                        enemyWeakFactor * 100f, enemyWeakFactor * 80f,
+                        enemyWeakFactor * 240f + forwardSpeedUpdate, enemyWeakFactor * 150f,
+                        enemyWeakFactor * 50f, enemyWeakFactor * 80f,
                         enemyWeakFactor * 180f + rotationSpeedUpdate);
                 ship.setTextureSettings(Assets.getInstance().getTextureAtlas().findRegion("trident"),
                         40, 32, new Vector2[]{
                                 new Vector2(-37, 16),
                                 new Vector2(-37, -16)
                         });
-                ship.setWeapon(new Weapon(gameController, ship, 0.1f, 2000, enemyWeakFactor *1 + damageUpdate));
+                ship.setWeapon(new Weapon(gameController, ship, 0.1f, 2000, enemyWeakFactor * 1 + damageUpdate));
                 ship.getWeapon().setGunSeparate(new Gun(15, -12, 600f, -10));
                 ship.getWeapon().setGunSeparate(new Gun(15, -6, 600f, 5));
                 ship.getWeapon().setGunSeparate(new Gun(15, 0, 600f, 0));

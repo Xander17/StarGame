@@ -28,6 +28,7 @@ import com.star.app.screen.ScreenManager;
  * 20. Updates effects map
  * 21. Update menu via group
  * 22. Background and stars seamless parallax
+ * 23. Pathfinding
  * */
 
 public class StarGame extends Game {

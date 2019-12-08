@@ -46,7 +46,7 @@ public class Player implements Piloting {
         this.playerNumber = playerNumber;
         this.keyControls = new KeyControls(Options.loadProperties(), "PLAYER" + playerNumber);
         this.updates = new Updates(gameController);
-        this.ship = ShipFactory.getShip(START_TYPE, gameController, this, updates,true);
+        this.ship = ShipFactory.getShip(START_TYPE, gameController, this, updates, true);
         this.deadStatus = false;
         this.lives = START_LIVES;
         this.playerStatistic = new PlayerStatistic();
@@ -55,14 +55,15 @@ public class Player implements Piloting {
     public void update(float dt) {
         if (deadStatus) return;
         if (ship.isShipDestroyed()) {
-            ship = ShipFactory.getShip(START_TYPE, gameController, this, updates,true);
+            ship = ShipFactory.getShip(START_TYPE, gameController, this, updates, true);
             lives--;
             playerStatistic.inc(PlayerStatistic.Stats.LIVES_LOST);
             ship.resetInvulnerability();
         }
-        ship.update(dt);
+        ship.updatePlayer(dt);
         DebugOverlay.setParam("x", ship.getPosition().x);
         DebugOverlay.setParam("y", ship.getPosition().y);
+        DebugOverlay.setParam("v", ship.getVelocity().len());
     }
 
     public void render(SpriteBatch batch) {
@@ -86,19 +87,19 @@ public class Player implements Piloting {
         if (Gdx.input.isKeyPressed(keyControls.fire)) {
             ship.fire(true);
         }
-        if (Gdx.input.isKeyPressed(keyControls.left)) {
+        if (Gdx.input.isKeyPressed(keyControls.left) && !Gdx.input.isKeyPressed(keyControls.right)) {
             ship.turnLeft(dt);
         }
-        if (Gdx.input.isKeyPressed(keyControls.right)) {
+        else if (Gdx.input.isKeyPressed(keyControls.right) && !Gdx.input.isKeyPressed(keyControls.left)) {
             ship.turnRight(dt);
         }
         if (Gdx.input.isKeyPressed(keyControls.forward)) {
             ship.moveForward(dt);
             isTrust = true;
         }
-        if (Gdx.input.isKeyPressed(keyControls.backward)) {
-            ship.moveBack(dt);
-            isTrust = true;
+        else if (Gdx.input.isKeyPressed(keyControls.reverse)) {
+            ship.reverse(dt);
+            isTrust = false;
         }
         return isTrust;
     }
