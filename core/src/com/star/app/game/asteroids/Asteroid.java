@@ -117,9 +117,8 @@ public class Asteroid implements Poolable, Collisional {
     }
 
     void update(float dt) {
-        position.x += velocity.x * dt;
+        position.mulAdd(velocity, dt);
         gameController.seamlessTranslate(position);
-        position.y += velocity.y * dt;
         rotationAngle += rotationSpeed * dt;
         renderPosition.recalculate(gameController, textureW / 2f, textureH / 2f);
         checkTrack();

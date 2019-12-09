@@ -35,16 +35,20 @@ public class RenderPosition extends Vector2 {
         Vector2 playerPosition = gameController.getPlayer().getShip().getPosition();
         float worldWidth = gameController.SPACE_WIDTH;
         float worldHeight = gameController.SPACE_HEIGHT;
+        float signX = Math.signum(playerPosition.x - worldWidth / 2);
+        float signY = Math.signum(playerPosition.y - worldHeight / 2);
         float minDst = worldWidth + worldHeight;
-        for (int j = -1; j <= 1; j++) {
-            for (int i = -1; i <= 1; i++) {
-                float tmpX = position.x + worldWidth * i;
-                float tmpY = position.y + worldHeight * j;
+        float minLimit = Math.min(worldWidth, worldHeight) / 2;
+        for (int j = 0; j <= 1; j++) {
+            for (int i = 0; i <= 1; i++) {
+                float tmpX = position.x + worldWidth * i * signX;
+                float tmpY = position.y + worldHeight * j * signY;
                 float dst = playerPosition.dst(tmpX, tmpY);
                 if (dst < minDst) {
                     minDst = dst;
                     tmpCoords[0] = tmpX;
                     tmpCoords[1] = tmpY;
+                    if (dst <= minLimit) i = j = 2;
                 }
             }
         }
@@ -53,7 +57,7 @@ public class RenderPosition extends Vector2 {
 
     private void renderableUpdate(Vector2 playerPosition, float offsetX, float offsetY, float halfWidth, float halfHeight) {
         isRenderable = Math.abs(playerPosition.x - (tmpCoords[0] + offsetX)) <= SCREEN_HALF_WIDTH + halfWidth &&
-                Math.abs(playerPosition.y - (y + offsetY)) <= SCREEN_HALF_HEIGHT + halfHeight;
+                Math.abs(playerPosition.y - (tmpCoords[1] + offsetY)) <= SCREEN_HALF_HEIGHT + halfHeight;
     }
 
     public boolean isRenderable() {

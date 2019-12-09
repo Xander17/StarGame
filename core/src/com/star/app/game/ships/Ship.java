@@ -57,7 +57,7 @@ public class Ship implements Collisional {
          float FORWARD_POWER, float REVERSE_POWER, float FRICTION_BREAK, float rotationSpeed) {
         this.gameController = gameController;
         this.pilot = pilot;
-        this.position = new Vector2(SCREEN_HALF_WIDTH, SCREEN_HALF_HEIGHT);
+        this.position = new Vector2(gameController.SPACE_WIDTH / 2f, gameController.SPACE_HEIGHT / 2f);
         this.renderPosition = new RenderPosition(position);
         this.velocity = new Vector2(0, 0);
         this.angle = 0.0f;
