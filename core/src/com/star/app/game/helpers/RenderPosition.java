@@ -35,23 +35,12 @@ public class RenderPosition extends Vector2 {
         Vector2 playerPosition = gameController.getPlayer().getShip().getPosition();
         float worldWidth = gameController.SPACE_WIDTH;
         float worldHeight = gameController.SPACE_HEIGHT;
-        float signX = Math.signum(playerPosition.x - worldWidth / 2);
-        float signY = Math.signum(playerPosition.y - worldHeight / 2);
-        float minDst = worldWidth + worldHeight;
-        float minLimit = Math.min(worldWidth, worldHeight) / 2;
-        for (int j = 0; j <= 1; j++) {
-            for (int i = 0; i <= 1; i++) {
-                float tmpX = position.x + worldWidth * i * signX;
-                float tmpY = position.y + worldHeight * j * signY;
-                float dst = playerPosition.dst(tmpX, tmpY);
-                if (dst < minDst) {
-                    minDst = dst;
-                    tmpCoords[0] = tmpX;
-                    tmpCoords[1] = tmpY;
-                    if (dst <= minLimit) i = j = 2;
-                }
-            }
-        }
+        if (playerPosition.x - position.x > worldWidth / 2) tmpCoords[0] = position.x + worldWidth;
+        else if (playerPosition.x - position.x < -worldWidth / 2) tmpCoords[0] = position.x - worldWidth;
+        else tmpCoords[0] = position.x;
+        if (playerPosition.y - position.y > worldHeight / 2) tmpCoords[1] = position.y + worldHeight;
+        else if (playerPosition.y - position.y < -worldHeight / 2) tmpCoords[1] = position.y - worldHeight;
+        else tmpCoords[1] = position.y;
         if (renderableUpdate) renderableUpdate(playerPosition, renderOffsetX, renderOffsetY, halfWidth, halfHeight);
     }
 

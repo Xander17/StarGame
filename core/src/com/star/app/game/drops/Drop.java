@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.star.app.game.GameController;
+import com.star.app.game.helpers.GameTimer;
 import com.star.app.game.helpers.Poolable;
 import com.star.app.game.helpers.RenderPosition;
 import com.star.app.game.particles.ParticleLayouts;
@@ -33,7 +34,7 @@ public class Drop implements Poolable {
     private float[] rgb;
     private float shineCurrentDelay;
     private float shineCurrentAngle;
-    private float timeToLife;
+    private GameTimer lifeTimer;
     private float scale;
     private float scaleSign;
 
@@ -54,37 +55,39 @@ public class Drop implements Poolable {
         this.shineCurrentAngle = MathUtils.random(0, 360);
         this.scale = MathUtils.random(SCALE_MIN, SCALE_MAX);
         this.scaleSign = MathUtils.randomSign();
+        this.lifeTimer = new GameTimer(TIME_TO_LIFE);
     }
 
     public void activate(Vector2 position, DropType type, TextureRegion texture, float[] rgb) {
-        this.position.set(position);
         this.type = type;
         this.texture = texture;
         this.textureW = texture.getRegionWidth();
         this.textureH = texture.getRegionHeight();
+        this.position.set(position);
+        this.renderPosition.recalculate(gameController,textureW/2f,textureH/2f);
         this.rgb = rgb;
         this.hitBox.set(this.position, textureW / 2);
         this.isActive = true;
-        this.timeToLife = TIME_TO_LIFE;
+        lifeTimer.reset();
     }
 
     private void activateParticles(float dt) {
         if (shineCurrentDelay >= SHINE_DELAY) {
-            gameController.getParticleController().getEffectBuilder().circleShine(ParticleLayouts.TOP, position, textureW / 2f * timeToLife / TIME_TO_LIFE, shineCurrentAngle, rgb[0], rgb[1], rgb[2]);
+            gameController.getParticleController().getEffectBuilder().circleShine(ParticleLayouts.TOP, position, textureW / 2f * (1 - lifeTimer.percent()), shineCurrentAngle, rgb[0], rgb[1], rgb[2]);
             shineCurrentAngle += SHINE_ANGLE_STEP;
             shineCurrentDelay = 0;
         } else shineCurrentDelay += dt;
     }
 
-    private void deactivate() {
+    private void deactivate(boolean isConsume) {
         isActive = false;
-        if (timeToLife <= 0)
+        if (!isConsume)
             gameController.getParticleController().getEffectBuilder().circleBlast(ParticleLayouts.TOP, position, rgb[0], rgb[1], rgb[2], 400f, 0.1f);
     }
 
     public void update(float dt) {
-        timeToLife -= dt;
-        if (timeToLife <= 0) deactivate();
+        lifeTimer.update(dt);
+        if (lifeTimer.isReady()) deactivate(false);
         position.mulAdd(velocity, dt);
         renderPosition.recalculate(gameController, textureW / 2f, textureH / 2f);
         checkShipOncoming();
@@ -124,7 +127,7 @@ public class Drop implements Poolable {
     public void consume() {
         controller.getEffect(type);
         gameController.getParticleController().getEffectBuilder().circleBlast(ParticleLayouts.TOP, position, rgb[0], rgb[1], rgb[2], 200f, 1f);
-        deactivate();
+        deactivate(true);
     }
 
     public Circle getHitBox() {

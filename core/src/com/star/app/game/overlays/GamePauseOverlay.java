@@ -15,7 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
 import com.star.app.game.GameController;
 import com.star.app.game.overlays.elements.UpdateGroup;
-import com.star.app.game.ships.updates.Updates;
+import com.star.app.game.ships.Updates;
 import com.star.app.screen.ScreenManager;
 import com.star.app.utils.Assets;
 import com.star.app.utils.GameButtonStyle;
@@ -85,7 +85,10 @@ public class GamePauseOverlay {
         ChangeListener listener = new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                ((UpdateGroup) actor.getParent()).execute(gameController.getPlayer().getUpdates());
+                boolean full = false;
+                if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) || Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT))
+                    full = true;
+                ((UpdateGroup) actor.getParent()).execute(gameController.getPlayer().getUpdates(),full);
             }
         };
         Updates updates = gameController.getPlayer().getUpdates();

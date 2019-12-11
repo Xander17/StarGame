@@ -26,16 +26,16 @@ public class AsteroidController extends ObjectPool<Asteroid> {
         return new Asteroid(gameController);
     }
 
-    public void createNew(float x, float y, float scale, float velocityX, float velocityY, int health) {
-        getActive().activate(getRandomTexture(), x, y, scale, velocityX, velocityY, health);
+    public void createNew(float x, float y, float scale, float velocityX, float velocityY, int health,boolean delayed) {
+        getActive().activate(getRandomTexture(), x, y, scale, velocityX, velocityY, health,delayed);
     }
 
-    void createNew(float x, float y, float scale, int health) {
-        getActive().activate(getRandomTexture(), x, y, scale, health);
+    void createNew(float x, float y, float scale, int health,boolean delayed) {
+        getActive().activate(getRandomTexture(), x, y, scale, health,delayed);
     }
 
     public void createNew() {
-        getActive().activate(getRandomTexture());
+        getActive().activate(getRandomTexture(),false);
     }
 
     public void update(float dt) {

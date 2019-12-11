@@ -1,4 +1,4 @@
-package com.star.app.game.ships.updates;
+package com.star.app.game.ships;
 
 import com.star.app.game.GameController;
 
@@ -20,6 +20,7 @@ public class Updates {
 
     private HashMap<Types, Integer> map;
     private GameController gameController;
+    private int lastUpdateLevels;
 
     public Updates(GameController gameController) {
         map = new HashMap<>();
@@ -30,11 +31,13 @@ public class Updates {
         }
     }
 
-    public int improve(Types type) {
+    public int improve(Types type, boolean full) {
         int currentLevel = map.get(type);
         if (currentLevel == type.maxLevel) return -1;
-        map.put(type, currentLevel + 1);
-        return currentLevel + 1;
+        if (full) lastUpdateLevels = type.maxLevel - currentLevel;
+        else lastUpdateLevels = 1;
+        map.put(type, currentLevel + lastUpdateLevels);
+        return currentLevel + lastUpdateLevels;
     }
 
     public boolean isUpdatable(Types type) {
@@ -46,7 +49,7 @@ public class Updates {
     }
 
     public void applyUpdate(Types type) {
-        int effect = getLevelEffect(type);
+        int effect = getLevelEffect(type, lastUpdateLevels);
         switch (type) {
             case MAX_HEALTH:
                 gameController.getPlayer().getShip().updateMaxDurability(effect);
@@ -63,13 +66,15 @@ public class Updates {
     }
 
     public int getLevelEffect(Types type) {
-        return getLevelEffect(type, false);
+        return getLevelEffect(type, 1);
     }
 
     public int getLevelEffect(Types type, boolean full) {
-        int levels;
-        if (full) levels = map.get(type);
-        else levels = 1;
+        if (full) return getLevelEffect(type, map.get(type));
+        else return getLevelEffect(type, 1);
+    }
+
+    public int getLevelEffect(Types type, int levels) {
         switch (type) {
             case MAX_HEALTH:
                 return levels * 10;

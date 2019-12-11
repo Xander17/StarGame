@@ -14,7 +14,7 @@ public class BulletController extends ObjectPool<Bullet> {
 
     @Override
     public Bullet getNew() {
-        return new Bullet();
+        return new Bullet(gameController);
     }
 
     public void createNew(float x, float y, float angle, float velocityX, float velocityY, float damage,boolean playerOwner) {
@@ -23,7 +23,7 @@ public class BulletController extends ObjectPool<Bullet> {
 
     public void update(float dt) {
         for (int i = 0; i < activeList.size(); i++) {
-            activeList.get(i).update(dt, gameController);
+            activeList.get(i).update(dt);
         }
         checkFreeObjects();
     }

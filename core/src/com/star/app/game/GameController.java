@@ -196,7 +196,7 @@ public class GameController {
 
     private void startNewLevel() {
         for (int i = 0; i < 10 + level / 3; i++) asteroidController.createNew();
-        for (int i = 0; i < 10 + level / 5; i++) enemyController.createNew();
+        for (int i = 0; i < 0 + level / 5; i++) enemyController.createNew();
     }
 
     public Vector2 getRandomStartPoint(float textureRealSizeHalfW, float textureRealSizeHalfH) {
@@ -222,9 +222,11 @@ public class GameController {
         List<Bullet> bullets = getBulletController().getActiveList();
         for (int i = 0; i < bullets.size(); i++) {
             Bullet bullet = bullets.get(i);
+            if (!bullet.isActive()) break;
             List<Asteroid> asteroids = getAsteroidController().getActiveList();
             for (int j = 0; j < asteroids.size(); j++) {
                 Asteroid asteroid = asteroids.get(j);
+                if (!asteroid.isActive()) break;
                 if (bullet.checkHit(asteroid)) {
                     if (bullet.damageTarget(asteroid) && bullet.isPlayerIsOwner())
                         getPlayer().getPlayerStatistic().add(PlayerStatistic.Stats.SCORE, ASTEROIDS_SCORE * asteroid.getMaxHealth());
@@ -233,24 +235,29 @@ public class GameController {
             }
             List<Enemy> enemies = getEnemyController().getActiveList();
             for (int j = 0; j < enemies.size(); j++) {
+                if (!enemies.get(j).isActive()) break;
                 Ship ship = enemies.get(j).getShip();
-                if (bullet.checkHit(ship)) {
-                    if (bullet.damageTarget(ship) && bullet.isPlayerIsOwner())
+                if (bullet.checkHit(ship) && bullet.isPlayerIsOwner()) {
+                    if (bullet.damageTarget(ship))
                         getPlayer().getPlayerStatistic().add(PlayerStatistic.Stats.SCORE, ENEMY_SCORE * ship.getMaxDurability());
                     break;
                 }
             }
             Ship ship = player.getShip();
-            if (bullet.checkHit(ship)) bullet.damageTarget(ship);
+            if (!ship.isShipDestroyed() && !bullet.isPlayerIsOwner() && bullet.checkHit(ship))
+                bullet.damageTarget(ship);
         }
     }
 
     private void checkPlayerCollisions(float dt) {
         List<Asteroid> asteroids = getAsteroidController().getActiveList();
+        List<Enemy> enemies = getEnemyController().getActiveList();
         for (int i = 0; i < asteroids.size(); i++) {
             getPlayer().getShip().checkCollision(asteroids.get(i), dt);
+//            for (int j = 0; j < enemies.size(); j++) {
+//                enemies.get(j).getShip().checkCollision(asteroids.get(i), dt);
+//            }
         }
-        List<Enemy> enemies = getEnemyController().getActiveList();
         for (int i = 0; i < enemies.size(); i++) {
             getPlayer().getShip().checkCollision(enemies.get(i).getShip(), dt);
         }

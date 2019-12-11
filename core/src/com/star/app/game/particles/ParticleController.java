@@ -29,7 +29,7 @@ public class ParticleController extends ObjectPool<Particle> {
 
     @Override
     public Particle getNew() {
-        return new Particle();
+        return new Particle(gameController);
     }
 
     public void setup(ParticleLayouts layout, float x, float y, float vx, float vy, float timeMax, float r1, float g1, float b1, float a1, float size1, float r2, float g2, float b2, float a2, float size2) {
@@ -38,7 +38,7 @@ public class ParticleController extends ObjectPool<Particle> {
 
     public void update(float dt) {
         for (int i = 0; i < activeList.size(); i++) {
-            activeList.get(i).update(dt, gameController);
+            activeList.get(i).update(dt);
         }
         checkFreeObjects();
     }
@@ -47,7 +47,7 @@ public class ParticleController extends ObjectPool<Particle> {
         batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         for (int i = 0; i < activeList.size(); i++) {
             Particle p = activeList.get(i);
-            if (p.getLayout() == layout) p.render(batch, gameController, 1);
+            if (p.getLayout() == layout) p.render(batch, 1);
         }
         batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
         for (int i = 0; i < activeList.size(); i++) {
@@ -56,7 +56,7 @@ public class ParticleController extends ObjectPool<Particle> {
                 scaleCoefficient = RANDOM_SCALE_COEFFICIENT;
             }
             Particle p = activeList.get(i);
-            if (p.getLayout() == layout) p.render(batch, gameController, scaleCoefficient);
+            if (p.getLayout() == layout) p.render(batch, scaleCoefficient);
         }
         batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         batch.setColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -69,7 +69,7 @@ public class ParticleController extends ObjectPool<Particle> {
     public class EffectBuilder {
         public void exhaust(ParticleLayouts layout, float x, float y, Vector2 v, float angle, float size, float r, float g, float b) {
             float newSize;
-            float spread=0.3f;
+            float spread = 0.3f;
             for (int i = 0; i < 5; i++) {
                 newSize = (size / textureW) * MathUtils.random(0.8f, 1.3f);
                 setup(layout, x + MathUtils.random(-spread * size, spread * size), y + MathUtils.random(-spread * size, spread * size),
@@ -107,6 +107,17 @@ public class ParticleController extends ObjectPool<Particle> {
                         velocity.x, velocity.y, 0.3f,
                         1f, 0.8f, 0f, 1f, 0.1f,
                         1f, 0.4f, 0f, 0.3f, 0.1f);
+            }
+        }
+
+        public void bigBlast(ParticleLayouts layout, Vector2 position, float radius, float r1, float g1, float b1, float r2, float g2, float b2) {
+            float time = 0.5f;
+            for (int i = 0; i < 5; i++) {
+                for (int j = 0; j < 360; j += 36) {
+                    float vx = radius / (2 * time) - (i * 10) * MathUtils.cosDeg(j);
+                    float vy = radius / (2 * time) - (i * 10) * MathUtils.sinDeg(j);
+                    setup(layout, position.x, position.y, vx, vy, time, r1, g1, b1, 1f, 1f, r2, g2, b2, 0, radius / 4);
+                }
             }
         }
     }

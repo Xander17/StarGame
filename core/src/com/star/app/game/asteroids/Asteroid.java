@@ -7,9 +7,11 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.star.app.game.GameController;
 import com.star.app.game.helpers.Collisional;
+import com.star.app.game.helpers.GameTimer;
 import com.star.app.game.helpers.Poolable;
 import com.star.app.game.helpers.RenderPosition;
 import com.star.app.game.overlays.DebugOverlay;
+import com.star.app.game.particles.ParticleLayouts;
 import com.star.app.game.pilots.PlayerStatistic;
 
 public class Asteroid implements Poolable, Collisional {
@@ -24,13 +26,13 @@ public class Asteroid implements Poolable, Collisional {
     private final float BASE_SCALE_MAX = 1.0f;
     private final float ROTATION_BASE_SPEED_MIN = 60f;
     private final float ROTATION_BASE_SPEED_MAX = 10f;
-    private final float ANGLE_NO_CREATE = 15f;
     private final float SIZE_BOTTOM_LIMIT = 60f;
     private final float DESTROY_DOWNSCALE = 0.15f;
     private final int PARTS_COUNT_MIN = 3;
     private final int PARTS_COUNT_MAX = 5;
     private final float DROP_CHANCE_MAX = 0.1f;
     private final float DROP_CHANCE_MIN = 0.01f;
+    private final float BLAST_TIME = 0.5f;
 
     private GameController gameController;
     private TextureRegion texture;
@@ -50,6 +52,7 @@ public class Asteroid implements Poolable, Collisional {
     private Vector2 arrowPosition;
     private float arrowAngle;
     private float arrowScale;
+    private GameTimer activateTimer;
 
     Asteroid(GameController gameController) {
         this.gameController = gameController;
@@ -58,37 +61,39 @@ public class Asteroid implements Poolable, Collisional {
         velocity = new Vector2(0, 0);
         arrowPosition = new Vector2(0, 0);
         hitBox = new Circle();
+        activateTimer = new GameTimer(BLAST_TIME / 2);
         isActive = false;
     }
 
-    void activate(TextureRegion texture) {
+    void activate(TextureRegion texture, boolean delayed) {
         float speed = getRandomOnLevel(BASE_SPEED_MIN, BASE_SPEED_MAX, SPEED_LEVEL_FACTOR);
-        float angle = getOutboundsRandomAngle();
+        float angle = MathUtils.random(0, 359);
         float scale = MathUtils.random(BASE_SCALE_MIN, BASE_SCALE_MAX);
         float health = getRandomOnLevel(HEALTH_POINTS_MIN, HEALTH_POINTS_MAX, HEALTH_LEVEL_FACTOR);
         this.textureW = texture.getRegionWidth();
         this.textureH = texture.getRegionHeight();
         activate(texture, gameController.getRandomStartPoint(textureW / 2f * scale, textureH / 2f * scale), scale,
                 MathUtils.randomSign() * MathUtils.cosDeg(angle) * speed,
-                MathUtils.randomSign() * MathUtils.sinDeg(angle) * speed, health);
+                MathUtils.randomSign() * MathUtils.sinDeg(angle) * speed, health, delayed);
     }
 
-    void activate(TextureRegion texture, float x, float y, float scale, float health) {
+    void activate(TextureRegion texture, float x, float y, float scale, float health, boolean delayed) {
         float speed = getRandomOnLevel(BASE_SPEED_MIN, BASE_SPEED_MAX, SPEED_LEVEL_FACTOR);
         float angle = MathUtils.random(360);
         activate(texture, x, y, scale, MathUtils.randomSign() * MathUtils.cosDeg(angle) * speed,
-                MathUtils.randomSign() * MathUtils.sinDeg(angle) * speed, health);
+                MathUtils.randomSign() * MathUtils.sinDeg(angle) * speed, health, delayed);
     }
 
-    private void activate(TextureRegion texture, Vector2 position, float scale, float velocityX, float velocityY, float health) {
-        activate(texture, position.x, position.y, scale, velocityX, velocityY, health);
+    private void activate(TextureRegion texture, Vector2 position, float scale, float velocityX, float velocityY, float health, boolean delayed) {
+        activate(texture, position.x, position.y, scale, velocityX, velocityY, health, delayed);
     }
 
-    void activate(TextureRegion texture, float x, float y, float scale, float velocityX, float velocityY, float health) {
+    void activate(TextureRegion texture, float x, float y, float scale, float velocityX, float velocityY, float health, boolean delayed) {
         this.texture = texture;
         this.textureW = texture.getRegionWidth();
         this.textureH = texture.getRegionHeight();
         this.position.set(x, y);
+        this.renderPosition.recalculate(gameController,textureW/2f,textureH/2f);
         this.scale = scale;
         this.velocity.set(velocityX, velocityY);
         this.rotationAngle = MathUtils.random(0, 360);
@@ -97,6 +102,11 @@ public class Asteroid implements Poolable, Collisional {
         this.health = health;
         this.isActive = true;
         this.trackable = false;
+        if (delayed) {
+            activateTimer.reset();
+        } else {
+            activateTimer.disable();
+        }
     }
 
     private void deactivate() {
@@ -108,15 +118,9 @@ public class Asteroid implements Poolable, Collisional {
         return MathUtils.random((1 + factor * level) * min, (1 + factor * level) * max);
     }
 
-    private float getOutboundsRandomAngle() {
-        float angle = 0;
-        while (angle % 90 < ANGLE_NO_CREATE || angle % 90 > (90 - ANGLE_NO_CREATE)) {
-            angle = MathUtils.random(0, 360);
-        }
-        return angle;
-    }
-
     void update(float dt) {
+        activateTimer.update(dt);
+        if (!activateTimer.isReady()) return;
         position.mulAdd(velocity, dt);
         gameController.seamlessTranslate(position);
         rotationAngle += rotationSpeed * dt;
@@ -138,6 +142,7 @@ public class Asteroid implements Poolable, Collisional {
     }
 
     public void render(SpriteBatch batch) {
+        if (!activateTimer.isReady()) return;
         if (!renderPosition.isRenderable()) return;
         batch.draw(texture, renderPosition.x - textureW / 2f, renderPosition.y - textureH / 2f,
                 textureW / 2f, textureH / 2f, textureW, textureH, scale, scale, rotationAngle);
@@ -171,6 +176,7 @@ public class Asteroid implements Poolable, Collisional {
     @Override
     public void destroy() {
         gameController.getPlayer().getPlayerStatistic().inc(PlayerStatistic.Stats.ASTEROIDS);
+        gameController.getParticleController().getEffectBuilder().bigBlast(ParticleLayouts.TOP, position, textureW / 2f * scale, 0.5f, 0.5f, 0.5f, 0.2f, 0.2f, 0.2f);
         deactivate();
         getAsteroidPieces();
         dropItem();
@@ -180,8 +186,9 @@ public class Asteroid implements Poolable, Collisional {
         float downscale = MathUtils.random(0.9f, 1.1f) * DESTROY_DOWNSCALE;
         float newScale = scale - downscale;
         if (newScale * textureW < SIZE_BOTTOM_LIMIT) return;
-        for (int i = 1; i < MathUtils.random(PARTS_COUNT_MIN, PARTS_COUNT_MAX); i++)
-            gameController.getAsteroidController().createNew(position.x, position.y, newScale, (int) (maxHealth * (1 - downscale)));
+        int maxParts = MathUtils.random(PARTS_COUNT_MIN, PARTS_COUNT_MAX);
+        for (int i = 0; i < maxParts; i++)
+            gameController.getAsteroidController().createNew(position.x, position.y, newScale, (int) (maxHealth * (1 - downscale)), true);
     }
 
     private void dropItem() {

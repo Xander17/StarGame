@@ -8,6 +8,7 @@ import com.star.app.game.helpers.Poolable;
 import com.star.app.game.helpers.RenderPosition;
 
 public class Particle implements Poolable {
+    private GameController gameController;
     private Vector2 position;
     private RenderPosition renderPosition;
     private Vector2 velocity;
@@ -20,11 +21,12 @@ public class Particle implements Poolable {
     private boolean isActive;
     private ParticleLayouts layout;
 
-    public Particle() {
-        position = new Vector2(0, 0);
-        renderPosition = new RenderPosition(position);
-        velocity = new Vector2(0, 0);
-        isActive = false;
+    public Particle(GameController  gameController) {
+        this.gameController=gameController;
+        this.position = new Vector2(0, 0);
+        this.renderPosition = new RenderPosition(this.position);
+        this.velocity = new Vector2(0, 0);
+        this.isActive = false;
     }
 
     public void activate(TextureRegion texture, ParticleLayouts layout, float x, float y, float vx, float vy, float timeMax, float r1, float g1, float b1, float a1, float size1, float r2, float g2, float b2, float a2, float size2) {
@@ -33,6 +35,7 @@ public class Particle implements Poolable {
         this.textureW = texture.getRegionWidth();
         this.textureH = texture.getRegionHeight();
         this.position.set(x, y);
+        this.renderPosition.recalculate(gameController,textureW/2f,textureH/2f);
         this.velocity.set(vx, vy);
         this.time = 0f;
         this.timeMax = timeMax;
@@ -53,7 +56,7 @@ public class Particle implements Poolable {
         isActive = false;
     }
 
-    public void update(float dt, GameController gameController) {
+    public void update(float dt) {
         time += dt;
         position.mulAdd(velocity, dt);
         gameController.seamlessTranslate(position);
@@ -61,7 +64,7 @@ public class Particle implements Poolable {
         if (time > timeMax) deactivate();
     }
 
-    public void render(SpriteBatch batch, GameController gameController, float scaleCoefficient) {
+    public void render(SpriteBatch batch, float scaleCoefficient) {
         if (!renderPosition.isRenderable()) return;
         float t = time / timeMax;
         float scale = lerp(size1, size2, t) * scaleCoefficient;

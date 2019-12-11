@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.star.app.game.GameController;
 import com.star.app.game.helpers.Collisional;
+import com.star.app.game.helpers.GameTimer;
 import com.star.app.game.helpers.Poolable;
 import com.star.app.game.helpers.RenderPosition;
 import com.star.app.game.particles.ParticleLayouts;
@@ -14,6 +15,7 @@ import com.star.app.utils.Assets;
 public class Bullet implements Poolable {
     private final float MAX_DISTANCE_TOLERANCE = 0.05f;
 
+    private GameController gameController;
     private TextureRegion texture;
     private int textureW;
     private int textureH;
@@ -32,7 +34,8 @@ public class Bullet implements Poolable {
         return isActive;
     }
 
-    Bullet() {
+    Bullet(GameController gameController) {
+        this.gameController=gameController;
         this.texture = Assets.getInstance().getTextureAtlas().findRegion("bullet");
         this.textureW = texture.getRegionWidth();
         this.textureH = texture.getRegionHeight();
@@ -47,6 +50,7 @@ public class Bullet implements Poolable {
         this.position.set(x, y);
         this.angle = angle;
         this.velocity.set(velocityX, velocityY);
+        this.renderPosition.recalculate(gameController,textureW/2f,textureH/2f);
         this.damage = damage;
         this.distancePassed = 0;
         this.maxDistance = maxDistance * (1 + MathUtils.random(-MAX_DISTANCE_TOLERANCE, MAX_DISTANCE_TOLERANCE));
@@ -58,14 +62,14 @@ public class Bullet implements Poolable {
         isActive = false;
     }
 
-    public void update(float dt, GameController gameController) {
+    public void update(float dt) {
         position.mulAdd(velocity, dt);
         gameController.seamlessTranslate(position);
-        checkPassedDistance(dt, gameController);
+        checkPassedDistance(dt);
         renderPosition.recalculate(gameController, textureW / 2f, textureH / 2f);
     }
 
-    private void checkPassedDistance(float dt, GameController gameController) {
+    private void checkPassedDistance(float dt) {
         distancePassed += velocity.len() * dt;
         if (distancePassed >= maxDistance) {
             gameController.getParticleController().getEffectBuilder().bulletDeactivate(ParticleLayouts.SHIP, getHitPointX(), getHitPointY(), velocity, textureW, textureH);
@@ -86,7 +90,6 @@ public class Bullet implements Poolable {
 
     public boolean damageTarget(Collisional obj) {
         deactivate();
-
         return obj.takeDamage(damage);
     }
 

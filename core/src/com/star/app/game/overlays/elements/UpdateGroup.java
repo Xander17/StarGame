@@ -7,7 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
-import com.star.app.game.ships.updates.Updates;
+import com.star.app.game.ships.Updates;
 import com.star.app.utils.GameButtonStyle;
 
 public class UpdateGroup extends Group {
@@ -29,8 +29,8 @@ public class UpdateGroup extends Group {
         this.addActor(label);
     }
 
-    public void execute(Updates updates) {
-        int newLevel = updates.improve(type);
+    public void execute(Updates updates,boolean full) {
+        int newLevel = updates.improve(type,full);
         updates.applyUpdate(type);
         if (newLevel >= 0) {
             if (!updates.isUpdatable(type)) {

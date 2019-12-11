@@ -1,6 +1,7 @@
 package com.star.app.game.ships;
 
 import com.star.app.game.GameController;
+import com.star.app.game.helpers.GameTimer;
 import com.star.app.game.pilots.PlayerStatistic;
 
 import java.util.ArrayList;
@@ -13,8 +14,7 @@ public class Weapon {
     private int groupsCount;
     private float groupDamage;
     private int currentGunGroup;
-    private float shootDelay;
-    private float currentDelay;
+    private GameTimer fireTimer;
     private int maxBullets;
     private int bullets;
 
@@ -22,8 +22,7 @@ public class Weapon {
         this.gameController = gameController;
         this.ship = ship;
         this.currentGunGroup = 0;
-        this.shootDelay = shootDelay;
-        this.currentDelay = shootDelay;
+        this.fireTimer = new GameTimer(shootDelay);
         this.guns = new ArrayList<>();
         this.bullets = bullets;
         this.maxBullets = bullets;
@@ -50,20 +49,20 @@ public class Weapon {
     }
 
     public void update(float dt) {
-        if (currentDelay < shootDelay) currentDelay += dt;
+        fireTimer.update(dt);
     }
 
     void fire(boolean playerIsOwner) {
-        if (currentDelay < shootDelay) return;
+        if (!fireTimer.isReady()) return;
         for (int i = 0; i < guns.size(); i++) {
             if (bullets == 0) break;
             if (guns.get(i).getGroupIndex() == currentGunGroup) {
-                guns.get(i).fire(gameController, ship,playerIsOwner);
+                guns.get(i).fire(gameController, ship, playerIsOwner);
                 bullets--;
                 gameController.getPlayer().getPlayerStatistic().inc(PlayerStatistic.Stats.BULLETS_SPENT);
             }
         }
-        currentDelay = 0;
+        fireTimer.reset();
         if (currentGunGroup == groupsCount) currentGunGroup = 0;
         else currentGunGroup++;
     }

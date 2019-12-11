@@ -13,8 +13,6 @@ import com.star.app.game.helpers.RenderPosition;
 import com.star.app.game.particles.ParticleLayouts;
 import com.star.app.game.pilots.PlayerStatistic;
 
-import static com.star.app.screen.ScreenManager.*;
-
 public class Ship implements Collisional {
     private final float COLLISION_BREAK_FACTOR = 0.5f;
     private final float INVULNERABILITY_TIME = 3f;
@@ -63,14 +61,14 @@ public class Ship implements Collisional {
         this.angle = 0.0f;
         this.massCenter = new Vector2(0, 0);
         this.hitBox = new Circle();
-        this.maxDurability = durability;
-        this.durability = maxDurability;
         this.shipDestroyed = false;
+        this.maxDurability = durability;
+        this.durability = durability;
         this.forwardMaxSpeed = forwardMaxSpeed;
+        this.rotationSpeed = rotationSpeed;
         this.FORWARD_POWER = FORWARD_POWER;
         this.REVERSE_POWER = REVERSE_POWER;
         this.FRICTION_BREAK = FRICTION_BREAK;
-        this.rotationSpeed = rotationSpeed;
     }
 
     public void setTextureSettings(TextureRegion texture, float massCenterX, float massCenterY, Vector2[] exhaustPoints) {
@@ -320,6 +318,8 @@ public class Ship implements Collisional {
         durability = 0;
         shipDestroyed = true;
         pilot.setDeadStatus(true);
+        gameController.getParticleController().getEffectBuilder().bigBlast(ParticleLayouts.TOP, position, hitBox.radius, 1f, 1f, 0.5f, 0.2f, 0, 0);
+        System.out.println("dead");
     }
 
     @Override

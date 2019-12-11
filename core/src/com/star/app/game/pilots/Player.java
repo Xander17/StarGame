@@ -9,13 +9,13 @@ import com.star.app.game.overlays.DebugOverlay;
 import com.star.app.game.ships.Ship;
 import com.star.app.game.ships.ShipFactory;
 import com.star.app.game.ships.ShipTypes;
-import com.star.app.game.ships.updates.Updates;
+import com.star.app.game.ships.Updates;
 import com.star.app.utils.Options;
 
 public class Player implements Piloting {
     private final int START_LIVES = 2;
     private final int SCORE_DEAD_PENALTY = 20000;
-    private final ShipTypes START_TYPE = ShipTypes.HORSESHOE;
+    private final ShipTypes START_TYPE = ShipTypes.FIGHTER;
 
     private GameController gameController;
     private Ship ship;
