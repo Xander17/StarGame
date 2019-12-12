@@ -1,9 +1,11 @@
 package com.star.app.game.ships;
 
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector2;
 import com.star.app.game.GameController;
 import com.star.app.game.helpers.Piloting;
+import com.star.app.game.ships.parts.Exhaust;
+import com.star.app.game.ships.parts.Gun;
+import com.star.app.game.ships.parts.Weapon;
 import com.star.app.utils.Assets;
 
 public class ShipFactory {
@@ -30,10 +32,11 @@ public class ShipFactory {
                         enemyWeakFactor * 30f, enemyWeakFactor * 60f,
                         enemyWeakFactor * 90f + rotationSpeedUpdate);
                 ship.setTextureSettings(Assets.getInstance().getTextureAtlas().findRegion("fighter"),
-                        23, 32, new Vector2[]{
-                                new Vector2(-20, 28),
-                                new Vector2(-20, -28)
-                        });
+                        23, 32);
+                ship.setExhausts(
+                        new Exhaust(gameController, -20, 28, Exhaust.Flags.LEFT_THRUST),
+                        new Exhaust(gameController, -20, -28, Exhaust.Flags.RIGHT_THRUST)
+                );
                 ship.setWeapon(new Weapon(gameController, ship, 0.1f, 1000, enemyWeakFactor * 1 + damageUpdate));
                 ship.getWeapon().setGunSeparate(new Gun(1, -27, 600f, 0));
                 ship.getWeapon().setGunSeparate(new Gun(1, 27, 600f, 0));
@@ -44,15 +47,14 @@ public class ShipFactory {
                         enemyWeakFactor * 50f, enemyWeakFactor * 70f,
                         enemyWeakFactor * 90f + rotationSpeedUpdate);
                 ship.setTextureSettings(Assets.getInstance().getTextureAtlas().findRegion("horseshoe"),
-                        23, 32, new Vector2[]{
-                                new Vector2(-20, 18),
-                                new Vector2(-20, -18)
-                        });
+                        23, 32);
+                ship.setExhausts(new Exhaust(gameController, -20, 18, Exhaust.Flags.LEFT_THRUST),
+                        new Exhaust(gameController, -20, -18, Exhaust.Flags.RIGHT_THRUST));
                 ship.setWeapon(new Weapon(gameController, ship, 0.1f, 1000, enemyWeakFactor * 1 + damageUpdate));
-                ship.getWeapon().setGunGroup(new Gun[]{
+                ship.getWeapon().setGunGroup(
                         new Gun(32, -14, 600f, 0),
                         new Gun(32, 14, 600f, 0)
-                });
+                );
                 break;
             case TRIDENT:
                 ship = new Ship(gameController, pilot, enemyWeakFactor * 100f + durabilityUpdate,
@@ -60,10 +62,11 @@ public class ShipFactory {
                         enemyWeakFactor * 50f, enemyWeakFactor * 80f,
                         enemyWeakFactor * 180f + rotationSpeedUpdate);
                 ship.setTextureSettings(Assets.getInstance().getTextureAtlas().findRegion("trident"),
-                        40, 32, new Vector2[]{
-                                new Vector2(-37, 16),
-                                new Vector2(-37, -16)
-                        });
+                        40, 32);
+                ship.setExhausts(
+                        new Exhaust(gameController, -37, 16, Exhaust.Flags.LEFT_THRUST),
+                        new Exhaust(gameController, -27, -16, Exhaust.Flags.RIGHT_THRUST)
+                );
                 ship.setWeapon(new Weapon(gameController, ship, 0.1f, 2000, enemyWeakFactor * 1 + damageUpdate));
                 ship.getWeapon().setGunSeparate(new Gun(15, -12, 600f, -10));
                 ship.getWeapon().setGunSeparate(new Gun(15, -6, 600f, 5));

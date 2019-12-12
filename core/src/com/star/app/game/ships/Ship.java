@@ -12,6 +12,8 @@ import com.star.app.game.helpers.Piloting;
 import com.star.app.game.helpers.RenderPosition;
 import com.star.app.game.particles.ParticleLayouts;
 import com.star.app.game.pilots.PlayerStatistic;
+import com.star.app.game.ships.parts.Exhaust;
+import com.star.app.game.ships.parts.Weapon;
 
 public class Ship implements Collisional {
     private final float COLLISION_BREAK_FACTOR = 0.5f;
@@ -26,7 +28,7 @@ public class Ship implements Collisional {
     private int textureW;
     private int textureH;
     private Vector2 massCenter;
-    private Vector2[] exhaustPoints;
+    private Exhaust[] exhausts;
     private Weapon weapon;
 
     private GameController gameController;
@@ -71,12 +73,15 @@ public class Ship implements Collisional {
         this.FRICTION_BREAK = FRICTION_BREAK;
     }
 
-    public void setTextureSettings(TextureRegion texture, float massCenterX, float massCenterY, Vector2[] exhaustPoints) {
+    public void setTextureSettings(TextureRegion texture, float massCenterX, float massCenterY) {
         this.texture = texture;
         this.textureW = texture.getRegionWidth();
         this.textureH = texture.getRegionHeight();
         this.massCenter.set(massCenterX, massCenterY);
-        this.exhaustPoints = exhaustPoints;
+    }
+
+    public void setExhausts(Exhaust... exhausts) {
+        this.exhausts = exhausts;
     }
 
     public void setRandomState() {
@@ -97,6 +102,7 @@ public class Ship implements Collisional {
 
     private void update(float dt) {
         if (!pilot.control(dt)) frictionBreak(dt);
+        doExhaust();
         position.mulAdd(velocity, dt);
         weapon.update(dt);
         gameController.seamlessTranslate(position);
@@ -125,19 +131,21 @@ public class Ship implements Collisional {
     }
 
     public void turnLeft(float dt) {
-        turn(dt, 1, -1);
+        turnLeft(dt, -1);
     }
 
     public void turnLeft(float dt, float maxAngle) {
         turn(dt, 1, maxAngle);
+        powerExhausts(Exhaust.Flags.RIGHT_TURN);
     }
 
     public void turnRight(float dt) {
-        turn(dt, -1, -1);
+        turnRight(dt, -1);
     }
 
     public void turnRight(float dt, float maxAngle) {
         turn(dt, -1, maxAngle);
+        powerExhausts(Exhaust.Flags.LEFT_TURN);
     }
 
     private void turn(float dt, int direction, float maxAngle) {
@@ -155,7 +163,7 @@ public class Ship implements Collisional {
         velocity.add(directionX * FORWARD_POWER * dt, directionY * FORWARD_POWER * dt);
         if (velocity.len() > forwardMaxSpeed && isForwardMoving)
             velocity.nor().scl(forwardMaxSpeed);
-        makeAccelerationParticles();
+        powerExhausts(Exhaust.Flags.THRUST);
     }
 
     public void reverse(float dt) {
@@ -170,13 +178,15 @@ public class Ship implements Collisional {
         }
     }
 
-    private void makeAccelerationParticles() {
-        for (int i = 0; i < exhaustPoints.length; i++) {
-            gameController.getParticleController().getEffectBuilder().exhaust(ParticleLayouts.SHIP,
-                    position.x + getOffsetX(exhaustPoints[i].x, exhaustPoints[i].y),
-                    position.y + getOffsetY(exhaustPoints[i].x, exhaustPoints[i].y),
-                    velocity, angle, 8, 1f, 0.9f, 0.5f
-            );
+    private void powerExhausts(Exhaust.Flags flag) {
+        for (int i = 0; i < exhausts.length; i++) {
+            exhausts[i].increasePower(flag);
+        }
+    }
+
+    private void doExhaust() {
+        for (int i = 0; i < exhausts.length; i++) {
+            exhausts[i].exhaust(position, velocity, angle);
         }
     }
 

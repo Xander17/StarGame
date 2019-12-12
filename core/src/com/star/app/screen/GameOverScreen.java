@@ -37,7 +37,7 @@ public class GameOverScreen extends AbstractScreen {
         font16 = Assets.getInstance().getAssetManager().get("fonts/font16.ttf", BitmapFont.class);
         font24 = Assets.getInstance().getAssetManager().get("fonts/font24.ttf", BitmapFont.class);
         font64 = Assets.getInstance().getAssetManager().get("fonts/font64.ttf", BitmapFont.class);
-        background = new Background(null);
+        background = new Background();
         readyForMenu = false;
     }
 

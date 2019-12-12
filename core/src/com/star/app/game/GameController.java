@@ -25,7 +25,13 @@ import static com.star.app.screen.ScreenManager.*;
 
 public class GameController {
     public enum GameStatus {
-        START("LEVEL %s STARTS!"), ACTIVE(null), DEAD("YOU ARE DEAD"), GAME_OVER("GAME OVER"), PAUSED(null), LEVEL_COMPLETE("LEVEL COMPLETE"), WIN("YOU WIN");
+        START("LEVEL %s STARTS!"),
+        ACTIVE(null),
+        DEAD("YOU ARE DEAD"),
+        GAME_OVER("GAME OVER"),
+        PAUSED(null),
+        LEVEL_COMPLETE("LEVEL COMPLETE"),
+        WIN("YOU WIN");
 
         private String msg;
 
@@ -44,8 +50,8 @@ public class GameController {
         }
     }
 
-    public final int SPACE_WIDTH = 4000;
-    public final int SPACE_HEIGHT = 4000;
+    public final float SPACE_WIDTH = 4000;
+    public final float SPACE_HEIGHT = 4000;
     private final int ASTEROIDS_SCORE = 100;
     private final int ENEMY_SCORE = 500;
     private final float TIME_TO_RESPAWN = 3f;
@@ -142,7 +148,6 @@ public class GameController {
         betweenLevels(dt);
         checkRespawn(dt);
         gameOverCountDown(dt);
-        background.update(dt);
         if (gameStatus != GameStatus.GAME_OVER && gameStatus != GameStatus.WIN) {
             player.update(dt);
         }
@@ -154,6 +159,7 @@ public class GameController {
         infoOverlay.update(dt);
         checkBulletsCollisions();
         if (!player.isDead()) checkPlayerCollisions(dt);
+        background.update(dt);
     }
 
     private void betweenLevels(float dt) {

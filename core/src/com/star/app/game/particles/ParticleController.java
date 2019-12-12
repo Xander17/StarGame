@@ -72,9 +72,10 @@ public class ParticleController extends ObjectPool<Particle> {
             float spread = 0.3f;
             for (int i = 0; i < 5; i++) {
                 newSize = (size / textureW) * MathUtils.random(0.8f, 1.3f);
+                float rnd = MathUtils.random(0.3f, 0.5f);
                 setup(layout, x + MathUtils.random(-spread * size, spread * size), y + MathUtils.random(-spread * size, spread * size),
-                        -(v.len() * MathUtils.cosDeg(angle)) * MathUtils.random(0.3f, 0.5f) + MathUtils.random(-0.5f * size, 0.5f * size),
-                        -(v.len() * MathUtils.sinDeg(angle)) * MathUtils.random(0.3f, 0.5f) + MathUtils.random(-0.5f * size, 0.5f * size),
+                        v.len() * MathUtils.cosDeg(angle + 180) * rnd + MathUtils.random(-0.5f * size, 0.5f * size),
+                        v.len() * MathUtils.sinDeg(angle + 180) * rnd + MathUtils.random(-0.5f * size, 0.5f * size),
                         0.3f, r, g, b, 1, newSize, 1f, 0f, 0f, 0.1f, newSize * 0.1f);
             }
         }

@@ -15,9 +15,9 @@ public class ScreenManager {
     public enum ScreenType {GAME, MENU, GAME_OVER}
 
     public static final int SCREEN_WIDTH = Gdx.graphics.getBackBufferWidth();
-    public static final int SCREEN_HALF_WIDTH = SCREEN_WIDTH / 2;
+    public static final float SCREEN_HALF_WIDTH = SCREEN_WIDTH / 2;
     public static final int SCREEN_HEIGHT = Gdx.graphics.getBackBufferHeight();
-    public static final int SCREEN_HALF_HEIGHT = SCREEN_HEIGHT / 2;
+    public static final float SCREEN_HALF_HEIGHT = SCREEN_HEIGHT / 2;
 
     private SpriteBatch batch;
     private Game game;

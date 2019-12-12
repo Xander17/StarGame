@@ -42,7 +42,7 @@ public class MenuScreen extends AbstractScreen {
         font24 = Assets.getInstance().getAssetManager().get("fonts/font24.ttf", BitmapFont.class);
         font18 = Assets.getInstance().getAssetManager().get("fonts/font18.ttf", BitmapFont.class);
         font64 = Assets.getInstance().getAssetManager().get("fonts/font64.ttf", BitmapFont.class);
-        background = new Background(null);
+        background = new Background();
         stage = new Stage(ScreenManager.getInstance().getViewport(), batch);
         settingsStage = new Stage(ScreenManager.getInstance().getViewport(), batch);
         settingsMode = false;

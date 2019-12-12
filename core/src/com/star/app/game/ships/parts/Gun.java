@@ -1,8 +1,9 @@
-package com.star.app.game.ships;
+package com.star.app.game.ships.parts;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.star.app.game.GameController;
+import com.star.app.game.ships.Ship;
 
 public class Gun {
     private Vector2 position;
@@ -12,8 +13,8 @@ public class Gun {
     private float groupDamage;
     private float countInGroup;
 
-    public Gun(float x, float y, float velocity, float angleOffset) {
-        this.position = new Vector2(x, y);
+    public Gun(float offsetX, float offsetY, float velocity, float angleOffset) {
+        this.position = new Vector2(offsetX, offsetY);
         this.groupIndex = 0;
         this.angleOffset = angleOffset;
         this.velocity = velocity;

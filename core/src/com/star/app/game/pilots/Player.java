@@ -15,7 +15,7 @@ import com.star.app.utils.Options;
 public class Player implements Piloting {
     private final int START_LIVES = 2;
     private final int SCORE_DEAD_PENALTY = 20000;
-    private final ShipTypes START_TYPE = ShipTypes.FIGHTER;
+    private final ShipTypes START_TYPE = ShipTypes.HORSESHOE;
 
     private GameController gameController;
     private Ship ship;
@@ -99,7 +99,6 @@ public class Player implements Piloting {
         }
         else if (Gdx.input.isKeyPressed(keyControls.reverse)) {
             ship.reverse(dt);
-            isTrust = false;
         }
         return isTrust;
     }

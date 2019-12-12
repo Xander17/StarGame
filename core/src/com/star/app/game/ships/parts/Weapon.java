@@ -1,8 +1,9 @@
-package com.star.app.game.ships;
+package com.star.app.game.ships.parts;
 
 import com.star.app.game.GameController;
 import com.star.app.game.helpers.GameTimer;
 import com.star.app.game.pilots.PlayerStatistic;
+import com.star.app.game.ships.Ship;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +30,7 @@ public class Weapon {
         this.groupDamage = groupDamage;
     }
 
-    public void setGunGroup(Gun[] guns) {
+    public void setGunGroup(Gun... guns) {
         for (int i = 0; i < guns.length; i++) {
             Gun gun = guns[i];
             addGun(gun, guns.length);
@@ -52,7 +53,7 @@ public class Weapon {
         fireTimer.update(dt);
     }
 
-    void fire(boolean playerIsOwner) {
+    public void fire(boolean playerIsOwner) {
         if (!fireTimer.isReady()) return;
         for (int i = 0; i < guns.size(); i++) {
             if (bullets == 0) break;
