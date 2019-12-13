@@ -26,6 +26,7 @@ public class InfoOverlay {
     private TextureRegion durability;
     private TextureRegion cash;
     private TextureRegion ammo;
+    private TextureRegion mines;
     private GlyphLayout layout;
 
     private float scoreView;
@@ -41,6 +42,7 @@ public class InfoOverlay {
         this.durability = Assets.getInstance().getTextureAtlas().findRegion("durabilityicon");
         this.cash = Assets.getInstance().getTextureAtlas().findRegion("cashicon");
         this.ammo = Assets.getInstance().getTextureAtlas().findRegion("ammoicon");
+        this.mines = Assets.getInstance().getTextureAtlas().findRegion("minesicon");
         this.layout = new GlyphLayout();
         this.scoreView = 0f;
         this.cashView = 0f;
@@ -68,12 +70,13 @@ public class InfoOverlay {
     public void render(SpriteBatch batch) {
         drawIconMaxAmount(batch, durability, font22, 20, SCREEN_HEIGHT - 20, Math.round(durabilityView), Math.round(gameController.getPlayer().getShip().getMaxDurability()), 3);
         drawIconMaxAmount(batch, ammo, font22, 180, SCREEN_HEIGHT - 20, Math.round(ammoView), gameController.getPlayer().getShip().getWeapon().getMaxBullets(), 4);
-        drawIconAmount(batch, cash, font22, 20, SCREEN_HEIGHT - 60, Math.round(cashView), 0);
-        drawCaptionAmount(batch, font22, 380, SCREEN_HEIGHT - 20, "SCORE: ", Math.round(scoreView));
+        drawIconMaxAmount(batch, mines, font22, 380, SCREEN_HEIGHT - 20, gameController.getPlayer().getShip().getMinesCount(), gameController.getPlayer().getShip().getMaxMines(), 0);
+        drawCaptionAmount(batch, font22, 20, SCREEN_HEIGHT - 60, "SCORE: ", Math.round(scoreView));
+        drawIconAmount(batch, cash, font22, 20, SCREEN_HEIGHT - 100, Math.round(cashView), 0);
         drawCaptionAmount(batch, font22, SCREEN_WIDTH - 130, SCREEN_HEIGHT - 20, "LIVES: ", gameController.getPlayer().getLives());
 
         String statusMsg = gameController.getGameStatus().getMsg(String.valueOf(gameController.getLevel()));
-        if (statusMsg != null) drawCenterAlign(batch, font64, statusMsg, SCREEN_HALF_WIDTH,0, SCREEN_HALF_HEIGHT);
+        if (statusMsg != null) drawCenterAlign(batch, font64, statusMsg, SCREEN_HALF_WIDTH, 0, SCREEN_HALF_HEIGHT);
     }
 
     private void drawIconAmount(SpriteBatch batch, TextureRegion texture, BitmapFont font, float x, float y, int amount, int zeros) {
@@ -87,7 +90,7 @@ public class InfoOverlay {
     private void drawIconMaxAmount(SpriteBatch batch, TextureRegion texture, BitmapFont font, float x, float y, int amount, int maxAmount, int zeros) {
         batch.draw(texture, x, y - texture.getRegionHeight() + 4);
         String s;
-        if (zeros == 0) s = String.valueOf(amount);
+        if (zeros == 0) s = amount + "/" + maxAmount;
         else s = String.format("%0" + zeros + "d/%0" + zeros + "d", amount, maxAmount);
         font.draw(batch, s, x + texture.getRegionWidth() + 5, y);
     }

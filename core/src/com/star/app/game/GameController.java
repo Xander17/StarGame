@@ -9,6 +9,7 @@ import com.star.app.game.bullets.Bullet;
 import com.star.app.game.bullets.BulletController;
 import com.star.app.game.drops.Drop;
 import com.star.app.game.drops.DropController;
+import com.star.app.game.mines.MineController;
 import com.star.app.game.overlays.InfoOverlay;
 import com.star.app.game.overlays.GamePauseOverlay;
 import com.star.app.game.particles.ParticleController;
@@ -67,6 +68,7 @@ public class GameController {
     private InfoOverlay infoOverlay;
     private GamePauseOverlay gamePauseOverlay;
     private EnemyController enemyController;
+    private MineController mineController;
     private float timeToRespawn;
     private float timeToGameOver;
     private float timeToStart;
@@ -122,6 +124,10 @@ public class GameController {
         return enemyController;
     }
 
+    public MineController getMineController() {
+        return mineController;
+    }
+
     public GameController(SpriteBatch batch) {
         background = new Background(this);
         player = new Player(this, 1);
@@ -132,6 +138,7 @@ public class GameController {
         infoOverlay = new InfoOverlay(this);
         gamePauseOverlay = new GamePauseOverlay(this, batch);
         enemyController = new EnemyController(this);
+        mineController = new MineController(this);
         gameStatus = GameStatus.START;
         timeToRespawn = 0;
         timeToGameOver = 0;
@@ -153,6 +160,7 @@ public class GameController {
         }
         enemyController.update(dt);
         bulletController.update(dt);
+        mineController.update(dt);
         asteroidController.update(dt);
         dropController.update(dt);
         particleController.update(dt);
@@ -202,7 +210,7 @@ public class GameController {
 
     private void startNewLevel() {
         for (int i = 0; i < 10 + level / 3; i++) asteroidController.createNew();
-        for (int i = 0; i < 0 + level / 5; i++) enemyController.createNew();
+        for (int i = 0; i < 10 + level / 5; i++) enemyController.createNew();
     }
 
     public Vector2 getRandomStartPoint(float textureRealSizeHalfW, float textureRealSizeHalfH) {
@@ -226,11 +234,13 @@ public class GameController {
 
     private void checkBulletsCollisions() {
         List<Bullet> bullets = getBulletController().getActiveList();
-        for (int i = 0; i < bullets.size(); i++) {
+        float size = bullets.size();
+        for (int i = 0; i < size; i++) {
             Bullet bullet = bullets.get(i);
             if (!bullet.isActive()) break;
             List<Asteroid> asteroids = getAsteroidController().getActiveList();
-            for (int j = 0; j < asteroids.size(); j++) {
+            float size2 = asteroids.size();
+            for (int j = 0; j < size2; j++) {
                 Asteroid asteroid = asteroids.get(j);
                 if (!asteroid.isActive()) break;
                 if (bullet.checkHit(asteroid)) {
@@ -240,7 +250,8 @@ public class GameController {
                 }
             }
             List<Enemy> enemies = getEnemyController().getActiveList();
-            for (int j = 0; j < enemies.size(); j++) {
+            size2 = enemies.size();
+            for (int j = 0; j < size2; j++) {
                 if (!enemies.get(j).isActive()) break;
                 Ship ship = enemies.get(j).getShip();
                 if (bullet.checkHit(ship) && bullet.isPlayerIsOwner()) {
@@ -258,17 +269,20 @@ public class GameController {
     private void checkPlayerCollisions(float dt) {
         List<Asteroid> asteroids = getAsteroidController().getActiveList();
         List<Enemy> enemies = getEnemyController().getActiveList();
-        for (int i = 0; i < asteroids.size(); i++) {
+        float size = asteroids.size();
+        for (int i = 0; i < size; i++) {
             getPlayer().getShip().checkCollision(asteroids.get(i), dt);
 //            for (int j = 0; j < enemies.size(); j++) {
 //                enemies.get(j).getShip().checkCollision(asteroids.get(i), dt);
 //            }
         }
-        for (int i = 0; i < enemies.size(); i++) {
+        size = enemies.size();
+        for (int i = 0; i < size; i++) {
             getPlayer().getShip().checkCollision(enemies.get(i).getShip(), dt);
         }
         List<Drop> drops = getDropController().getActiveList();
-        for (int i = 0; i < drops.size(); i++) {
+        size = drops.size();
+        for (int i = 0; i < size; i++) {
             getPlayer().getShip().checkDropItem(drops.get(i));
         }
     }

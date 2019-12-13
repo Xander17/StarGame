@@ -121,5 +121,16 @@ public class ParticleController extends ObjectPool<Particle> {
                 }
             }
         }
+
+        public void mineBlast(ParticleLayouts layouts, Vector2 position, float radius) {
+            float time = 0.3f;
+            float speed = radius / time;
+            for (int i = 0; i < 360; i += 6) {
+                float vx = speed * MathUtils.cosDeg(i);
+                float vy = speed * MathUtils.sinDeg(i);
+                setup(layouts, position.x, position.y, vx, vy, time, 1f, 1f, 0.5f, 1, 0.1f, 0.2f, 0, 0, 0, 2f);
+                setup(layouts, position.x, position.y, vx * 0.8f, vy * 0.8f, time, 1f, 0.5f, 0.5f, 1, 0.1f, 0.2f, 0, 0, 0, 3*radius/100);
+            }
+        }
     }
 }

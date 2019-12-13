@@ -10,7 +10,6 @@ import com.star.app.screen.ScreenManager;
  * 2. Asteroid split texture
  * 3. Elastic collisions
  * 4. Particles
- *   - exhaust rotate
  *   - bullet
  *   - bullet hit
  *   - (?) collision
@@ -19,7 +18,9 @@ import com.star.app.screen.ScreenManager;
  * 10. Animation
  * 11. Stage controller in Menu Screen
  * 13. Damage info overlay
- * 14. Statistic asteroids destroyed by bullet and by hit
+ * 14. Statistic
+ *    - asteroids destroyed by bullet and by hit
+ *    - mines used
  * 15. Level complete fireworks
  * 16. Drop random start speed
  * 17. No bullets mode
@@ -27,7 +28,6 @@ import com.star.app.screen.ScreenManager;
  * 19. Updates costs map
  * 20. Updates effects map
  * 21. Update menu via group
- * 22. Background and stars seamless parallax
  * 23. Pathfinding
  * */
 

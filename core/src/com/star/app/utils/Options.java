@@ -13,7 +13,8 @@ public class Options {
         PLAYER1_REVERSE(Input.Keys.DOWN),
         PLAYER1_LEFT(Input.Keys.LEFT),
         PLAYER1_RIGHT(Input.Keys.RIGHT),
-        PLAYER1_FIRE(Input.Keys.Z);
+        PLAYER1_FIRE(Input.Keys.Z),
+        PLAYER1_MINE(Input.Keys.X);
 
         int defaultKey;
 

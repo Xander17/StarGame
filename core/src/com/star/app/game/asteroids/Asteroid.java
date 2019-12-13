@@ -93,7 +93,7 @@ public class Asteroid implements Poolable, Collisional {
         this.textureW = texture.getRegionWidth();
         this.textureH = texture.getRegionHeight();
         this.position.set(x, y);
-        this.renderPosition.recalculate(gameController,textureW/2f,textureH/2f);
+        this.renderPosition.recalculate(gameController, textureW / 2f, textureH / 2f);
         this.scale = scale;
         this.velocity.set(velocityX, velocityY);
         this.rotationAngle = MathUtils.random(0, 360);
@@ -170,6 +170,14 @@ public class Asteroid implements Poolable, Collisional {
             destroy();
             return true;
         }
+        return false;
+    }
+
+    @Override
+    public boolean takeImpulseDamage(float power, float angle, float amount) {
+        if (takeDamage(amount)) return true;
+        velocity.x += power * MathUtils.cosDeg(angle)/getMassFactor();
+        velocity.y += power * MathUtils.sinDeg(angle)/getMassFactor();
         return false;
     }
 

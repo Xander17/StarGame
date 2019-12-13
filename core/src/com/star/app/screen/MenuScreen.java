@@ -104,7 +104,8 @@ public class MenuScreen extends AbstractScreen {
                 new Label("REVERSE", labelStyle),
                 new Label("RIGHT", labelStyle),
                 new Label("LEFT", labelStyle),
-                new Label("FIRE", labelStyle)
+                new Label("FIRE", labelStyle),
+                new Label("MINE", labelStyle)
         };
 
         textButtonStyle = GameButtonStyle.getInstance().getKeyButtonStyle(font18);
@@ -114,7 +115,8 @@ public class MenuScreen extends AbstractScreen {
                 getPropertyKeyButton("PLAYER1_REVERSE", textButtonStyle),
                 getPropertyKeyButton("PLAYER1_RIGHT", textButtonStyle),
                 getPropertyKeyButton("PLAYER1_LEFT", textButtonStyle),
-                getPropertyKeyButton("PLAYER1_FIRE", textButtonStyle)
+                getPropertyKeyButton("PLAYER1_FIRE", textButtonStyle),
+                getPropertyKeyButton("PLAYER1_MINE", textButtonStyle)
         );
         settingsButtons.setMaxCheckCount(1);
         settingsButtons.setMinCheckCount(0);
@@ -134,8 +136,8 @@ public class MenuScreen extends AbstractScreen {
         };
 
         for (int i = 0; i < settingsButtons.getButtons().size; i++) {
-            labels[i].setPosition(SCREEN_WIDTH * 0.3f, SCREEN_HALF_HEIGHT + (1.8f - 1.2f * i) * textureH);
-            settingsButtons.getButtons().get(i).setPosition(SCREEN_WIDTH * 0.7f, SCREEN_HALF_HEIGHT + (2.0f - 1.2f * i) * textureH, Align.right);
+            labels[i].setPosition(SCREEN_WIDTH * 0.3f, SCREEN_HALF_HEIGHT + (3f - 1.2f * i) * textureH);
+            settingsButtons.getButtons().get(i).setPosition(SCREEN_WIDTH * 0.7f, SCREEN_HALF_HEIGHT + (3.2f - 1.2f * i) * textureH, Align.right);
             settingsButtons.getButtons().get(i).addListener(listener);
             settingsStage.addActor(settingsButtons.getButtons().get(i));
             settingsStage.addActor(labels[i]);

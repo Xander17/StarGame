@@ -21,14 +21,15 @@ public class DropController extends ObjectPool<Drop> {
 
     private GameController gameController;
 
-    private TextureRegion[] textures = {
-            Assets.getInstance().getTextureAtlas().findRegion("healdrop"),
-            Assets.getInstance().getTextureAtlas().findRegion("ammodrop"),
-            Assets.getInstance().getTextureAtlas().findRegion("cashdrop")
-    };
+    private TextureRegion[] textures;
 
     public DropController(GameController gameController) {
         this.gameController = gameController;
+        textures = new TextureRegion[]{
+                Assets.getInstance().getTextureAtlas().findRegion("healdrop"),
+                Assets.getInstance().getTextureAtlas().findRegion("ammodrop"),
+                Assets.getInstance().getTextureAtlas().findRegion("cashdrop")
+        };
     }
 
     @Override

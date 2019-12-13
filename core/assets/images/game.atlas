@@ -13,21 +13,21 @@ Layer 3
   index: -1
 ammodrop
   rotate: false
-  xy: 1940, 378
+  xy: 846, 186
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 ammoicon
   rotate: false
-  xy: 118, 25
+  xy: 1940, 448
   size: 26, 26
   orig: 26, 26
   offset: 0, 0
   index: -1
 arrow
   rotate: false
-  xy: 1550, 283
+  xy: 1968, 479
   size: 57, 29
   orig: 57, 29
   offset: 0, 0
@@ -104,21 +104,21 @@ buttonmenuover
   index: -1
 buttonmenuup
   rotate: false
-  xy: 1550, 444
+  xy: 1550, 410
   size: 256, 64
   orig: 256, 64
   offset: 0, 0
   index: -1
 cashdrop
   rotate: false
-  xy: 520, 56
+  xy: 780, 186
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 cashicon
   rotate: false
-  xy: 586, 94
+  xy: 780, 158
   size: 26, 26
   orig: 26, 26
   offset: 0, 0
@@ -139,21 +139,21 @@ damageupdateup
   index: -1
 durabilityicon
   rotate: false
-  xy: 2006, 482
+  xy: 1550, 252
   size: 26, 26
   orig: 26, 26
   offset: 0, 0
   index: -1
 fighter
   rotate: false
-  xy: 780, 186
+  xy: 184, 53
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 forwardspeeddisabled
   rotate: false
-  xy: 1810, 250
+  xy: 1810, 216
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
@@ -167,21 +167,21 @@ forwardspeedup
   index: -1
 healdrop
   rotate: false
-  xy: 1940, 444
+  xy: 520, 56
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 healupdatedisabled
   rotate: false
-  xy: 1810, 380
+  xy: 1810, 346
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: -1
 healupdateup
   rotate: false
-  xy: 1680, 314
+  xy: 1680, 280
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
@@ -193,16 +193,30 @@ horseshoe
   orig: 64, 64
   offset: 0, 0
   index: -1
+mine
+  rotate: false
+  xy: 1550, 476
+  size: 416, 32
+  orig: 416, 32
+  offset: 0, 0
+  index: -1
+minesicon
+  rotate: false
+  xy: 118, 25
+  size: 26, 26
+  orig: 26, 26
+  offset: 0, 0
+  index: -1
 particle1
   rotate: false
-  xy: 146, 35
+  xy: 1578, 262
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 rotationspeeddisabled
   rotate: false
-  xy: 1550, 314
+  xy: 1550, 280
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
@@ -216,49 +230,49 @@ rotationspeedup
   index: -1
 star1
   rotate: false
-  xy: 846, 234
+  xy: 912, 234
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 star2
   rotate: false
-  xy: 1940, 360
+  xy: 1968, 461
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 star3
   rotate: false
-  xy: 1550, 265
+  xy: 2027, 492
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 star4
   rotate: false
-  xy: 2006, 464
+  xy: 146, 35
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 star5
   rotate: false
-  xy: 1609, 296
+  xy: 1940, 430
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 star6
   rotate: false
-  xy: 780, 168
+  xy: 652, 104
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 trident
   rotate: false
-  xy: 184, 53
+  xy: 586, 56
   size: 64, 64
   orig: 64, 64
   offset: 0, 0

@@ -42,10 +42,11 @@ public class WorldRenderer {
         batch.end();
         ScreenManager.getInstance().resetCamera(gameController.getPlayer().getShip().getPosition());
         batch.begin();
+        gameController.getBulletController().render(batch);
+        gameController.getMineController().render(batch);
         gameController.getPlayer().render(batch);
         gameController.getEnemyController().render(batch);
         gameController.getParticleController().render(batch, ParticleLayouts.SHIP);
-        gameController.getBulletController().render(batch);
         gameController.getAsteroidController().render(batch);
         gameController.getDropController().render(batch);
         gameController.getParticleController().render(batch, ParticleLayouts.TOP);

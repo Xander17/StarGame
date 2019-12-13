@@ -44,6 +44,8 @@ public class Ship implements Collisional {
     private boolean shipDestroyed;
     private float angle;
     private float invulnerabilityTime;
+    private int maxMines;
+    private int minesCount;
 
     public Vector2 getVelocity() {
         return velocity;
@@ -128,6 +130,13 @@ public class Ship implements Collisional {
 
     public void fire(boolean playerIsOwner) {
         weapon.fire(playerIsOwner);
+    }
+
+    public void mine() {
+        if (minesCount > 0) {
+            gameController.getMineController().createNew(position.x, position.y);
+            minesCount--;
+        }
     }
 
     public void turnLeft(float dt) {
@@ -231,8 +240,10 @@ public class Ship implements Collisional {
         return angle;
     }
 
-    public void setWeapon(Weapon weapon) {
+    public void setWeapon(Weapon weapon, int maxMines) {
         this.weapon = weapon;
+        this.maxMines = maxMines;
+        this.minesCount = maxMines;
     }
 
     public Weapon getWeapon() {
@@ -349,6 +360,14 @@ public class Ship implements Collisional {
         return false;
     }
 
+    @Override
+    public boolean takeImpulseDamage(float power, float angle, float amount) {
+        if (takeDamage(amount)) return true;
+        velocity.x += power * MathUtils.cosDeg(angle) / getMassFactor();
+        velocity.y += power * MathUtils.sinDeg(angle) / getMassFactor();
+        return false;
+    }
+
     public void checkDropItem(Drop drop) {
         if (hitBox.overlaps(drop.getHitBox())) drop.consume();
     }
@@ -384,5 +403,13 @@ public class Ship implements Collisional {
 
     public RenderPosition getRenderPosition() {
         return renderPosition;
+    }
+
+    public int getMaxMines() {
+        return maxMines;
+    }
+
+    public int getMinesCount() {
+        return minesCount;
     }
 }

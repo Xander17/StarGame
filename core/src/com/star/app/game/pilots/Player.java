@@ -87,6 +87,9 @@ public class Player implements Piloting {
         if (Gdx.input.isKeyPressed(keyControls.fire)) {
             ship.fire(true);
         }
+        if (Gdx.input.isKeyJustPressed(keyControls.mine)) {
+            ship.mine();
+        }
         if (Gdx.input.isKeyPressed(keyControls.left) && !Gdx.input.isKeyPressed(keyControls.right)) {
             ship.turnLeft(dt);
         }

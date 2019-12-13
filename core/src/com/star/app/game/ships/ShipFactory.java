@@ -37,7 +37,7 @@ public class ShipFactory {
                         new Exhaust(gameController, -20, 28, Exhaust.Flags.LEFT_THRUST),
                         new Exhaust(gameController, -20, -28, Exhaust.Flags.RIGHT_THRUST)
                 );
-                ship.setWeapon(new Weapon(gameController, ship, 0.1f, 1000, enemyWeakFactor * 1 + damageUpdate));
+                ship.setWeapon(new Weapon(gameController, ship, 0.1f, 1000, enemyWeakFactor * 1 + damageUpdate),5);
                 ship.getWeapon().setGunSeparate(new Gun(1, -27, 600f, 0));
                 ship.getWeapon().setGunSeparate(new Gun(1, 27, 600f, 0));
                 break;
@@ -50,7 +50,7 @@ public class ShipFactory {
                         23, 32);
                 ship.setExhausts(new Exhaust(gameController, -20, 18, Exhaust.Flags.LEFT_THRUST),
                         new Exhaust(gameController, -20, -18, Exhaust.Flags.RIGHT_THRUST));
-                ship.setWeapon(new Weapon(gameController, ship, 0.1f, 1000, enemyWeakFactor * 1 + damageUpdate));
+                ship.setWeapon(new Weapon(gameController, ship, 0.1f, 1000, enemyWeakFactor * 1 + damageUpdate),3);
                 ship.getWeapon().setGunGroup(
                         new Gun(32, -14, 600f, 0),
                         new Gun(32, 14, 600f, 0)
@@ -67,7 +67,7 @@ public class ShipFactory {
                         new Exhaust(gameController, -37, 16, Exhaust.Flags.LEFT_THRUST),
                         new Exhaust(gameController, -27, -16, Exhaust.Flags.RIGHT_THRUST)
                 );
-                ship.setWeapon(new Weapon(gameController, ship, 0.1f, 2000, enemyWeakFactor * 1 + damageUpdate));
+                ship.setWeapon(new Weapon(gameController, ship, 0.1f, 2000, enemyWeakFactor * 1 + damageUpdate),2);
                 ship.getWeapon().setGunSeparate(new Gun(15, -12, 600f, -10));
                 ship.getWeapon().setGunSeparate(new Gun(15, -6, 600f, 5));
                 ship.getWeapon().setGunSeparate(new Gun(15, 0, 600f, 0));
