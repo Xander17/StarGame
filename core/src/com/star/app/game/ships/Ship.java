@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.star.app.game.GameController;
 import com.star.app.game.drops.Drop;
 import com.star.app.game.helpers.Collisional;
+import com.star.app.game.helpers.GameTimer;
 import com.star.app.game.helpers.Piloting;
 import com.star.app.game.helpers.RenderPosition;
 import com.star.app.game.particles.ParticleLayouts;
@@ -43,7 +44,7 @@ public class Ship implements Collisional {
     private float rotationSpeed;
     private boolean shipDestroyed;
     private float angle;
-    private float invulnerabilityTime;
+    private GameTimer invulnerabilityTimer;
     private int maxMines;
     private int minesCount;
 
@@ -69,6 +70,7 @@ public class Ship implements Collisional {
         this.maxDurability = durability;
         this.durability = durability;
         this.forwardMaxSpeed = forwardMaxSpeed;
+        this.invulnerabilityTimer = new GameTimer(INVULNERABILITY_TIME, true);
         this.rotationSpeed = rotationSpeed;
         this.FORWARD_POWER = FORWARD_POWER;
         this.REVERSE_POWER = REVERSE_POWER;
@@ -93,7 +95,7 @@ public class Ship implements Collisional {
 
     public void updatePlayer(float dt) {
         update(dt);
-        if (invulnerabilityTime > 0) invulnerabilityTime -= dt;
+        invulnerabilityTimer.update(dt);
     }
 
     public void updateEnemy(float dt) {
@@ -113,9 +115,9 @@ public class Ship implements Collisional {
 
     public void renderPlayer(SpriteBatch batch) {
         if (shipDestroyed) return;
-        if (invulnerabilityTime > 0) batch.setColor(1, 1, 1, 0.6f);
+        if (!invulnerabilityTimer.isReady()) batch.setColor(1, 1, 1, 0.6f);
         render(batch, position);
-        if (invulnerabilityTime > 0) batch.setColor(1, 1, 1, 1);
+        if (!invulnerabilityTimer.isReady()) batch.setColor(1, 1, 1, 1);
     }
 
     public void renderEnemy(SpriteBatch batch) {
@@ -350,7 +352,7 @@ public class Ship implements Collisional {
 
     @Override
     public boolean takeDamage(float amount) {
-        if (invulnerabilityTime > 0) return false;
+        if (!invulnerabilityTimer.isReady()) return false;
         gameController.getPlayer().getPlayerStatistic().add(PlayerStatistic.Stats.DAMAGE_TAKEN, amount);
         durability -= amount;
         if (durability <= 0) {
@@ -370,10 +372,6 @@ public class Ship implements Collisional {
 
     public void checkDropItem(Drop drop) {
         if (hitBox.overlaps(drop.getHitBox())) drop.consume();
-    }
-
-    public void resetInvulnerability() {
-        invulnerabilityTime = INVULNERABILITY_TIME;
     }
 
     public void setVelocity(float x, float y) {
@@ -411,5 +409,13 @@ public class Ship implements Collisional {
 
     public int getMinesCount() {
         return minesCount;
+    }
+
+    public void addMines() {
+        if (minesCount < maxMines) minesCount++;
+    }
+
+    public void setInvulnerability() {
+        invulnerabilityTimer.reset();
     }
 }

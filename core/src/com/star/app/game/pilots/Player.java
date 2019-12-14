@@ -31,6 +31,7 @@ public class Player implements Piloting {
         this.deadStatus = status;
         if (status) {
             playerStatistic.add(PlayerStatistic.Stats.SCORE, -SCORE_DEAD_PENALTY);
+            playerStatistic.inc(PlayerStatistic.Stats.LIVES_LOST);
             ship.setVelocity(0, 0);
             if (lives == 0) gameController.setGameStatus(GameController.GameStatus.GAME_OVER);
             else gameController.setGameStatus(GameController.GameStatus.DEAD);
@@ -56,9 +57,8 @@ public class Player implements Piloting {
         if (deadStatus) return;
         if (ship.isShipDestroyed()) {
             ship = ShipFactory.getShip(START_TYPE, gameController, this, updates, true);
+            ship.setInvulnerability();
             lives--;
-            playerStatistic.inc(PlayerStatistic.Stats.LIVES_LOST);
-            ship.resetInvulnerability();
         }
         ship.updatePlayer(dt);
         DebugOverlay.setParam("x", ship.getPosition().x);
@@ -92,15 +92,13 @@ public class Player implements Piloting {
         }
         if (Gdx.input.isKeyPressed(keyControls.left) && !Gdx.input.isKeyPressed(keyControls.right)) {
             ship.turnLeft(dt);
-        }
-        else if (Gdx.input.isKeyPressed(keyControls.right) && !Gdx.input.isKeyPressed(keyControls.left)) {
+        } else if (Gdx.input.isKeyPressed(keyControls.right) && !Gdx.input.isKeyPressed(keyControls.left)) {
             ship.turnRight(dt);
         }
         if (Gdx.input.isKeyPressed(keyControls.forward)) {
             ship.moveForward(dt);
             isTrust = true;
-        }
-        else if (Gdx.input.isKeyPressed(keyControls.reverse)) {
+        } else if (Gdx.input.isKeyPressed(keyControls.reverse)) {
             ship.reverse(dt);
         }
         return isTrust;

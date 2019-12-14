@@ -13,7 +13,7 @@ Layer 3
   index: -1
 ammodrop
   rotate: false
-  xy: 846, 186
+  xy: 652, 56
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
@@ -200,6 +200,13 @@ mine
   orig: 416, 32
   offset: 0, 0
   index: -1
+minesdrop
+  rotate: false
+  xy: 586, 56
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
 minesicon
   rotate: false
   xy: 118, 25
@@ -230,7 +237,7 @@ rotationspeedup
   index: -1
 star1
   rotate: false
-  xy: 912, 234
+  xy: 718, 104
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
@@ -265,14 +272,14 @@ star5
   index: -1
 star6
   rotate: false
-  xy: 652, 104
+  xy: 912, 234
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 trident
   rotate: false
-  xy: 586, 56
+  xy: 846, 186
   size: 64, 64
   orig: 64, 64
   offset: 0, 0

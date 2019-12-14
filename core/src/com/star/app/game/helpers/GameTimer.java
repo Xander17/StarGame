@@ -5,8 +5,12 @@ public class GameTimer {
     private float current;
 
     public GameTimer(float max) {
+        this(max, false);
+    }
+
+    public GameTimer(float max, boolean disabled) {
         this.max = max;
-        current = 0;
+        current = disabled ? max : 0;
     }
 
     public void update(float dt) {
