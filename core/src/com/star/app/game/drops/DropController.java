@@ -26,10 +26,10 @@ public class DropController extends ObjectPool<Drop> {
     public DropController(GameController gameController) {
         this.gameController = gameController;
         textures = new TextureRegion[]{
-                Assets.getInstance().getTextureAtlas().findRegion("healdrop"),
-                Assets.getInstance().getTextureAtlas().findRegion("ammodrop"),
-                Assets.getInstance().getTextureAtlas().findRegion("cashdrop"),
-                Assets.getInstance().getTextureAtlas().findRegion("minesdrop")
+                Assets.getInstance().getTextureAtlas().findRegion("drop_heal"),
+                Assets.getInstance().getTextureAtlas().findRegion("drop_ammo"),
+                Assets.getInstance().getTextureAtlas().findRegion("drop_cash"),
+                Assets.getInstance().getTextureAtlas().findRegion("drop_mines")
         };
     }
 

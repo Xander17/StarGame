@@ -27,7 +27,6 @@ import com.star.app.screen.ScreenManager;
  * 18. Score up by level
  * 19. Updates costs map
  * 20. Updates effects map
- * 21. Update menu via group
  * 23. Pathfinding
  * */
 

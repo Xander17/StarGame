@@ -50,7 +50,7 @@ public class AsteroidController extends ObjectPool<Asteroid> {
 
     public AsteroidController(GameController gameController) {
         this.gameController = gameController;
-        this.arrowTexture = Assets.getInstance().getTextureAtlas().findRegion("arrow");
+        this.arrowTexture = Assets.getInstance().getTextureAtlas().findRegion("arrow_asteroid");
     }
 
     public void render(SpriteBatch batch) {

@@ -31,7 +31,7 @@ public class ShipFactory {
                         enemyWeakFactor * 240f + forwardSpeedUpdate, enemyWeakFactor * 120f,
                         enemyWeakFactor * 30f, enemyWeakFactor * 60f,
                         enemyWeakFactor * 90f + rotationSpeedUpdate);
-                ship.setTextureSettings(Assets.getInstance().getTextureAtlas().findRegion("fighter"),
+                ship.setTextureSettings(Assets.getInstance().getTextureAtlas().findRegion("ship_fighter"),
                         23, 32);
                 ship.setExhausts(
                         new Exhaust(gameController, -20, 28, Exhaust.Flags.LEFT_THRUST),
@@ -46,7 +46,7 @@ public class ShipFactory {
                         enemyWeakFactor * 300f + forwardSpeedUpdate, enemyWeakFactor * 200f,
                         enemyWeakFactor * 50f, enemyWeakFactor * 70f,
                         enemyWeakFactor * 90f + rotationSpeedUpdate);
-                ship.setTextureSettings(Assets.getInstance().getTextureAtlas().findRegion("horseshoe"),
+                ship.setTextureSettings(Assets.getInstance().getTextureAtlas().findRegion("ship_horseshoe"),
                         23, 32);
                 ship.setExhausts(new Exhaust(gameController, -20, 18, Exhaust.Flags.LEFT_THRUST),
                         new Exhaust(gameController, -20, -18, Exhaust.Flags.RIGHT_THRUST));
@@ -61,7 +61,7 @@ public class ShipFactory {
                         enemyWeakFactor * 240f + forwardSpeedUpdate, enemyWeakFactor * 150f,
                         enemyWeakFactor * 50f, enemyWeakFactor * 80f,
                         enemyWeakFactor * 180f + rotationSpeedUpdate);
-                ship.setTextureSettings(Assets.getInstance().getTextureAtlas().findRegion("trident"),
+                ship.setTextureSettings(Assets.getInstance().getTextureAtlas().findRegion("ship_trident"),
                         40, 32);
                 ship.setExhausts(
                         new Exhaust(gameController, -37, 16, Exhaust.Flags.LEFT_THRUST),

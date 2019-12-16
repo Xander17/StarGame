@@ -4,283 +4,290 @@ size: 2048,512
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
-Layer 3
+arrow_asteroid
   rotate: false
-  xy: 2, 20
-  size: 114, 97
-  orig: 114, 97
-  offset: 0, 0
-  index: -1
-ammodrop
-  rotate: false
-  xy: 652, 56
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: -1
-ammoicon
-  rotate: false
-  xy: 1940, 448
-  size: 26, 26
-  orig: 26, 26
-  offset: 0, 0
-  index: -1
-arrow
-  rotate: false
-  xy: 1968, 479
+  xy: 1968, 476
   size: 57, 29
   orig: 57, 29
   offset: 0, 0
   index: -1
+arrow_drop
+  rotate: false
+  xy: 780, 153
+  size: 56, 28
+  orig: 56, 28
+  offset: 0, 0
+  index: -1
+arrow_enemy
+  rotate: false
+  xy: 2, 20
+  size: 56, 28
+  orig: 56, 28
+  offset: 0, 0
+  index: -1
 asteroid1
   rotate: false
-  xy: 260, 252
+  xy: 260, 249
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 asteroid2
   rotate: false
-  xy: 518, 252
+  xy: 518, 249
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 asteroid3
   rotate: false
-  xy: 776, 252
+  xy: 776, 249
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 asteroid4
   rotate: false
-  xy: 2, 251
+  xy: 2, 248
   size: 256, 257
   orig: 256, 257
   offset: 0, 0
   index: -1
 asteroid5
   rotate: false
-  xy: 1034, 252
+  xy: 1034, 249
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 asteroid6
   rotate: false
-  xy: 1292, 252
+  xy: 1292, 249
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 bullet
   rotate: false
-  xy: 2, 2
+  xy: 200, 98
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 buttonmenucheck
   rotate: false
-  xy: 2, 185
+  xy: 2, 182
   size: 256, 64
   orig: 256, 64
   offset: 0, 0
   index: -1
 buttonmenudown
   rotate: false
-  xy: 2, 119
+  xy: 2, 116
   size: 256, 64
   orig: 256, 64
   offset: 0, 0
   index: -1
 buttonmenuover
   rotate: false
-  xy: 260, 186
+  xy: 260, 183
   size: 256, 64
   orig: 256, 64
   offset: 0, 0
   index: -1
 buttonmenuup
   rotate: false
-  xy: 1550, 410
+  xy: 1550, 407
   size: 256, 64
   orig: 256, 64
   offset: 0, 0
   index: -1
-cashdrop
-  rotate: false
-  xy: 780, 186
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: -1
-cashicon
-  rotate: false
-  xy: 780, 158
-  size: 26, 26
-  orig: 26, 26
-  offset: 0, 0
-  index: -1
 damageupdatedisabled
   rotate: false
-  xy: 520, 122
+  xy: 520, 119
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: -1
 damageupdateup
   rotate: false
-  xy: 260, 56
+  xy: 260, 53
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: -1
-durabilityicon
+drop_ammo
   rotate: false
-  xy: 1550, 252
-  size: 26, 26
-  orig: 26, 26
+  xy: 586, 53
+  size: 64, 64
+  orig: 64, 64
   offset: 0, 0
   index: -1
-fighter
+drop_cash
   rotate: false
-  xy: 184, 53
+  xy: 2, 50
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+drop_heal
+  rotate: false
+  xy: 134, 50
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+drop_mines
+  rotate: false
+  xy: 68, 50
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 forwardspeeddisabled
   rotate: false
-  xy: 1810, 216
+  xy: 390, 53
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: -1
 forwardspeedup
   rotate: false
-  xy: 650, 122
+  xy: 650, 119
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: -1
-healdrop
-  rotate: false
-  xy: 520, 56
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: -1
 healupdatedisabled
   rotate: false
-  xy: 1810, 346
+  xy: 1810, 213
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: -1
 healupdateup
   rotate: false
-  xy: 1680, 280
+  xy: 1680, 277
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: -1
-horseshoe
+icon_ammo
   rotate: false
-  xy: 118, 53
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: -1
-mine
-  rotate: false
-  xy: 1550, 476
-  size: 416, 32
-  orig: 416, 32
-  offset: 0, 0
-  index: -1
-minesdrop
-  rotate: false
-  xy: 586, 56
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: -1
-minesicon
-  rotate: false
-  xy: 118, 25
+  xy: 1940, 445
   size: 26, 26
   orig: 26, 26
   offset: 0, 0
   index: -1
+icon_cash
+  rotate: false
+  xy: 652, 91
+  size: 26, 26
+  orig: 26, 26
+  offset: 0, 0
+  index: -1
+icon_durability
+  rotate: false
+  xy: 1550, 249
+  size: 26, 26
+  orig: 26, 26
+  offset: 0, 0
+  index: -1
+icon_mines
+  rotate: false
+  xy: 912, 221
+  size: 26, 26
+  orig: 26, 26
+  offset: 0, 0
+  index: -1
+mine
+  rotate: false
+  xy: 1550, 473
+  size: 416, 32
+  orig: 416, 32
+  offset: 0, 0
+  index: -1
 particle1
   rotate: false
-  xy: 1578, 262
+  xy: 838, 165
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 rotationspeeddisabled
   rotate: false
-  xy: 1550, 280
+  xy: 1550, 277
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: -1
 rotationspeedup
   rotate: false
-  xy: 390, 56
+  xy: 1810, 343
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: -1
+ship_fighter
+  rotate: false
+  xy: 520, 53
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+ship_horseshoe
+  rotate: false
+  xy: 846, 183
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+ship_trident
+  rotate: false
+  xy: 780, 183
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
 star1
   rotate: false
-  xy: 718, 104
+  xy: 2, 2
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 star2
   rotate: false
-  xy: 1968, 461
+  xy: 60, 32
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 star3
   rotate: false
-  xy: 2027, 492
+  xy: 1940, 427
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 star4
   rotate: false
-  xy: 146, 35
+  xy: 1968, 458
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 star5
   rotate: false
-  xy: 1940, 430
+  xy: 780, 135
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 star6
   rotate: false
-  xy: 912, 234
+  xy: 2027, 489
   size: 16, 16
   orig: 16, 16
-  offset: 0, 0
-  index: -1
-trident
-  rotate: false
-  xy: 846, 186
-  size: 64, 64
-  orig: 64, 64
   offset: 0, 0
   index: -1

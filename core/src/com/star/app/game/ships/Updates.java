@@ -6,15 +6,21 @@ import java.util.HashMap;
 
 public class Updates {
     public enum Types {
-        MAX_HEALTH(20),
-        DAMAGE(20),
-        ROTATION_SPEED(20),
-        FORWARD_SPEED(20);
+        MAX_HEALTH(20, "healupdate"),
+        DAMAGE(20, "damageupdate"),
+        ROTATION_SPEED(20, "rotationspeed"),
+        FORWARD_SPEED(20, "forwardspeed");
 
         private int maxLevel;
+        private String texturePrefix;
 
-        Types(int maxLevel) {
+        Types(int maxLevel, String texturePrefix) {
             this.maxLevel = maxLevel;
+            this.texturePrefix = texturePrefix;
+        }
+
+        public String getTexturePrefix() {
+            return texturePrefix;
         }
     }
 
@@ -45,7 +51,8 @@ public class Updates {
     }
 
     public int getCost(Types type) {
-        return (map.get(type) + 1) * 10;
+        if (isUpdatable(type)) return (map.get(type) + 1) * 10;
+        else return -1;
     }
 
     public void applyUpdate(Types type) {
