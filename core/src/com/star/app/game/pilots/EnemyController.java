@@ -11,7 +11,7 @@ public class EnemyController extends ObjectPool<Enemy> {
         this.gameController = gameController;
     }
 
-    public void createNew(){
+    public void createNew() {
         getActive().activate();
     }
 

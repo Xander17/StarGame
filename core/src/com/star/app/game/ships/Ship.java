@@ -48,14 +48,6 @@ public class Ship implements Collisional {
     private int maxMines;
     private int minesCount;
 
-    public Vector2 getVelocity() {
-        return velocity;
-    }
-
-    public boolean isShipDestroyed() {
-        return shipDestroyed;
-    }
-
     Ship(GameController gameController, Piloting pilot, float durability, float forwardMaxSpeed,
          float FORWARD_POWER, float REVERSE_POWER, float FRICTION_BREAK, float rotationSpeed) {
         this.gameController = gameController;
@@ -75,6 +67,14 @@ public class Ship implements Collisional {
         this.FORWARD_POWER = FORWARD_POWER;
         this.REVERSE_POWER = REVERSE_POWER;
         this.FRICTION_BREAK = FRICTION_BREAK;
+    }
+
+    public Vector2 getVelocity() {
+        return velocity;
+    }
+
+    public boolean isShipDestroyed() {
+        return shipDestroyed;
     }
 
     public void setTextureSettings(TextureRegion texture, float massCenterX, float massCenterY) {

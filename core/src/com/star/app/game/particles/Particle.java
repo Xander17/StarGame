@@ -21,8 +21,8 @@ public class Particle implements Poolable {
     private boolean isActive;
     private ParticleLayouts layout;
 
-    public Particle(GameController  gameController) {
-        this.gameController=gameController;
+    public Particle(GameController gameController) {
+        this.gameController = gameController;
         this.position = new Vector2(0, 0);
         this.renderPosition = new RenderPosition(this.position);
         this.velocity = new Vector2(0, 0);
@@ -35,7 +35,7 @@ public class Particle implements Poolable {
         this.textureW = texture.getRegionWidth();
         this.textureH = texture.getRegionHeight();
         this.position.set(x, y);
-        this.renderPosition.recalculate(gameController,textureW/2f,textureH/2f);
+        this.renderPosition.recalculate(gameController, textureW / 2f, textureH / 2f);
         this.velocity.set(vx, vy);
         this.time = 0f;
         this.timeMax = timeMax;

@@ -1,20 +1,18 @@
 package com.star.app.game.helpers;
 
-import com.star.app.game.overlays.DebugOverlay;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class ObjectPool<T extends Poolable> {
-    private List<T> freeList;
     protected List<T> activeList;
-
-    public abstract T getNew();
+    private List<T> freeList;
 
     protected ObjectPool() {
         this.freeList = new ArrayList<>();
         this.activeList = new ArrayList<>();
     }
+
+    public abstract T getNew();
 
     public List<T> getActiveList() {
         return activeList;

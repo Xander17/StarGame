@@ -8,27 +8,12 @@ import java.io.IOException;
 import java.util.Properties;
 
 public class Options {
-    public enum DefaultOptions {
-        PLAYER1_FORWARD(Input.Keys.UP),
-        PLAYER1_REVERSE(Input.Keys.DOWN),
-        PLAYER1_LEFT(Input.Keys.LEFT),
-        PLAYER1_RIGHT(Input.Keys.RIGHT),
-        PLAYER1_FIRE(Input.Keys.Z),
-        PLAYER1_MINE(Input.Keys.X);
-
-        int defaultKey;
-
-        DefaultOptions(int defaultKey) {
-            this.defaultKey = defaultKey;
-        }
-    }
-
     private static final String OPTIONS_FILE_PATH = "options.properties";
 
     public static Properties loadProperties() {
         Properties properties = new Properties();
         try {
-            if(!Gdx.files.local(OPTIONS_FILE_PATH).exists()) throw new FileNotFoundException();
+            if (!Gdx.files.local(OPTIONS_FILE_PATH).exists()) throw new FileNotFoundException();
             properties.load(Gdx.files.local(OPTIONS_FILE_PATH).read());
             if (!checkConsistent(properties)) throw new FileNotFoundException();
         } catch (FileNotFoundException e) {
@@ -68,6 +53,21 @@ public class Options {
             properties.store(Gdx.files.local(OPTIONS_FILE_PATH).write(false), null);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public enum DefaultOptions {
+        PLAYER1_FORWARD(Input.Keys.UP),
+        PLAYER1_REVERSE(Input.Keys.DOWN),
+        PLAYER1_LEFT(Input.Keys.LEFT),
+        PLAYER1_RIGHT(Input.Keys.RIGHT),
+        PLAYER1_FIRE(Input.Keys.Z),
+        PLAYER1_MINE(Input.Keys.X);
+
+        int defaultKey;
+
+        DefaultOptions(int defaultKey) {
+            this.defaultKey = defaultKey;
         }
     }
 }

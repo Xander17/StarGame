@@ -10,8 +10,8 @@ import com.star.app.game.bullets.BulletController;
 import com.star.app.game.drops.Drop;
 import com.star.app.game.drops.DropController;
 import com.star.app.game.mines.MineController;
-import com.star.app.game.overlays.InfoOverlay;
 import com.star.app.game.overlays.GamePauseOverlay;
+import com.star.app.game.overlays.InfoOverlay;
 import com.star.app.game.particles.ParticleController;
 import com.star.app.game.pilots.Enemy;
 import com.star.app.game.pilots.EnemyController;
@@ -22,35 +22,10 @@ import com.star.app.screen.ScreenManager;
 
 import java.util.List;
 
-import static com.star.app.screen.ScreenManager.*;
+import static com.star.app.screen.ScreenManager.SCREEN_HALF_HEIGHT;
+import static com.star.app.screen.ScreenManager.SCREEN_HALF_WIDTH;
 
 public class GameController {
-    public enum GameStatus {
-        START("LEVEL %s STARTS!"),
-        ACTIVE(null),
-        DEAD("YOU ARE DEAD"),
-        GAME_OVER("GAME OVER"),
-        PAUSED(null),
-        LEVEL_COMPLETE("LEVEL COMPLETE"),
-        WIN("YOU WIN");
-
-        private String msg;
-
-        GameStatus(String msg) {
-            this.msg = msg;
-        }
-
-        public String getMsg(Object... strings) {
-            if (msg == null) return null;
-            return String.format(msg, strings);
-        }
-
-        public String getMsg() {
-            if (msg == null) return null;
-            return msg;
-        }
-    }
-
     public final float SPACE_WIDTH = 4000;
     public final float SPACE_HEIGHT = 4000;
     private final int ASTEROIDS_SCORE = 100;
@@ -58,7 +33,6 @@ public class GameController {
     private final float TIME_TO_RESPAWN = 3f;
     private final float GAME_OVER_MESSAGE_TIME = 3f;
     private final float TIME_TO_LEVEL_MESSAGE = 2f;
-
     private Background background;
     private Player player;
     private AsteroidController asteroidController;
@@ -75,6 +49,25 @@ public class GameController {
     private GameStatus gameStatus;
     private int level;
     private int[] seamlessMatrix;
+
+    public GameController(SpriteBatch batch) {
+        background = new Background(this);
+        player = new Player(this, 1);
+        bulletController = new BulletController(this);
+        asteroidController = new AsteroidController(this);
+        dropController = new DropController(this);
+        particleController = new ParticleController(this);
+        infoOverlay = new InfoOverlay(this);
+        gamePauseOverlay = new GamePauseOverlay(this, batch);
+        enemyController = new EnemyController(this);
+        mineController = new MineController(this);
+        gameStatus = GameStatus.START;
+        timeToRespawn = 0;
+        timeToGameOver = 0;
+        timeToStart = 0;
+        level = 1;
+        seamlessMatrix = new int[]{0, 0};
+    }
 
     public Background getBackground() {
         return background;
@@ -108,12 +101,12 @@ public class GameController {
         return level;
     }
 
-    public void setGameStatus(GameStatus gameStatus) {
-        this.gameStatus = gameStatus;
-    }
-
     public GameStatus getGameStatus() {
         return gameStatus;
+    }
+
+    public void setGameStatus(GameStatus gameStatus) {
+        this.gameStatus = gameStatus;
     }
 
     public GamePauseOverlay getGamePauseOverlay() {
@@ -126,25 +119,6 @@ public class GameController {
 
     public MineController getMineController() {
         return mineController;
-    }
-
-    public GameController(SpriteBatch batch) {
-        background = new Background(this);
-        player = new Player(this, 1);
-        bulletController = new BulletController(this);
-        asteroidController = new AsteroidController(this);
-        dropController = new DropController(this);
-        particleController = new ParticleController(this);
-        infoOverlay = new InfoOverlay(this);
-        gamePauseOverlay = new GamePauseOverlay(this, batch);
-        enemyController = new EnemyController(this);
-        mineController = new MineController(this);
-        gameStatus = GameStatus.START;
-        timeToRespawn = 0;
-        timeToGameOver = 0;
-        timeToStart = 0;
-        level = 1;
-        seamlessMatrix = new int[]{0, 0};
     }
 
     public void update(float dt) {
@@ -271,6 +245,7 @@ public class GameController {
         List<Enemy> enemies = getEnemyController().getActiveList();
         float size = asteroids.size();
         for (int i = 0; i < size; i++) {
+
             getPlayer().getShip().checkCollision(asteroids.get(i), dt);
 //            for (int j = 0; j < enemies.size(); j++) {
 //                enemies.get(j).getShip().checkCollision(asteroids.get(i), dt);
@@ -289,5 +264,31 @@ public class GameController {
 
     public void dispose() {
         background.dispose();
+    }
+
+    public enum GameStatus {
+        START("LEVEL %s STARTS!"),
+        ACTIVE(null),
+        DEAD("YOU ARE DEAD"),
+        GAME_OVER("GAME OVER"),
+        PAUSED(null),
+        LEVEL_COMPLETE("LEVEL COMPLETE"),
+        WIN("YOU WIN");
+
+        private String msg;
+
+        GameStatus(String msg) {
+            this.msg = msg;
+        }
+
+        public String getMsg(Object... strings) {
+            if (msg == null) return null;
+            return String.format(msg, strings);
+        }
+
+        public String getMsg() {
+            if (msg == null) return null;
+            return msg;
+        }
     }
 }

@@ -10,8 +10,6 @@ import com.badlogic.gdx.utils.Align;
 import com.star.app.game.ships.Updates;
 import com.star.app.utils.GameButtonStyle;
 
-import static com.star.app.screen.ScreenManager.SCREEN_WIDTH;
-
 public class UpdateElement extends Group {
 
     private Updates.Types type;

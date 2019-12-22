@@ -175,8 +175,8 @@ public class Asteroid implements Poolable, Collisional {
     @Override
     public boolean takeImpulseDamage(float power, float angle, float amount) {
         if (takeDamage(amount)) return true;
-        velocity.x += power * MathUtils.cosDeg(angle)/getMassFactor();
-        velocity.y += power * MathUtils.sinDeg(angle)/getMassFactor();
+        velocity.x += power * MathUtils.cosDeg(angle) / getMassFactor();
+        velocity.y += power * MathUtils.sinDeg(angle) / getMassFactor();
         return false;
     }
 

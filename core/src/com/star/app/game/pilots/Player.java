@@ -27,6 +27,17 @@ public class Player implements Piloting {
     private boolean deadStatus;
     private int cash;
 
+    public Player(GameController gameController, int playerNumber) {
+        this.gameController = gameController;
+        this.playerNumber = playerNumber;
+        this.keyControls = new KeyControls(Options.loadProperties(), "PLAYER" + playerNumber);
+        this.updates = new Updates(gameController);
+        this.ship = ShipFactory.getShip(START_TYPE, gameController, this, updates, true);
+        this.deadStatus = false;
+        this.lives = START_LIVES;
+        this.playerStatistic = new PlayerStatistic();
+    }
+
     public void setDeadStatus(boolean status) {
         this.deadStatus = status;
         if (status) {
@@ -40,17 +51,6 @@ public class Player implements Piloting {
 
     public boolean isDead() {
         return deadStatus;
-    }
-
-    public Player(GameController gameController, int playerNumber) {
-        this.gameController = gameController;
-        this.playerNumber = playerNumber;
-        this.keyControls = new KeyControls(Options.loadProperties(), "PLAYER" + playerNumber);
-        this.updates = new Updates(gameController);
-        this.ship = ShipFactory.getShip(START_TYPE, gameController, this, updates, true);
-        this.deadStatus = false;
-        this.lives = START_LIVES;
-        this.playerStatistic = new PlayerStatistic();
     }
 
     public void update(float dt) {

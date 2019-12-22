@@ -1,6 +1,7 @@
 package com.star.app;
 
-import com.badlogic.gdx.*;
+import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.star.app.screen.ScreenManager;
@@ -37,7 +38,7 @@ public class StarGame extends Game {
     public void create() {
         batch = new SpriteBatch();
         ScreenManager.getInstance().init(batch, this);
-        ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.GAME);
+        ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.MENU);
     }
 
     @Override

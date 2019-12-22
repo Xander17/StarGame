@@ -7,13 +7,10 @@ import com.star.app.game.particles.ParticleLayouts;
 
 public class Exhaust {
 
-    public enum Flags {LEFT_TURN, LEFT_THRUST, THRUST, RIGHT_THRUST, RIGHT_TURN}
-
     private GameController gameController;
     private Vector2 position;
     private Flags flag;
     private int currentPower;
-
     public Exhaust(GameController gameController, float offsetX, float offsetY, Flags flag) {
         this.gameController = gameController;
         this.position = new Vector2(offsetX, offsetY);
@@ -51,4 +48,6 @@ public class Exhaust {
         }
         return false;
     }
+
+    public enum Flags {LEFT_TURN, LEFT_THRUST, THRUST, RIGHT_THRUST, RIGHT_TURN}
 }
