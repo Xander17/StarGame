@@ -17,8 +17,8 @@ public class BulletController extends ObjectPool<Bullet> {
         return new Bullet(gameController);
     }
 
-    public void createNew(float x, float y, float angle, float velocityX, float velocityY, float damage,boolean playerOwner) {
-        getActive().activate(x, y, angle, velocityX, velocityY, damage, BULLET_MAX_DISTANCE,playerOwner);
+    public void createNew(float x, float y, float angle, float velocityX, float velocityY, float damage, boolean playerOwner) {
+        getActive().activate(x, y, angle, velocityX, velocityY, damage, BULLET_MAX_DISTANCE, playerOwner);
     }
 
     public void update(float dt) {

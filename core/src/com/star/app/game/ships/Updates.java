@@ -5,19 +5,6 @@ import com.star.app.game.GameController;
 import java.util.HashMap;
 
 public class Updates {
-    public enum Types {
-        MAX_HEALTH(20),
-        DAMAGE(20),
-        ROTATION_SPEED(20),
-        FORWARD_SPEED(20);
-
-        private int maxLevel;
-
-        Types(int maxLevel) {
-            this.maxLevel = maxLevel;
-        }
-    }
-
     private HashMap<Types, Integer> map;
     private GameController gameController;
     private int lastUpdateLevels;
@@ -45,7 +32,8 @@ public class Updates {
     }
 
     public int getCost(Types type) {
-        return (map.get(type) + 1) * 10;
+        if (isUpdatable(type)) return (map.get(type) + 1) * 10;
+        else return -1;
     }
 
     public void applyUpdate(Types type) {
@@ -86,5 +74,24 @@ public class Updates {
                 return levels * 6;
         }
         return 0;
+    }
+
+    public enum Types {
+        MAX_HEALTH(20, "healupdate"),
+        DAMAGE(20, "damageupdate"),
+        ROTATION_SPEED(20, "rotationspeed"),
+        FORWARD_SPEED(20, "forwardspeed");
+
+        private int maxLevel;
+        private String texturePrefix;
+
+        Types(int maxLevel, String texturePrefix) {
+            this.maxLevel = maxLevel;
+            this.texturePrefix = texturePrefix;
+        }
+
+        public String getTexturePrefix() {
+            return texturePrefix;
+        }
     }
 }

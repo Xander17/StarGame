@@ -20,21 +20,18 @@ public class Assets {
         instance = new Assets();
     }
 
-    public static Assets getInstance() {
-        return instance;
-    }
-
     private final String GAME_PACK_PATH = "images/game.atlas";
     private final String MENU_PACK_PATH = "images/menu.atlas";
     private final String GAMEOVER_PACK_PATH = "images/gameover.atlas";
     private final String DEFAULT_FONT = "fonts/good times rg.ttf";
-
-
     private AssetManager assetManager;
     private TextureAtlas textureAtlas;
-
     private Assets() {
         assetManager = new AssetManager();
+    }
+
+    public static Assets getInstance() {
+        return instance;
     }
 
     public AssetManager getAssetManager() {

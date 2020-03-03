@@ -26,9 +26,10 @@ public class DropController extends ObjectPool<Drop> {
     public DropController(GameController gameController) {
         this.gameController = gameController;
         textures = new TextureRegion[]{
-                Assets.getInstance().getTextureAtlas().findRegion("healdrop"),
-                Assets.getInstance().getTextureAtlas().findRegion("ammodrop"),
-                Assets.getInstance().getTextureAtlas().findRegion("cashdrop")
+                Assets.getInstance().getTextureAtlas().findRegion("drop_heal"),
+                Assets.getInstance().getTextureAtlas().findRegion("drop_ammo"),
+                Assets.getInstance().getTextureAtlas().findRegion("drop_cash"),
+                Assets.getInstance().getTextureAtlas().findRegion("drop_mines")
         };
     }
 
@@ -50,6 +51,9 @@ public class DropController extends ObjectPool<Drop> {
                 break;
             case CASH:
                 getActive().activate(position, DropType.CASH, textures[i], new float[]{0.5f, 1f, 0.5f});
+                break;
+            case MINES:
+                getActive().activate(position, DropType.MINES, textures[i], new float[]{0.58f, 0.5f, 1f});
                 break;
         }
     }
@@ -77,6 +81,9 @@ public class DropController extends ObjectPool<Drop> {
                 break;
             case CASH:
                 gameController.getPlayer().addCash((int) getRandomOnLevel(CASH_BASE_AMOUNT_MIN, CASH_BASE_AMOUNT_MAX, CASH_LEVEL_FACTOR));
+                break;
+            case MINES:
+                gameController.getPlayer().getShip().addMines();
                 break;
         }
     }

@@ -7,7 +7,6 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.star.app.game.GameController;
 import com.star.app.game.helpers.ObjectPool;
-import com.star.app.game.overlays.DebugOverlay;
 import com.star.app.utils.Assets;
 
 public class ParticleController extends ObjectPool<Particle> {
@@ -80,18 +79,21 @@ public class ParticleController extends ObjectPool<Particle> {
             }
         }
 
-        public void circleShine(ParticleLayouts layout, Vector2 position, float radius, float angle, float r, float g, float b) {
+        public void circleShine(ParticleLayouts layout, Vector2 position, float radius, float angle, float[] rgb) {
             float speed = 10;
             setup(layout, position.x + radius * MathUtils.cosDeg(angle), position.y + radius * MathUtils.sinDeg(angle),
-                    speed * MathUtils.cosDeg(angle), speed * MathUtils.sinDeg(angle), 1f, r, g, b, 1, 0.5f, r, g, b, 0.7f, 0.1f);
-            setup(layout, position.x + radius * MathUtils.cosDeg(angle + 180), position.y + radius * MathUtils.sinDeg(angle + 180),
-                    speed * MathUtils.cosDeg(angle + 180), speed * MathUtils.sinDeg(angle + 180), 1f, r, g, b, 1, 0.5f, r, g, b, 0.7f, 0.1f);
+                    speed * MathUtils.cosDeg(angle), speed * MathUtils.sinDeg(angle), 1f,
+                    rgb[0], rgb[1], rgb[2], 1, 0.5f, rgb[0], rgb[1], rgb[2], 0.7f, 0.1f);
+            setup(layout, position.x + radius * MathUtils.cosDeg(angle + 180),
+                    position.y + radius * MathUtils.sinDeg(angle + 180),
+                    speed * MathUtils.cosDeg(angle + 180), speed * MathUtils.sinDeg(angle + 180),
+                    1f, rgb[0], rgb[1], rgb[2], 1, 0.5f, rgb[0], rgb[1], rgb[2], 0.7f, 0.1f);
         }
 
-        public void circleBlast(ParticleLayouts layout, Vector2 position, float r, float g, float b, float speed, float time) {
+        public void circleBlast(ParticleLayouts layout, Vector2 position, float[] rgb, float speed, float time) {
             for (int i = 0; i < 360; i += 18) {
                 setup(layout, position.x, position.y, speed * MathUtils.cosDeg(i), speed * MathUtils.sinDeg(i), time,
-                        r, g, b, 1f, 0.5f, 1f, 1f, 1f, 0.3f, 0.1f);
+                        rgb[0], rgb[1], rgb[2], 1f, 0.5f, 1f, 1f, 1f, 0.3f, 0.1f);
             }
         }
 
@@ -129,7 +131,7 @@ public class ParticleController extends ObjectPool<Particle> {
                 float vx = speed * MathUtils.cosDeg(i);
                 float vy = speed * MathUtils.sinDeg(i);
                 setup(layouts, position.x, position.y, vx, vy, time, 1f, 1f, 0.5f, 1, 0.1f, 0.2f, 0, 0, 0, 2f);
-                setup(layouts, position.x, position.y, vx * 0.8f, vy * 0.8f, time, 1f, 0.5f, 0.5f, 1, 0.1f, 0.2f, 0, 0, 0, 3*radius/100);
+                setup(layouts, position.x, position.y, vx * 0.8f, vy * 0.8f, time, 1f, 0.5f, 0.5f, 1, 0.1f, 0.2f, 0, 0, 0, 3 * radius / 100);
             }
         }
     }

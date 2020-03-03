@@ -12,13 +12,11 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.star.app.utils.Assets;
 
 public class ScreenManager {
-    public enum ScreenType {GAME, MENU, GAME_OVER}
-
     public static final int SCREEN_WIDTH = Gdx.graphics.getBackBufferWidth();
     public static final float SCREEN_HALF_WIDTH = SCREEN_WIDTH / 2;
     public static final int SCREEN_HEIGHT = Gdx.graphics.getBackBufferHeight();
     public static final float SCREEN_HALF_HEIGHT = SCREEN_HEIGHT / 2;
-
+    private static ScreenManager instance = new ScreenManager();
     private SpriteBatch batch;
     private Game game;
     private LoadingScreen loadingScreen;
@@ -29,8 +27,6 @@ public class ScreenManager {
     private ScreenType targetScreenType;
     private Viewport viewport;
     private Camera camera;
-
-    private static ScreenManager instance = new ScreenManager();
 
     public static ScreenManager getInstance() {
         return instance;
@@ -108,4 +104,6 @@ public class ScreenManager {
     public Camera getCamera() {
         return camera;
     }
+
+    public enum ScreenType {GAME, MENU, GAME_OVER}
 }

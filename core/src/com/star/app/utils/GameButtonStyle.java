@@ -2,7 +2,6 @@ package com.star.app.utils;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 
@@ -13,13 +12,13 @@ public class GameButtonStyle {
         instance = new GameButtonStyle();
     }
 
-    public static GameButtonStyle getInstance() {
-        return instance;
-    }
-
     private TextButton.TextButtonStyle tmpStyle;
 
     public GameButtonStyle() {
+    }
+
+    public static GameButtonStyle getInstance() {
+        return instance;
     }
 
     private void setStyle(BitmapFont font, String prefix, boolean over, boolean pressed, boolean checkable, boolean disabled) {
@@ -54,17 +53,17 @@ public class GameButtonStyle {
     }
 
     public TextButton.TextButtonStyle getDefaultStyle(BitmapFont font) {
-        setStyle(font, "buttonmenu", true, true, false,false);
+        setStyle(font, "buttonmenu", true, true, false, false);
         return new TextButton.TextButtonStyle(tmpStyle);
     }
 
     public TextButton.TextButtonStyle getKeyButtonStyle(BitmapFont font) {
-        setStyle(font, "buttonkey", true, true, true,false);
+        setStyle(font, "buttonkey", true, true, true, false);
         return new TextButton.TextButtonStyle(tmpStyle);
     }
 
     public TextButton.TextButtonStyle getUpdateStyle(BitmapFont font, String filePrefix) {
-        setStyle(font, filePrefix, false, false, false,true);
+        setStyle(font, filePrefix, false, false, false, true);
         float w = tmpStyle.up.getMinWidth();
         float h = tmpStyle.up.getMinHeight();
         tmpStyle.unpressedOffsetX = -w / 10;

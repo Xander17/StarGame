@@ -12,7 +12,6 @@ import com.star.app.game.helpers.Poolable;
 import com.star.app.game.helpers.RenderPosition;
 import com.star.app.game.particles.ParticleLayouts;
 import com.star.app.game.pilots.Enemy;
-import com.star.app.utils.Assets;
 
 import java.util.List;
 

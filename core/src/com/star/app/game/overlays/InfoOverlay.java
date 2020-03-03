@@ -39,10 +39,10 @@ public class InfoOverlay {
         this.font22 = Assets.getInstance().getAssetManager().get("fonts/font22.ttf", BitmapFont.class);
         this.font64 = Assets.getInstance().getAssetManager().get("fonts/font64.ttf", BitmapFont.class);
         this.stringBuilder = new StringBuilder();
-        this.durability = Assets.getInstance().getTextureAtlas().findRegion("durabilityicon");
-        this.cash = Assets.getInstance().getTextureAtlas().findRegion("cashicon");
-        this.ammo = Assets.getInstance().getTextureAtlas().findRegion("ammoicon");
-        this.mines = Assets.getInstance().getTextureAtlas().findRegion("minesicon");
+        this.durability = Assets.getInstance().getTextureAtlas().findRegion("icon_durability");
+        this.cash = Assets.getInstance().getTextureAtlas().findRegion("icon_cash");
+        this.ammo = Assets.getInstance().getTextureAtlas().findRegion("icon_ammo");
+        this.mines = Assets.getInstance().getTextureAtlas().findRegion("icon_mines");
         this.layout = new GlyphLayout();
         this.scoreView = 0f;
         this.cashView = 0f;
@@ -98,7 +98,7 @@ public class InfoOverlay {
     private void drawCaptionAmount(SpriteBatch batch, BitmapFont font, float x, float y, String caption, int amount) {
         stringBuilder.clear();
         stringBuilder.append(caption).append(amount);
-        font.draw(batch, stringBuilder.toString(), x, y);
+        font.draw(batch, stringBuilder.toString(), x + 3, y);
     }
 
     private void drawCenterAlign(SpriteBatch batch, BitmapFont font, String text, float regionStartX, float regionWidth, float y) {

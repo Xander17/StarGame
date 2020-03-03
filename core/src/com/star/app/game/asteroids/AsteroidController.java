@@ -21,21 +21,26 @@ public class AsteroidController extends ObjectPool<Asteroid> {
     private GameController gameController;
     private TextureRegion arrowTexture;
 
+    public AsteroidController(GameController gameController) {
+        this.gameController = gameController;
+        this.arrowTexture = Assets.getInstance().getTextureAtlas().findRegion("arrow_asteroid");
+    }
+
     @Override
     public Asteroid getNew() {
         return new Asteroid(gameController);
     }
 
-    public void createNew(float x, float y, float scale, float velocityX, float velocityY, int health,boolean delayed) {
-        getActive().activate(getRandomTexture(), x, y, scale, velocityX, velocityY, health,delayed);
+    public void createNew(float x, float y, float scale, float velocityX, float velocityY, int health, boolean delayed) {
+        getActive().activate(getRandomTexture(), x, y, scale, velocityX, velocityY, health, delayed);
     }
 
-    void createNew(float x, float y, float scale, int health,boolean delayed) {
-        getActive().activate(getRandomTexture(), x, y, scale, health,delayed);
+    void createNew(float x, float y, float scale, int health, boolean delayed) {
+        getActive().activate(getRandomTexture(), x, y, scale, health, delayed);
     }
 
     public void createNew() {
-        getActive().activate(getRandomTexture(),false);
+        getActive().activate(getRandomTexture(), false);
     }
 
     public void update(float dt) {
@@ -46,11 +51,6 @@ public class AsteroidController extends ObjectPool<Asteroid> {
             b.update(dt);
         }
         checkFreeObjects();
-    }
-
-    public AsteroidController(GameController gameController) {
-        this.gameController = gameController;
-        this.arrowTexture = Assets.getInstance().getTextureAtlas().findRegion("arrow");
     }
 
     public void render(SpriteBatch batch) {

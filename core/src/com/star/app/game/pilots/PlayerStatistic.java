@@ -2,30 +2,8 @@ package com.star.app.game.pilots;
 
 import java.util.Comparator;
 import java.util.TreeMap;
-import java.util.function.ToIntFunction;
 
 public class PlayerStatistic {
-    public enum Stats {
-        ASTEROIDS("Asteroids destroyed"),
-        BULLETS_SPENT("Bullets spent"),
-        DAMAGE_OVERALL("Damage overall"),
-        DAMAGE_TAKEN("Damage taken"),
-        LIVES_LOST("Lives lost"),
-        SCORE("Score");
-
-        private String desc;
-
-        Stats(String desc) {
-            this.desc = desc;
-
-        }
-
-        @Override
-        public String toString() {
-            return desc;
-        }
-    }
-
     private TreeMap<Stats, Float> map;
 
     public PlayerStatistic() {
@@ -56,5 +34,26 @@ public class PlayerStatistic {
 
     public TreeMap<Stats, Float> getFull() {
         return map;
+    }
+
+    public enum Stats {
+        ASTEROIDS("Asteroids destroyed"),
+        BULLETS_SPENT("Bullets spent"),
+        DAMAGE_OVERALL("Damage overall"),
+        DAMAGE_TAKEN("Damage taken"),
+        LIVES_LOST("Lives lost"),
+        SCORE("Score");
+
+        private String desc;
+
+        Stats(String desc) {
+            this.desc = desc;
+
+        }
+
+        @Override
+        public String toString() {
+            return desc;
+        }
     }
 }

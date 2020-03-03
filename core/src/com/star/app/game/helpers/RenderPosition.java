@@ -3,7 +3,8 @@ package com.star.app.game.helpers;
 import com.badlogic.gdx.math.Vector2;
 import com.star.app.game.GameController;
 
-import static com.star.app.screen.ScreenManager.*;
+import static com.star.app.screen.ScreenManager.SCREEN_HALF_HEIGHT;
+import static com.star.app.screen.ScreenManager.SCREEN_HALF_WIDTH;
 
 public class RenderPosition extends Vector2 {
 

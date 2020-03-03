@@ -10,7 +10,6 @@ import com.star.app.game.helpers.Collisional;
 import com.star.app.game.helpers.GameTimer;
 import com.star.app.game.helpers.Poolable;
 import com.star.app.game.helpers.RenderPosition;
-import com.star.app.game.overlays.DebugOverlay;
 import com.star.app.game.particles.ParticleLayouts;
 import com.star.app.game.pilots.PlayerStatistic;
 
@@ -69,39 +68,39 @@ public class Asteroid implements Poolable, Collisional {
         float speed = getRandomOnLevel(BASE_SPEED_MIN, BASE_SPEED_MAX, SPEED_LEVEL_FACTOR);
         float angle = MathUtils.random(0, 359);
         float scale = MathUtils.random(BASE_SCALE_MIN, BASE_SCALE_MAX);
-        float health = getRandomOnLevel(HEALTH_POINTS_MIN, HEALTH_POINTS_MAX, HEALTH_LEVEL_FACTOR);
+        float maxHealth = getRandomOnLevel(HEALTH_POINTS_MIN, HEALTH_POINTS_MAX, HEALTH_LEVEL_FACTOR);
         this.textureW = texture.getRegionWidth();
         this.textureH = texture.getRegionHeight();
         activate(texture, gameController.getRandomStartPoint(textureW / 2f * scale, textureH / 2f * scale), scale,
                 MathUtils.randomSign() * MathUtils.cosDeg(angle) * speed,
-                MathUtils.randomSign() * MathUtils.sinDeg(angle) * speed, health, delayed);
+                MathUtils.randomSign() * MathUtils.sinDeg(angle) * speed, maxHealth, delayed);
     }
 
-    void activate(TextureRegion texture, float x, float y, float scale, float health, boolean delayed) {
+    void activate(TextureRegion texture, float x, float y, float scale, float maxHealth, boolean delayed) {
         float speed = getRandomOnLevel(BASE_SPEED_MIN, BASE_SPEED_MAX, SPEED_LEVEL_FACTOR);
         float angle = MathUtils.random(360);
         activate(texture, x, y, scale, MathUtils.randomSign() * MathUtils.cosDeg(angle) * speed,
-                MathUtils.randomSign() * MathUtils.sinDeg(angle) * speed, health, delayed);
+                MathUtils.randomSign() * MathUtils.sinDeg(angle) * speed, maxHealth, delayed);
     }
 
-    private void activate(TextureRegion texture, Vector2 position, float scale, float velocityX, float velocityY, float health, boolean delayed) {
-        activate(texture, position.x, position.y, scale, velocityX, velocityY, health, delayed);
+    private void activate(TextureRegion texture, Vector2 position, float scale, float velocityX, float velocityY, float maxHealth, boolean delayed) {
+        activate(texture, position.x, position.y, scale, velocityX, velocityY, maxHealth, delayed);
     }
 
-    void activate(TextureRegion texture, float x, float y, float scale, float velocityX, float velocityY, float health, boolean delayed) {
+    void activate(TextureRegion texture, float x, float y, float scale, float velocityX, float velocityY, float maxHealth, boolean delayed) {
         this.texture = texture;
-        this.textureW = texture.getRegionWidth();
-        this.textureH = texture.getRegionHeight();
-        this.position.set(x, y);
-        this.renderPosition.recalculate(gameController, textureW / 2f, textureH / 2f);
+        textureW = texture.getRegionWidth();
+        textureH = texture.getRegionHeight();
+        position.set(x, y);
+        renderPosition.recalculate(gameController, textureW / 2f, textureH / 2f);
         this.scale = scale;
-        this.velocity.set(velocityX, velocityY);
+        velocity.set(velocityX, velocityY);
         this.rotationAngle = MathUtils.random(0, 360);
         this.rotationSpeed = MathUtils.randomSign() * MathUtils.random(ROTATION_BASE_SPEED_MIN, ROTATION_BASE_SPEED_MAX);
-        this.maxHealth = health;
-        this.health = health;
-        this.isActive = true;
-        this.trackable = false;
+        this.maxHealth = maxHealth;
+        health = maxHealth;
+        isActive = true;
+        trackable = false;
         if (delayed) {
             activateTimer.reset();
         } else {
@@ -176,8 +175,8 @@ public class Asteroid implements Poolable, Collisional {
     @Override
     public boolean takeImpulseDamage(float power, float angle, float amount) {
         if (takeDamage(amount)) return true;
-        velocity.x += power * MathUtils.cosDeg(angle)/getMassFactor();
-        velocity.y += power * MathUtils.sinDeg(angle)/getMassFactor();
+        velocity.x += power * MathUtils.cosDeg(angle) / getMassFactor();
+        velocity.y += power * MathUtils.sinDeg(angle) / getMassFactor();
         return false;
     }
 

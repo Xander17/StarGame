@@ -6,7 +6,6 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.star.app.game.GameController;
 import com.star.app.game.helpers.Collisional;
-import com.star.app.game.helpers.GameTimer;
 import com.star.app.game.helpers.Poolable;
 import com.star.app.game.helpers.RenderPosition;
 import com.star.app.game.particles.ParticleLayouts;
@@ -29,13 +28,8 @@ public class Bullet implements Poolable {
     private boolean isActive;
     private boolean playerIsOwner;
 
-    @Override
-    public boolean isActive() {
-        return isActive;
-    }
-
     Bullet(GameController gameController) {
-        this.gameController=gameController;
+        this.gameController = gameController;
         this.texture = Assets.getInstance().getTextureAtlas().findRegion("bullet");
         this.textureW = texture.getRegionWidth();
         this.textureH = texture.getRegionHeight();
@@ -46,11 +40,16 @@ public class Bullet implements Poolable {
         this.isActive = false;
     }
 
+    @Override
+    public boolean isActive() {
+        return isActive;
+    }
+
     void activate(float x, float y, float angle, float velocityX, float velocityY, float damage, float maxDistance, boolean playerOwner) {
         this.position.set(x, y);
         this.angle = angle;
         this.velocity.set(velocityX, velocityY);
-        this.renderPosition.recalculate(gameController,textureW/2f,textureH/2f);
+        this.renderPosition.recalculate(gameController, textureW / 2f, textureH / 2f);
         this.damage = damage;
         this.distancePassed = 0;
         this.maxDistance = maxDistance * (1 + MathUtils.random(-MAX_DISTANCE_TOLERANCE, MAX_DISTANCE_TOLERANCE));

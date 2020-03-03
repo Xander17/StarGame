@@ -59,7 +59,7 @@ public class Enemy implements Piloting, Poolable {
     }
 
     private boolean playerTarget(float dt, Vector2 playerPos, Vector2 shipPos) {
-        if(!detected) {
+        if (!detected) {
             detected = true;
             randomTargetTimer.disable();
         }
@@ -76,7 +76,7 @@ public class Enemy implements Piloting, Poolable {
     }
 
     private void setRandomTargetVector() {
-        if(detected) detected = false;
+        if (detected) detected = false;
         targetVector.set(1, 0);
         targetVector.setAngle(MathUtils.random(359));
         randomTargetTimer.reset(MathUtils.random(TIME_RANDOM_TRAVEL_MIN, TIME_RANDOM_TRAVEL_MAX));

@@ -16,7 +16,7 @@ public class DebugOverlay {
 
     static {
         String DEFAULT_FONT = "fonts/ShareTechMono-Regular.ttf";
-        font = Assets.getInstance().getInstanceFont(DEFAULT_FONT,16);
+        font = Assets.getInstance().getInstanceFont(DEFAULT_FONT, 16);
         debugParams = new TreeMap<>();
         stringBuilder = new StringBuilder();
     }
@@ -33,7 +33,7 @@ public class DebugOverlay {
         int size = debugParams.size();
         if (size == 0) return;
         int count = 0;
-        float fontH=font.getLineHeight();
+        float fontH = font.getLineHeight();
         for (Map.Entry<String, String> entry : debugParams.entrySet()) {
             stringBuilder.clear();
             String k = entry.getKey();
