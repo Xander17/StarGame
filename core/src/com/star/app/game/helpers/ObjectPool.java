@@ -1,5 +1,7 @@
 package com.star.app.game.helpers;
 
+import com.star.app.game.overlays.DebugOverlay;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,5 +35,8 @@ public abstract class ObjectPool<T extends Poolable> {
         for (int i = activeList.size() - 1; i >= 0; i--) {
             if (!activeList.get(i).isActive()) free(i);
         }
+
+        //if(activeList.size()>0) DebugOverlay.setParam(activeList.get(0).getClass().getSimpleName()+" active", activeList.size());
+        //if(freeList.size()>0) DebugOverlay.setParam(freeList.get(0).getClass().getSimpleName()+" free",freeList.size());
     }
 }

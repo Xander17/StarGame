@@ -1,0 +1,279 @@
+
+game.png
+size: 2048,512
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+Layer 3
+  rotate: false
+  xy: 2, 20
+  size: 114, 97
+  orig: 114, 97
+  offset: 0, 0
+  index: -1
+ammodrop
+  rotate: false
+  xy: 846, 186
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+ammoicon
+  rotate: false
+  xy: 1940, 448
+  size: 26, 26
+  orig: 26, 26
+  offset: 0, 0
+  index: -1
+arrow
+  rotate: false
+  xy: 1968, 479
+  size: 57, 29
+  orig: 57, 29
+  offset: 0, 0
+  index: -1
+asteroid1
+  rotate: false
+  xy: 260, 252
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+asteroid2
+  rotate: false
+  xy: 518, 252
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+asteroid3
+  rotate: false
+  xy: 776, 252
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+asteroid4
+  rotate: false
+  xy: 2, 251
+  size: 256, 257
+  orig: 256, 257
+  offset: 0, 0
+  index: -1
+asteroid5
+  rotate: false
+  xy: 1034, 252
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+asteroid6
+  rotate: false
+  xy: 1292, 252
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+bullet
+  rotate: false
+  xy: 2, 2
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+buttonmenucheck
+  rotate: false
+  xy: 2, 185
+  size: 256, 64
+  orig: 256, 64
+  offset: 0, 0
+  index: -1
+buttonmenudown
+  rotate: false
+  xy: 2, 119
+  size: 256, 64
+  orig: 256, 64
+  offset: 0, 0
+  index: -1
+buttonmenuover
+  rotate: false
+  xy: 260, 186
+  size: 256, 64
+  orig: 256, 64
+  offset: 0, 0
+  index: -1
+buttonmenuup
+  rotate: false
+  xy: 1550, 410
+  size: 256, 64
+  orig: 256, 64
+  offset: 0, 0
+  index: -1
+cashdrop
+  rotate: false
+  xy: 780, 186
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+cashicon
+  rotate: false
+  xy: 780, 158
+  size: 26, 26
+  orig: 26, 26
+  offset: 0, 0
+  index: -1
+damageupdatedisabled
+  rotate: false
+  xy: 520, 122
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+damageupdateup
+  rotate: false
+  xy: 260, 56
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+durabilityicon
+  rotate: false
+  xy: 1550, 252
+  size: 26, 26
+  orig: 26, 26
+  offset: 0, 0
+  index: -1
+fighter
+  rotate: false
+  xy: 184, 53
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+forwardspeeddisabled
+  rotate: false
+  xy: 1810, 216
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+forwardspeedup
+  rotate: false
+  xy: 650, 122
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+healdrop
+  rotate: false
+  xy: 520, 56
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+healupdatedisabled
+  rotate: false
+  xy: 1810, 346
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+healupdateup
+  rotate: false
+  xy: 1680, 280
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+horseshoe
+  rotate: false
+  xy: 118, 53
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+mine
+  rotate: false
+  xy: 1550, 476
+  size: 416, 32
+  orig: 416, 32
+  offset: 0, 0
+  index: -1
+minesicon
+  rotate: false
+  xy: 118, 25
+  size: 26, 26
+  orig: 26, 26
+  offset: 0, 0
+  index: -1
+particle1
+  rotate: false
+  xy: 1578, 262
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+rotationspeeddisabled
+  rotate: false
+  xy: 1550, 280
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+rotationspeedup
+  rotate: false
+  xy: 390, 56
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+star1
+  rotate: false
+  xy: 912, 234
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+star2
+  rotate: false
+  xy: 1968, 461
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+star3
+  rotate: false
+  xy: 2027, 492
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+star4
+  rotate: false
+  xy: 146, 35
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+star5
+  rotate: false
+  xy: 1940, 430
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+star6
+  rotate: false
+  xy: 652, 104
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+trident
+  rotate: false
+  xy: 586, 56
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1

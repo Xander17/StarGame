@@ -1,28 +1,24 @@
 package com.star.app.game.bullets;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.star.app.game.GameController;
 import com.star.app.game.helpers.ObjectPool;
-import com.star.app.utils.Assets;
 
 public class BulletController extends ObjectPool<Bullet> {
-
-    TextureRegion texture;
-    GameController gameController;
-
-    @Override
-    public Bullet getNew() {
-        return new Bullet(texture);
-    }
+    private final float BULLET_MAX_DISTANCE = 1000;
+    private GameController gameController;
 
     public BulletController(GameController gameController) {
-        texture = Assets.getInstance().getTextureAtlas().findRegion("bullet");
         this.gameController = gameController;
     }
 
-    public void createNew(float x, float y, float angle, float velocityX, float velocityY) {
-        getActive().activate(x, y, angle, velocityX, velocityY);
+    @Override
+    public Bullet getNew() {
+        return new Bullet(gameController);
+    }
+
+    public void createNew(float x, float y, float angle, float velocityX, float velocityY, float damage,boolean playerOwner) {
+        getActive().activate(x, y, angle, velocityX, velocityY, damage, BULLET_MAX_DISTANCE,playerOwner);
     }
 
     public void update(float dt) {

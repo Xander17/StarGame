@@ -8,6 +8,8 @@ public interface Collisional {
 
     boolean takeDamage(float amount);
 
+    boolean takeImpulseDamage(float power, float angle, float amount);
+
     Circle getHitBox();
 
     Vector2 getVelocity();
@@ -15,4 +17,5 @@ public interface Collisional {
     Vector2 getPosition();
 
     float getMassFactor();
+
 }

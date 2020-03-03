@@ -1,0 +1,104 @@
+
+menu.png
+size: 2048,128
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+buttonkeycheck
+  rotate: false
+  xy: 1340, 38
+  size: 100, 64
+  orig: 100, 64
+  offset: 0, 0
+  index: -1
+buttonkeydown
+  rotate: false
+  xy: 1238, 38
+  size: 100, 64
+  orig: 100, 64
+  offset: 0, 0
+  index: -1
+buttonkeyover
+  rotate: false
+  xy: 1034, 38
+  size: 100, 64
+  orig: 100, 64
+  offset: 0, 0
+  index: -1
+buttonkeyup
+  rotate: false
+  xy: 1136, 38
+  size: 100, 64
+  orig: 100, 64
+  offset: 0, 0
+  index: -1
+buttonmenucheck
+  rotate: false
+  xy: 2, 38
+  size: 256, 64
+  orig: 256, 64
+  offset: 0, 0
+  index: -1
+buttonmenudown
+  rotate: false
+  xy: 776, 38
+  size: 256, 64
+  orig: 256, 64
+  offset: 0, 0
+  index: -1
+buttonmenuover
+  rotate: false
+  xy: 260, 38
+  size: 256, 64
+  orig: 256, 64
+  offset: 0, 0
+  index: -1
+buttonmenuup
+  rotate: false
+  xy: 518, 38
+  size: 256, 64
+  orig: 256, 64
+  offset: 0, 0
+  index: -1
+star1
+  rotate: false
+  xy: 2, 20
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+star2
+  rotate: false
+  xy: 1442, 86
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+star3
+  rotate: false
+  xy: 2, 2
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+star4
+  rotate: false
+  xy: 20, 20
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+star5
+  rotate: false
+  xy: 1442, 68
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+star6
+  rotate: false
+  xy: 1460, 86
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
